@@ -1,0 +1,14 @@
+%% vim: set filetype=erlang : -*- erlang -*-
+{application, moyo,
+ [
+  {description, "Erlang Utility Library for DWANGO"},
+  {vsn, git},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  crypto,
+                  xmerl
+                 ]},
+  {env, []}
+ ]}.
