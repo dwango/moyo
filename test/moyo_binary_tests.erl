@@ -215,6 +215,29 @@ to_float_test_() ->
       end}
     ].
 
+to_number_test_() ->
+    [
+     {"整数表現のバイナリは整数に変換する",
+      fun () ->
+              Input  = <<"1234">>,
+              Result = moyo_binary:to_number(Input),
+              Expected = 1234,
+              ?assertEqual(Expected, Result)
+      end},
+     {"小数表現のバイナリは浮動小数点数に変換する",
+      fun () ->
+              Input  = <<"1234.5678">>,
+              Result = moyo_binary:to_number(Input),
+              Expected = 1234.5678,
+              ?assertEqual(Expected, Result)
+      end},
+     {"整数表現、小数表現のいずれでもなかった場合は badarg を投げる",
+      fun () ->
+              Input = <<"abc">>,
+              ?assertError(badarg, moyo_binary:to_number(Input))
+      end}
+    ].
+
 to_binary_test_() ->
     [
      {"バイナリを入力に渡した場合は、そのままの値が返る",

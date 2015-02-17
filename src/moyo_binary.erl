@@ -14,6 +14,7 @@
          format/2,
          generate_random_list/2,
          to_float/1,
+         to_number/1,
          strip/1,
          strip/2,
          strip/3,
@@ -122,6 +123,19 @@ generate_random_list(ByteSize, Count) ->
 to_float(Bin) ->
     try
         binary_to_integer(Bin) * 1.0
+    catch
+        _:_ ->
+            binary_to_float(Bin)
+    end.
+
+%% @doc 数値表現のバイナリを、整数もしくは浮動小数点数に変換する．
+%%
+%% 引数で与えられたバイナリが整数表現だった場合は整数に、小数表現だった場合は浮動小数点数に変換する.
+%% 整数表現、小数表現のいずれでもなかった場合は badarg を投げる．
+-spec to_number(binary()) -> number().
+to_number(Bin) ->
+    try
+        binary_to_integer(Bin)
     catch
         _:_ ->
             binary_to_float(Bin)

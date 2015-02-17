@@ -14,7 +14,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#abbreviate-2">abbreviate/2</a></td><td>Equivalent to <a href="#abbreviate-3"><tt>abbreviate(Bin, MaxLength, &lt;&lt;"..."&gt;&gt;)</tt></a>.</td></tr><tr><td valign="top"><a href="#abbreviate-3">abbreviate/3</a></td><td>入力バイナリが最大長を超えている場合に、指定された省略文字列を使って切り詰めを行う.</td></tr><tr><td valign="top"><a href="#fill-2">fill/2</a></td><td>同じ数字(文字)が連続したバイナリを作る.</td></tr><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットのバイナリを生成して返す.</td></tr><tr><td valign="top"><a href="#from_hex-1">from_hex/1</a></td><td>16進数表記のバイナリを生のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#generate_random_list-2">generate_random_list/2</a></td><td>ランダム かつ ユニークな要素(バイナリ)を<code>Count</code>個含むリストを生成する.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>バイナリリストの要素をセパレータで区切ったバイナリを返す.</td></tr><tr><td valign="top"><a href="#strip-1">strip/1</a></td><td>バイナリの両端からスペース(\s)を取り除く(strip(Binary, both)).</td></tr><tr><td valign="top"><a href="#strip-2">strip/2</a></td><td>指定された方向のスペースを取り除く(strip(Binary, Direction, <<"\s">>)).</td></tr><tr><td valign="top"><a href="#strip-3">strip/3</a></td><td>指定された方向から任意の1文字を全て取り除く(strip(Binary, Direction, Target, single)).</td></tr><tr><td valign="top"><a href="#strip-4">strip/4</a></td><td>指定された方向から任意の文字を取り除く.</td></tr><tr><td valign="top"><a href="#to_binary-1">to_binary/1</a></td><td>Erlangの項をバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_float-1">to_float/1</a></td><td>バイナリを小数に変換する.</td></tr><tr><td valign="top"><a href="#to_hex-1">to_hex/1</a></td><td>生のバイナリを16進数表記のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#tr-2">tr/2</a></td><td>入力バイナリ内の文字を、マッピング指定に従って置換する.</td></tr><tr><td valign="top"><a href="#try_binary_to_existing_atom-2">try_binary_to_existing_atom/2</a></td><td>バイナリのアトムへの変換を試みる.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#abbreviate-2">abbreviate/2</a></td><td>Equivalent to <a href="#abbreviate-3"><tt>abbreviate(Bin, MaxLength, &lt;&lt;"..."&gt;&gt;)</tt></a>.</td></tr><tr><td valign="top"><a href="#abbreviate-3">abbreviate/3</a></td><td>入力バイナリが最大長を超えている場合に、指定された省略文字列を使って切り詰めを行う.</td></tr><tr><td valign="top"><a href="#fill-2">fill/2</a></td><td>同じ数字(文字)が連続したバイナリを作る.</td></tr><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットのバイナリを生成して返す.</td></tr><tr><td valign="top"><a href="#from_hex-1">from_hex/1</a></td><td>16進数表記のバイナリを生のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#generate_random_list-2">generate_random_list/2</a></td><td>ランダム かつ ユニークな要素(バイナリ)を<code>Count</code>個含むリストを生成する.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>バイナリリストの要素をセパレータで区切ったバイナリを返す.</td></tr><tr><td valign="top"><a href="#strip-1">strip/1</a></td><td>バイナリの両端からスペース(\s)を取り除く(strip(Binary, both)).</td></tr><tr><td valign="top"><a href="#strip-2">strip/2</a></td><td>指定された方向のスペースを取り除く(strip(Binary, Direction, <<"\s">>)).</td></tr><tr><td valign="top"><a href="#strip-3">strip/3</a></td><td>指定された方向から任意の1文字を全て取り除く(strip(Binary, Direction, Target, single)).</td></tr><tr><td valign="top"><a href="#strip-4">strip/4</a></td><td>指定された方向から任意の文字を取り除く.</td></tr><tr><td valign="top"><a href="#to_binary-1">to_binary/1</a></td><td>Erlangの項をバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_float-1">to_float/1</a></td><td>バイナリを小数に変換する.</td></tr><tr><td valign="top"><a href="#to_hex-1">to_hex/1</a></td><td>生のバイナリを16進数表記のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_number-1">to_number/1</a></td><td>数値表現のバイナリを、整数もしくは浮動小数点数に変換する．.</td></tr><tr><td valign="top"><a href="#tr-2">tr/2</a></td><td>入力バイナリ内の文字を、マッピング指定に従って置換する.</td></tr><tr><td valign="top"><a href="#try_binary_to_existing_atom-2">try_binary_to_existing_atom/2</a></td><td>バイナリのアトムへの変換を試みる.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -276,6 +276,22 @@ ex:
   <<"61625f595a">>
 ```
 
+<a name="to_number-1"></a>
+
+### to_number/1 ###
+
+
+<pre><code>
+to_number(Bin::binary()) -&gt; number()
+</code></pre>
+<br />
+
+
+数値表現のバイナリを、整数もしくは浮動小数点数に変換する．
+
+
+引数で与えられたバイナリが整数表現だった場合は整数に、小数表現だった場合は浮動小数点数に変換する.
+整数表現、小数表現のいずれでもなかった場合は badarg を投げる．
 <a name="tr-2"></a>
 
 ### tr/2 ###
