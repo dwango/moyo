@@ -4,7 +4,7 @@
 %%
 -module(moyo_pipe_tests).
 
--include_lib("eunit/include/eunit.hrl").
+-include("eunit.hrl").
 
 output_start_test_() ->
     [
@@ -49,15 +49,10 @@ output_start_test_() ->
               Data = <<"pipe_data\n">>,
 
               OutputPid = moyo_pipe:output_start(Port, Data, []),
-              _ = monitor(process, OutputPid),
+              Ref = monitor(process, OutputPid),
               timer:sleep(10),
               true = port_close(Port),
-
-              receive
-                  {'DOWN', _, _, Pid, Reason} ->
-                      ?assertEqual(OutputPid, Pid),
-                      ?assertEqual(normal, Reason)
-              end
+              ?assertDown(Ref, normal)
       end},
      {"パイププロセスが(異常)終了した場合は、ポートも閉じる",
       fun () ->
