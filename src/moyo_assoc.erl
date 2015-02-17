@@ -62,6 +62,9 @@
          to_record/3,
          to_record_as/4,
 
+         from_map/1,
+         to_map/1,
+
          equal/2,
          intersection_and_differences/2,
          diff/2,
@@ -453,6 +456,36 @@ to_record_as(RecordName, Fields, FieldSpecList, Params) ->
         {error, Reason} -> {error, Reason};
         {ok, Entries}   -> {ok, to_record(RecordName, Fields, Entries)}
     end.
+
+%% @doc mapから連想リストを生成する.
+%%
+%% maps:to_list/1 の結果と同じ.
+%%
+%% ex:
+%% ```
+%% 1> moyo_assoc:from_map(#{key1 => value1,key2 => value2,key3 => value3,key4 => value4,key5 => value5}).
+%% [{key1,value1},
+%%  {key2,value2},
+%%  {key3,value3},
+%%  {key4,value4},
+%%  {key5,value5}]
+%% '''
+-spec from_map(#{}) -> moyo_assoc:assoc_list().
+from_map(Map) ->
+    maps:to_list(Map).
+
+%% @doc 連想リストからmapを生成する.
+%%
+%% 連想リスト内に重複するキーが存在した場合は先に現れた値が使われる.
+%%
+%% ex:
+%% ```
+%% 1> moyo_assoc:to_map([{key1, value1}, {key2, value2}, {key3, value3}, {key4, value4}, {key5, value5}]).
+%% #{key1 => value1,key2 => value2,key3 => value3,key4 => value4,key5 => value5}
+%% '''
+-spec to_map(moyo_assoc:assoc_list()) -> #{}.
+to_map(Fields) ->
+    lists:foldr(fun({K, V}, Map) -> maps:put(K, V, Map) end, maps:new(), Fields).
 
 %% @doc 2つの連想リストが同じかどうかを比較する.
 %%

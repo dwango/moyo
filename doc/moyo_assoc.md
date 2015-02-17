@@ -161,7 +161,7 @@ value() = term()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-2">delete/2</a></td><td>キーに対応する要素を削除する.</td></tr><tr><td valign="top"><a href="#diff-2">diff/2</a></td><td>2つの連想リストから共通のタプルとどちらかのリストにしかないタプルとキーがList1とLIst2で異なるタプルを分ける.</td></tr><tr><td valign="top"><a href="#equal-2">equal/2</a></td><td>2つの連想リストが同じかどうかを比較する.</td></tr><tr><td valign="top"><a href="#fetch-2">fetch/2</a></td><td>キーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#fetch-3">fetch/3</a></td><td>キーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#fetch_as-3">fetch_as/3</a></td><td>キーに対応する値を<code>ValueSpec</code>で指定された方式で取得する.</td></tr><tr><td valign="top"><a href="#fetch_values-2">fetch_values/2</a></td><td>複数の値を一度に取得する.</td></tr><tr><td valign="top"><a href="#from_record-2">from_record/2</a></td><td>レコードを連想リスト形式に変換する.</td></tr><tr><td valign="top"><a href="#intersection_and_differences-2">intersection_and_differences/2</a></td><td>2つの連想リストから共通のタプルとどちらかのリストにしかないタプルを分ける.</td></tr><tr><td valign="top"><a href="#is_assoc_list-1">is_assoc_list/1</a></td><td>引数の値が連想リストかどうかを判定する.</td></tr><tr><td valign="top"><a href="#lookup-2">lookup/2</a></td><td>キーに対応する値を検索する.</td></tr><tr><td valign="top"><a href="#lookup_as-3">lookup_as/3</a></td><td>キーに対応する値を<code>ValueSpec</code>で指定された方式で取得する.</td></tr><tr><td valign="top"><a href="#lookup_entries-2">lookup_entries/2</a></td><td><code>KeyList</code>で指定されたエントリー(要素)一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_entries_as-2">lookup_entries_as/2</a></td><td><code>EntrySpecList</code>で指定された方式で、エントリー(要素)一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_values-2">lookup_values/2</a></td><td><code>KeyList</code>で指定されたキーに対応する値一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_values_as-2">lookup_values_as/2</a></td><td><code>EntrySpecList</code>で指定された方式で、値一覧を取得する.</td></tr><tr><td valign="top"><a href="#merge-2">merge/2</a></td><td>2つの連想リストをマージする.</td></tr><tr><td valign="top"><a href="#pop-2">pop/2</a></td><td>キーに対応するリストの先頭から値を取り出す.</td></tr><tr><td valign="top"><a href="#push-3">push/3</a></td><td>キーに対応するリストの先頭に値を追加する.</td></tr><tr><td valign="top"><a href="#rfetch-2">rfetch/2</a></td><td>再帰的にキーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#rfetch-3">rfetch/3</a></td><td>再帰的にキーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#rupdate-4">rupdate/4</a></td><td>キーリストに対応する要素の値を更新する.</td></tr><tr><td valign="top"><a href="#store-3">store/3</a></td><td>連想リストに要素を追加する.</td></tr><tr><td valign="top"><a href="#store_if_not_exist-3">store_if_not_exist/3</a></td><td>既にキーが存在しない場合にのみ、連想リストに要素を追加する.</td></tr><tr><td valign="top"><a href="#take-2">take/2</a></td><td>キーに対応する要素を連想リストから取り出す(取り除く).</td></tr><tr><td valign="top"><a href="#to_record-3">to_record/3</a></td><td>連想リストからレコードを生成する.</td></tr><tr><td valign="top"><a href="#to_record_as-4">to_record_as/4</a></td><td>連想リストからレコードを生成する.</td></tr><tr><td valign="top"><a href="#update-4">update/4</a></td><td>キーに対応する要素の値を更新する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#delete-2">delete/2</a></td><td>キーに対応する要素を削除する.</td></tr><tr><td valign="top"><a href="#diff-2">diff/2</a></td><td>2つの連想リストから共通のタプルとどちらかのリストにしかないタプルとキーがList1とLIst2で異なるタプルを分ける.</td></tr><tr><td valign="top"><a href="#equal-2">equal/2</a></td><td>2つの連想リストが同じかどうかを比較する.</td></tr><tr><td valign="top"><a href="#fetch-2">fetch/2</a></td><td>キーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#fetch-3">fetch/3</a></td><td>キーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#fetch_as-3">fetch_as/3</a></td><td>キーに対応する値を<code>ValueSpec</code>で指定された方式で取得する.</td></tr><tr><td valign="top"><a href="#fetch_values-2">fetch_values/2</a></td><td>複数の値を一度に取得する.</td></tr><tr><td valign="top"><a href="#from_map-1">from_map/1</a></td><td>mapから連想リストを生成する.</td></tr><tr><td valign="top"><a href="#from_record-2">from_record/2</a></td><td>レコードを連想リスト形式に変換する.</td></tr><tr><td valign="top"><a href="#intersection_and_differences-2">intersection_and_differences/2</a></td><td>2つの連想リストから共通のタプルとどちらかのリストにしかないタプルを分ける.</td></tr><tr><td valign="top"><a href="#is_assoc_list-1">is_assoc_list/1</a></td><td>引数の値が連想リストかどうかを判定する.</td></tr><tr><td valign="top"><a href="#lookup-2">lookup/2</a></td><td>キーに対応する値を検索する.</td></tr><tr><td valign="top"><a href="#lookup_as-3">lookup_as/3</a></td><td>キーに対応する値を<code>ValueSpec</code>で指定された方式で取得する.</td></tr><tr><td valign="top"><a href="#lookup_entries-2">lookup_entries/2</a></td><td><code>KeyList</code>で指定されたエントリー(要素)一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_entries_as-2">lookup_entries_as/2</a></td><td><code>EntrySpecList</code>で指定された方式で、エントリー(要素)一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_values-2">lookup_values/2</a></td><td><code>KeyList</code>で指定されたキーに対応する値一覧を取得する.</td></tr><tr><td valign="top"><a href="#lookup_values_as-2">lookup_values_as/2</a></td><td><code>EntrySpecList</code>で指定された方式で、値一覧を取得する.</td></tr><tr><td valign="top"><a href="#merge-2">merge/2</a></td><td>2つの連想リストをマージする.</td></tr><tr><td valign="top"><a href="#pop-2">pop/2</a></td><td>キーに対応するリストの先頭から値を取り出す.</td></tr><tr><td valign="top"><a href="#push-3">push/3</a></td><td>キーに対応するリストの先頭に値を追加する.</td></tr><tr><td valign="top"><a href="#rfetch-2">rfetch/2</a></td><td>再帰的にキーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#rfetch-3">rfetch/3</a></td><td>再帰的にキーに対応する値を取得する.</td></tr><tr><td valign="top"><a href="#rupdate-4">rupdate/4</a></td><td>キーリストに対応する要素の値を更新する.</td></tr><tr><td valign="top"><a href="#store-3">store/3</a></td><td>連想リストに要素を追加する.</td></tr><tr><td valign="top"><a href="#store_if_not_exist-3">store_if_not_exist/3</a></td><td>既にキーが存在しない場合にのみ、連想リストに要素を追加する.</td></tr><tr><td valign="top"><a href="#take-2">take/2</a></td><td>キーに対応する要素を連想リストから取り出す(取り除く).</td></tr><tr><td valign="top"><a href="#to_map-1">to_map/1</a></td><td>連想リストからmapを生成する.</td></tr><tr><td valign="top"><a href="#to_record-3">to_record/3</a></td><td>連想リストからレコードを生成する.</td></tr><tr><td valign="top"><a href="#to_record_as-4">to_record_as/4</a></td><td>連想リストからレコードを生成する.</td></tr><tr><td valign="top"><a href="#update-4">update/4</a></td><td>キーに対応する要素の値を更新する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -300,6 +300,35 @@ fetch_values(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type
 <br />
 
 複数の値を一度に取得する
+<a name="from_map-1"></a>
+
+### from_map/1 ###
+
+
+<pre><code>
+from_map(Map::#{}) -&gt; <a href="moyo_assoc.md#type-assoc_list">moyo_assoc:assoc_list()</a>
+</code></pre>
+<br />
+
+
+mapから連想リストを生成する.
+
+
+
+maps:to_list/1 の結果と同じ.
+
+
+ex:
+
+```
+  1> moyo_assoc:from_map(#{key1 => value1,key2 => value2,key3 => value3,key4 => value4,key5 => value5}).
+  [{key1,value1},
+   {key2,value2},
+   {key3,value3},
+   {key4,value4},
+   {key5,value5}]
+```
+
 <a name="from_record-2"></a>
 
 ### from_record/2 ###
@@ -660,6 +689,31 @@ take(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">a
 <br />
 
 キーに対応する要素を連想リストから取り出す(取り除く)
+<a name="to_map-1"></a>
+
+### to_map/1 ###
+
+
+<pre><code>
+to_map(Fields::<a href="moyo_assoc.md#type-assoc_list">moyo_assoc:assoc_list()</a>) -&gt; #{}
+</code></pre>
+<br />
+
+
+連想リストからmapを生成する.
+
+
+
+連想リスト内に重複するキーが存在した場合は先に現れた値が使われる.
+
+
+ex:
+
+```
+  1> moyo_assoc:to_map([{key1, value1}, {key2, value2}, {key3, value3}, {key4, value4}, {key5, value5}]).
+  #{key1 => value1,key2 => value2,key3 => value3,key4 => value4,key5 => value5}
+```
+
 <a name="to_record-3"></a>
 
 ### to_record/3 ###

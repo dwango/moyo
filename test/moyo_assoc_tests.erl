@@ -505,6 +505,48 @@ to_record_as_test_()->
       end}
     ].
 
+to_map_test_()->
+    [
+     {"連想リストをmapに変換する",
+      fun ()->
+              AssocList = [{a, 10}, {b, 20}, {c, 30}],
+              Expected = #{
+                           a => 10,
+                           b => 20,
+                           c => 30
+                         },
+              ?assertEqual(Expected, moyo_assoc:to_map(AssocList))
+      end
+     },
+     {"連想リストのキーが重複している場合，先にあるものが優先される",
+      fun ()->
+              AssocList = [{a, 10}, {c, 31}, {b, 20}, {c, 30}],
+              Expected = #{
+                           a => 10,
+                           b => 20,
+                           c => 31
+                         },
+              ?assertEqual(Expected, moyo_assoc:to_map(AssocList))
+      end
+     }
+    ].
+
+from_map_test_()->
+    [
+     {"mapを連想リストに変換する",
+      fun ()->
+              Map = #{
+                      a => 10,
+                      b => 20,
+                      c => 30
+                     },
+              Expected = [{a, 10}, {b, 20}, {c, 30}],
+              Result = moyo_assoc:from_map(Map),
+              ?assertEqual(lists:sort(Expected), lists:sort(Result))
+      end
+     }
+    ].
+
 equal_test_() ->
     [
      {"連想リストが等しい場合, trueが返る",
