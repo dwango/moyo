@@ -117,6 +117,30 @@ non_neg_seconds() = non_neg_integer()
 
 
 
+### <a name="type-pos_milliseconds">pos_milliseconds()</a> ###
+
+
+
+<pre><code>
+pos_milliseconds() = pos_integer()
+</code></pre>
+
+
+
+
+
+### <a name="type-pos_seconds">pos_seconds()</a> ###
+
+
+
+<pre><code>
+pos_seconds() = pos_integer()
+</code></pre>
+
+
+
+
+
 ### <a name="type-seconds">seconds()</a> ###
 
 

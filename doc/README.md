@@ -22,6 +22,7 @@ MOYOは、アフリカ東部で使われるスワヒリ語で、心、魂、精�
 <tr><td><a href="moyo_file.md" class="module">moyo_file</a></td></tr>
 <tr><td><a href="moyo_frac.md" class="module">moyo_frac</a></td></tr>
 <tr><td><a href="moyo_fun.md" class="module">moyo_fun</a></td></tr>
+<tr><td><a href="moyo_inet.md" class="module">moyo_inet</a></td></tr>
 <tr><td><a href="moyo_list.md" class="module">moyo_list</a></td></tr>
 <tr><td><a href="moyo_math.md" class="module">moyo_math</a></td></tr>
 <tr><td><a href="moyo_monad.md" class="module">moyo_monad</a></td></tr>
