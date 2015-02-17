@@ -34,4 +34,4 @@ start: compile
 	  $(shell ERL_LIBS=$(LIBS) erl -noshell -pa ebin -eval '{ok, _} = application:ensure_all_started($(APP)), [erlang:display(Name) || {Name, _, _} <- application:which_applications(), Name =/= $(APP)], halt().')
 
 dialyze: .dialyzer.plt compile
-	ERL_LIBS=$(LIBS) dialyzer -pa ebin --plt .dialyzer.plt -I deps -r ebin $(DIALYZER_OPTS)
+	ERL_LIBS=$(LIBS) dialyzer --no_native -pa ebin --plt .dialyzer.plt -I deps -r ebin $(DIALYZER_OPTS)
