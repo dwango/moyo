@@ -271,9 +271,9 @@ do_post_processing(Command, OptionList) ->
                  end, Command, OptionList),
 
     %% niceオプション: niceを指定する.
-    case moyo_assoc:lookup(nice, OptionList) of
-        {ok, Nice} -> moyo_binary:join([<<"nice">>, <<"-n">>, integer_to_binary(Nice), Command1], <<" ">>);
-        error      -> Command1
+    case proplists:lookup(nice, OptionList) of
+        {nice, Nice} -> moyo_binary:join([<<"nice">>, <<"-n">>, integer_to_binary(Nice), Command1], <<" ">>);
+        none         -> Command1
     end.
 
 %% @doc 別プロセスで行う外部プログラム実行処理.
