@@ -358,3 +358,28 @@ join_test_() ->
               ?assertEqual(Expected, Result)
       end}
     ].
+
+fixed_point_binary_to_number_test_() ->
+    [
+     {"固定小数点16.16",
+      fun() ->
+              ?assertEqual(1.5, moyo_binary:fixed_point_binary_to_number(16, 16, <<0, 1, 128, 0>>))
+      end},
+     {"固定小数点32.32",
+      fun() ->
+              ?assertEqual(1.5, moyo_binary:fixed_point_binary_to_number(32, 32, <<0, 0, 0, 1, 128, 0, 0, 0>>))
+      end}
+    ].
+
+number_to_fixed_point_binary_test_() ->
+    [
+     {"固定小数点16.16",
+      fun() ->
+              ?assertEqual(<<0, 1, 128, 0>>, moyo_binary:number_to_fixed_point_binary(16, 16, 1.5))
+      end},
+     {"固定小数点32.32.",
+      fun() ->
+              ?assertEqual(<<0, 0, 0, 1, 128, 0, 0, 0>>,
+                           moyo_binary:number_to_fixed_point_binary(32, 32, 1.5))
+      end}
+    ].

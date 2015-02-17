@@ -23,7 +23,9 @@
          abbreviate/3,
          tr/2,
          fill/2,
-         join/2
+         join/2,
+         fixed_point_binary_to_number/3,
+         number_to_fixed_point_binary/3
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -292,3 +294,30 @@ tr(Bin, Pos, End, Map, Acc) ->
         {_, C} -> <<Before:Pos/binary, _, After/binary>> = Bin,
                   tr(After, 0, byte_size(After), Map, [C, Before | Acc])
     end.
+
+%% @doc 固定小数点表記のバイナリから`number()'を生成する.
+%%
+%% 固定小数点のバイナリはビッグエンディアン.
+%% ```
+%% 1> fixed_point_binary_to_number(16, 16, <<0, 1, 128, 0>>).
+%% 1.5
+%% '''
+-spec fixed_point_binary_to_number(IntegerPartLength, DecimalPartLength, binary()) -> number() when
+      IntegerPartLength :: integer(),
+      DecimalPartLength :: integer().
+fixed_point_binary_to_number(IntegerPartLength, DecimalPartLength, Bin) ->
+    <<IntegerPart:IntegerPartLength, DecimalPart:DecimalPartLength>> = Bin,
+    IntegerPart + DecimalPart / (1 bsl DecimalPartLength).
+
+%% @doc `number()'から固定小数点表記のバイナリを生成する.
+%%
+%% 固定小数点のバイナリはビッグエンディアン.
+%% ```
+%% 1> number_to_fixed_point_binary(16, 16, 1.5).
+%% <<0, 1, 128, 0>>
+%% '''
+-spec number_to_fixed_point_binary(IntegerPartLength, DecimalPartLength, number()) -> binary() when
+      IntegerPartLength :: integer(),
+      DecimalPartLength :: integer().
+number_to_fixed_point_binary(IntegerPartLength, DecimalPartLength, Num) ->
+    <<(trunc(Num * (1 bsl DecimalPartLength))):(IntegerPartLength + DecimalPartLength)>>.

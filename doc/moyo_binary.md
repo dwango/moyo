@@ -14,7 +14,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#abbreviate-2">abbreviate/2</a></td><td>Equivalent to <a href="#abbreviate-3"><tt>abbreviate(Bin, MaxLength, &lt;&lt;"..."&gt;&gt;)</tt></a>.</td></tr><tr><td valign="top"><a href="#abbreviate-3">abbreviate/3</a></td><td>入力バイナリが最大長を超えている場合に、指定された省略文字列を使って切り詰めを行う.</td></tr><tr><td valign="top"><a href="#fill-2">fill/2</a></td><td>同じ数字(文字)が連続したバイナリを作る.</td></tr><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットのバイナリを生成して返す.</td></tr><tr><td valign="top"><a href="#from_hex-1">from_hex/1</a></td><td>16進数表記のバイナリを生のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#generate_random_list-2">generate_random_list/2</a></td><td>ランダム かつ ユニークな要素(バイナリ)を<code>Count</code>個含むリストを生成する.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>バイナリリストの要素をセパレータで区切ったバイナリを返す.</td></tr><tr><td valign="top"><a href="#strip-1">strip/1</a></td><td>バイナリの両端からスペース(\s)を取り除く(strip(Binary, both)).</td></tr><tr><td valign="top"><a href="#strip-2">strip/2</a></td><td>指定された方向のスペースを取り除く(strip(Binary, Direction, <<"\s">>)).</td></tr><tr><td valign="top"><a href="#strip-3">strip/3</a></td><td>指定された方向から任意の1文字を全て取り除く(strip(Binary, Direction, Target, single)).</td></tr><tr><td valign="top"><a href="#strip-4">strip/4</a></td><td>指定された方向から任意の文字を取り除く.</td></tr><tr><td valign="top"><a href="#to_binary-1">to_binary/1</a></td><td>Erlangの項をバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_float-1">to_float/1</a></td><td>バイナリを小数に変換する.</td></tr><tr><td valign="top"><a href="#to_hex-1">to_hex/1</a></td><td>生のバイナリを16進数表記のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_number-1">to_number/1</a></td><td>数値表現のバイナリを、整数もしくは浮動小数点数に変換する．.</td></tr><tr><td valign="top"><a href="#tr-2">tr/2</a></td><td>入力バイナリ内の文字を、マッピング指定に従って置換する.</td></tr><tr><td valign="top"><a href="#try_binary_to_existing_atom-2">try_binary_to_existing_atom/2</a></td><td>バイナリのアトムへの変換を試みる.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#abbreviate-2">abbreviate/2</a></td><td>Equivalent to <a href="#abbreviate-3"><tt>abbreviate(Bin, MaxLength, &lt;&lt;"..."&gt;&gt;)</tt></a>.</td></tr><tr><td valign="top"><a href="#abbreviate-3">abbreviate/3</a></td><td>入力バイナリが最大長を超えている場合に、指定された省略文字列を使って切り詰めを行う.</td></tr><tr><td valign="top"><a href="#fill-2">fill/2</a></td><td>同じ数字(文字)が連続したバイナリを作る.</td></tr><tr><td valign="top"><a href="#fixed_point_binary_to_number-3">fixed_point_binary_to_number/3</a></td><td>固定小数点表記のバイナリから<code>number()</code>を生成する.</td></tr><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットのバイナリを生成して返す.</td></tr><tr><td valign="top"><a href="#from_hex-1">from_hex/1</a></td><td>16進数表記のバイナリを生のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#generate_random_list-2">generate_random_list/2</a></td><td>ランダム かつ ユニークな要素(バイナリ)を<code>Count</code>個含むリストを生成する.</td></tr><tr><td valign="top"><a href="#join-2">join/2</a></td><td>バイナリリストの要素をセパレータで区切ったバイナリを返す.</td></tr><tr><td valign="top"><a href="#number_to_fixed_point_binary-3">number_to_fixed_point_binary/3</a></td><td><code>number()</code>から固定小数点表記のバイナリを生成する.</td></tr><tr><td valign="top"><a href="#strip-1">strip/1</a></td><td>バイナリの両端からスペース(\s)を取り除く(strip(Binary, both)).</td></tr><tr><td valign="top"><a href="#strip-2">strip/2</a></td><td>指定された方向のスペースを取り除く(strip(Binary, Direction, <<"\s">>)).</td></tr><tr><td valign="top"><a href="#strip-3">strip/3</a></td><td>指定された方向から任意の1文字を全て取り除く(strip(Binary, Direction, Target, single)).</td></tr><tr><td valign="top"><a href="#strip-4">strip/4</a></td><td>指定された方向から任意の文字を取り除く.</td></tr><tr><td valign="top"><a href="#to_binary-1">to_binary/1</a></td><td>Erlangの項をバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_float-1">to_float/1</a></td><td>バイナリを小数に変換する.</td></tr><tr><td valign="top"><a href="#to_hex-1">to_hex/1</a></td><td>生のバイナリを16進数表記のバイナリに変換する.</td></tr><tr><td valign="top"><a href="#to_number-1">to_number/1</a></td><td>数値表現のバイナリを、整数もしくは浮動小数点数に変換する．.</td></tr><tr><td valign="top"><a href="#tr-2">tr/2</a></td><td>入力バイナリ内の文字を、マッピング指定に従って置換する.</td></tr><tr><td valign="top"><a href="#try_binary_to_existing_atom-2">try_binary_to_existing_atom/2</a></td><td>バイナリのアトムへの変換を試みる.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -88,6 +88,28 @@ fill(Int::integer(), Count::integer()) -&gt; binary()
   <<"aaaaaaaaaa">>
 ```
 
+<a name="fixed_point_binary_to_number-3"></a>
+
+### fixed_point_binary_to_number/3 ###
+
+
+<pre><code>
+fixed_point_binary_to_number(IntegerPartLength, DecimalPartLength, Bin::binary()) -&gt; number()
+</code></pre>
+
+<ul class="definitions"><li><code>IntegerPartLength = integer()</code></li><li><code>DecimalPartLength = integer()</code></li></ul>
+
+
+固定小数点表記のバイナリから`number()`を生成する.
+
+
+固定小数点のバイナリはビッグエンディアン.
+
+```
+  1> fixed_point_binary_to_number(16, 16, <<0, 1, 128, 0>>).
+  1.5
+```
+
 <a name="format-2"></a>
 
 ### format/2 ###
@@ -148,6 +170,28 @@ join(Tail::[binary()], Separator::binary()) -&gt; binary()
 <br />
 
 バイナリリストの要素をセパレータで区切ったバイナリを返す.
+<a name="number_to_fixed_point_binary-3"></a>
+
+### number_to_fixed_point_binary/3 ###
+
+
+<pre><code>
+number_to_fixed_point_binary(IntegerPartLength, DecimalPartLength, Num::number()) -&gt; binary()
+</code></pre>
+
+<ul class="definitions"><li><code>IntegerPartLength = integer()</code></li><li><code>DecimalPartLength = integer()</code></li></ul>
+
+
+`number()`から固定小数点表記のバイナリを生成する.
+
+
+固定小数点のバイナリはビッグエンディアン.
+
+```
+  1> number_to_fixed_point_binary(16, 16, 1.5).
+  <<0, 1, 128, 0>>
+```
+
 <a name="strip-1"></a>
 
 ### strip/1 ###
