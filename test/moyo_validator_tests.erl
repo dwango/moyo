@@ -391,12 +391,16 @@ validate_number_test_() ->
 
               ?assertEqual({ok, Float}, moyo_validator:validate(BinFloat, number, [binary_in]))
       end},
-     {"float, binary_in: integer",
+     {"number, binary_in: integer",
       fun () ->
               Int = 551,
               BinInt = <<"551">>,
 
               ?assertMatch({ok, Int}, moyo_validator:validate(BinInt, number, [binary_in]))
+      end},
+     {"number, binary_in: string",
+      fun () ->
+              ?assertMatch({error, _}, moyo_validator:validate(<<"hoge">>, number, [binary_in]))
       end},
      {"正数かどうかをチェック",
       fun () ->
@@ -811,6 +815,50 @@ validate_list_test_() ->
               Input = grapes,
 
               ?assertMatch({error, _}, moyo_validator:validate(Input, {list, atom}))
+      end}
+    ].
+
+validate_tuple_test_() ->
+    [
+     {"tuple check",
+      fun() ->
+              TestData = [
+                          %% {InputValue, Spec}
+                          {{1, two, "three"},             {tuple, [{integer, [non_negative]}, {enum, [one, two]}, {string, [ascii]}]}},
+                          {{1},                           {tuple, [integer]}},
+                          {[{1, "assoc"}, {2, "assoc2"}], {list, {tuple, [integer, string]}}}
+                         ],
+              [?assertEqual({ok, Value}, moyo_validator:validate(Value, Spec))
+               || {Value, Spec} <- TestData]
+      end},
+     {"tuple check: error",
+      fun() ->
+              TestData = [
+                          %% {InputValue, Spec}
+                          {{1, two, "three"},   {tuple, [integer, integer, string]}},
+                          {{1, two, "three"},   {tuple, [{integer, [{range, 3, 10}]}, atom, string]}}
+                         ],
+              [?assertMatch({error, _}, moyo_validator:validate(Value, Spec))
+               || {Value, Spec} <- TestData]
+      end},
+     {"error: not_tuple",
+      fun() ->
+              ?assertMatch({error, {not_tuple, _, _}}, moyo_validator:validate([1,2], {tuple, [integer, integer]}))
+      end},
+     {"error: incorrect_spec_size",
+      fun() ->
+              Input = [
+                       %% {InputValue, Spec}
+                       {{1,2},   {tuple, [integer, integer, integer]}},
+                       {{1,2,3}, {tuple, [integer, integer]}}
+                      ],
+              [?assertEqual({error, incorrect_spec_size}, moyo_validator:validate(Value, Spec))
+               || {Value, Spec} <- Input]
+      end},
+     {"error: not_supported_spec",
+      fun() ->
+              ?assertMatch({error, {not_supported_spec, _, _}},
+                           moyo_validator:validate({1,2}, {tuple, {integer, integer}}))
       end}
     ].
 

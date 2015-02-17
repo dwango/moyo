@@ -219,12 +219,13 @@ sign_constraint() = positive | negative | non_negative
 
 
 <pre><code>
-spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_constraints">type_constraints()</a> | {list, <a href="#type-spec">spec()</a>} | {enum, [term()]} | {equal, term()} | {'or', [<a href="#type-spec">spec()</a>]} | {custom, <a href="#type-custom_spec_fun">custom_spec_fun()</a>}
+spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_constraints">type_constraints()</a> | {list, <a href="#type-spec">spec()</a>} | {tuple, [<a href="#type-spec">spec()</a>]} | {enum, [term()]} | {equal, term()} | {'or', [<a href="#type-spec">spec()</a>]} | {custom, <a href="#type-custom_spec_fun">custom_spec_fun()</a>}
 </code></pre>
 
 
 
   {list, spec()}: 入力値が`spec()`に適合する値を要素とするリストかをチェックする<br />
+{tuple, [spec()]}: 入力値の各要素が`spec()`と適合するかチェックする. `spec()`は`tuple`の要素数用意する必要がある.<br />
 {enum, [term()]}: 入力値が`[term()]`のいずれかの要素と等しいかどうかをチェックする<br />
 {equal, term()}: 入力値が`term()`と等しいかどうかをチェックする<br />
 {'or', [spec()]}: 入力値が`[spec()]`のいずれかの条件に適合するかをチェックする<br />

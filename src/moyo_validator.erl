@@ -32,8 +32,9 @@
 %% Types
 %%----------------------------------------------------------------------------------------------------------------------
 -type spec() :: basic_type() | type_constraints()
-              | {list, spec()} | {enum, [term()]} | {equal, term()} | {'or', [spec()]} | {custom, custom_spec_fun()}.
+              | {list, spec()} | {tuple, [spec()]} | {enum, [term()]} | {equal, term()} | {'or', [spec()]} | {custom, custom_spec_fun()}.
 %% {list, spec()}: 入力値が`spec()'に適合する値を要素とするリストかをチェックする<br />
+%% {tuple, [spec()]}: 入力値の各要素が`spec()`と適合するかチェックする. `spec()`は`tuple`の要素数用意する必要がある.<br />
 %% {enum, [term()]}: 入力値が`[term()]'のいずれかの要素と等しいかどうかをチェックする<br />
 %% {equal, term()}: 入力値が`term()'と等しいかどうかをチェックする<br />
 %% {'or', [spec()]}: 入力値が`[spec()]'のいずれかの条件に適合するかをチェックする<br />
@@ -51,7 +52,7 @@
           {any,     []}.
 
 -type basic_type() :: integer | float | number | string | binary | boolean | atom | datetime | any.
--type type()       :: basic_type() | list | enum | equal | custom.
+-type type()       :: basic_type() | list | tuple | enum | equal | custom.
 
 -type constraint()         :: integer_constraint() | float_constraint() |
                               string_constraint() | binary_constraint().
@@ -381,6 +382,23 @@ validate_impl(ValueList, {list, ElemSpec} = Spec) ->
                 Reason    -> {error, Reason}
             end
     end;
+validate_impl(ValueTuple, {tuple, SpecList} = Spec) ->
+    case is_tuple(ValueTuple) of
+        false ->
+            {error, {not_tuple, {value, ValueTuple}, {spec, Spec}}};
+        true when not is_list(SpecList) ->
+            {error, {not_supported_spec, {value, ValueTuple}, {spec, Spec}}};
+        true ->
+            Fun = fun(_, [], []) -> ok;
+                     (F, [Value | ValueRest], [ElemSpec | ElemRest]) ->
+                         case validate(Value, ElemSpec) of
+                             {ok, _}         -> F(F, ValueRest, ElemRest);
+                             {error, Reason} -> {error, Reason}
+                         end;
+                     (_, _, _) -> {error, incorrect_spec_size}
+                  end,
+            Fun(Fun, tuple_to_list(ValueTuple), SpecList)
+    end;
 validate_impl(Value, {enum, Items}) ->
     case lists:member(Value, Items) of
         true  -> ok;
@@ -549,16 +567,10 @@ try_binary_to_existing_atom(Bin) ->
 try_binary_to_atom(Bin) ->
     ?TRANSFORM_FROM_BINARY(atom, fun (_) -> binary_to_atom(Bin, utf8) end, Bin).
 
--spec try_binary_to_various_datetime(binary()) -> {ok, non_neg_integer()} | {error, Reason::term()}.
+%% datetimeの場合はbinaryでもdatetime形式の場合がある為、ここではOKで全て返す
+-spec try_binary_to_various_datetime(binary()) -> {ok, non_neg_integer()}.
 try_binary_to_various_datetime(Bin) ->
-    ?TRANSFORM_FROM_BINARY(datetime,
-                           fun(Bin1) ->
-                                   try binary_to_integer(Bin1)
-                                   catch
-                                       _:_ -> Bin1
-                                   end
-                           end,
-                           Bin).
+    try {ok, binary_to_integer(Bin)} catch _:_ -> {ok, Bin} end.
 
 -spec try_unixtime_to_datetime(non_neg_integer()) -> {ok, calendar:datetime()} | {error, Reason::term()}.
 try_unixtime_to_datetime(Int) when is_integer(Int), Int > 0 ->
