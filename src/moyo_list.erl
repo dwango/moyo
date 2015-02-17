@@ -16,6 +16,7 @@
          shuffle/1,
 
          foldl_while/3,
+         foldr_while/3,
 
          maybe_map/2,
          maybe_foreach/2,
@@ -128,6 +129,19 @@ foldl_while(Fun, Acc, [Element | List]) ->
         {false, Result} -> Result;
         {true,  Result} -> foldl_while(Fun, Result, List)
     end.
+
+%% @doc lists:foldr/3 の中断機能追加版: 関数適用後の結果が`{false, _}'となった場合は、そこで走査が中断される.
+%%
+%% `Fun'の結果は`{true, Result}' or `{false, Result}'のいずれかである必要がある.
+-spec foldr_while(Fun, Initial::term(), List) -> Result when
+      Fun     :: fun ((Element, Acc::term()) -> {true, Result} | {false, Result}),
+      List    :: [Element],
+      Element :: term(),
+      Result  :: term().
+foldr_while(_Fun, Acc, []) ->
+    Acc;
+foldr_while(Fun, Acc, List) ->
+    element(2, foldr_while_impl(Fun, Acc, List)).
 
 %% @doc lists:foldl/3 の maybe版: 関数適用結果が`{error, Reason}'となる要素があれば、そこで走査が中断される.
 %%
@@ -369,6 +383,19 @@ replace_if_impl(PredFun, Value, [X | List], Acc) ->
 position_impl(_Value, [], _Position)        -> error;
 position_impl(Value, [Value | _], Position) -> {ok, Position};
 position_impl(Value, [_ | List], Position)  -> position_impl(Value, List, Position + 1).
+
+-spec foldr_while_impl(Fun, Initial::term(), List) -> {true, Result} | {false, Result} when
+      Fun     :: fun ((Element, Acc::term()) -> {true, Result} | {false, Result}),
+      List    :: [Element],
+      Element :: term(),
+      Result  :: term().
+foldr_while_impl(_Fun, Acc, []) ->
+    {true, Acc};
+foldr_while_impl(Fun, Acc, [Element | List]) ->
+    case foldr_while_impl(Fun, Acc, List) of
+        {false, Result} -> {false, Result};
+        {true,  Result} -> Fun(Element, Result)
+    end.
 
 -spec longest_common_prefix_impl(Lists, non_neg_integer()) -> non_neg_integer() when
       Lists :: [List],

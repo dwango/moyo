@@ -115,6 +115,30 @@ foldl_while_test_() ->
       end}
     ].
 
+foldr_while_test_() ->
+    [
+     {"右畳み込みを途中で中断する",
+      fun () ->
+              List    = [1, 2, a, 3],
+              Initial = 1,
+              Fun     = fun (X, Acc) when is_number(X) -> {true, Acc * X + X};
+                            (X,   _)                   -> {false, {not_a_number, X}}
+                        end,
+
+              ?assertEqual({not_a_number, a}, moyo_list:foldr_while(Fun, Initial, List))
+      end},
+     {"右畳み込みを最後まで行う",
+      fun () ->
+              List    = [1, 2, 3],
+              Initial = 1,
+              Fun     = fun (X, Acc) when is_number(X) -> {true, Acc * X + X};
+                            (X,   _)                   -> {false, {not_a_number, X}}
+                        end,
+
+              ?assertEqual(15, moyo_list:foldr_while(Fun, Initial, List))
+      end}
+    ].
+
 maybe_map_foldl_test_() ->
     [
      {"左畳み込みの成功時",
