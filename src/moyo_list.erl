@@ -24,6 +24,7 @@
          maybe_foldr/3,
 
          maybe_pmap/2,
+         maybe_pmap/3,
 
          longest_common_prefix/1,
          split_longest_common_prefix/1,
@@ -32,13 +33,6 @@
          tails/1,
          adjacent_uniq/1,
          group_by/2
-        ]).
-
-%%----------------------------------------------------------------------------------------------------------------------
-%% Internal API
-%%----------------------------------------------------------------------------------------------------------------------
--export([
-         pmap_call/2
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -218,22 +212,35 @@ maybe_foreach(Fun, List) ->
         {error, Reason} -> {error, Reason}
     end.
 
-%% @doc {@link maybe_map/2}の並列版.
-%%
-%% `Fun'の実行中のエラーが発生した場合は`ExitError'が結果として返される.
+%% @equiv maybe_pmap(Fun, List, infinity)
 -spec maybe_pmap(Fun, List) -> {ok, Values} | {error, Reason} when
-      Fun    :: fun ((Arg) -> {ok, Value} | {error, Reason}),
-      List   :: [Arg],
-      Values :: [Value],
-      Arg    :: term(),
-      Value  :: term(),
-      Reason :: ExitError | term(),
+      Fun       :: fun ((Arg) -> {ok, Value} | {error, Reason}),
+      List      :: [Arg],
+      Values    :: [Value],
+      Arg       :: term(),
+      Value     :: term(),
+      Reason    :: ExitError | term(),
       ExitError :: {'EXIT', {ExitReason::term(), StackTrace::term()}}.
 maybe_pmap(Fun, List) ->
-    maybe_map(fun ({badrpc, Reason}) -> {error, Reason};
-                  (Other)            -> Other
-              end,
-              rpc:parallel_eval([{?MODULE, pmap_call, [Fun, Arg]} || Arg <- List])).
+    maybe_pmap(Fun, List, infinity).
+
+%% @doc {@link maybe_map/2}の並列版.
+%%
+%% `Fun'の実行中のエラーが発生した場合は`ExitError'、タイムアウトが発生した場合は`ExitTimeout'が結果として返される.
+%% また, 1つでも関数適用結果が`{error, Reason}'となる要素があれば, そこで走査を中断し、残ったプロセスを終了させる.
+-spec maybe_pmap(Fun, List, Timeout) -> {ok, Values} | {error, Reason} when
+      Fun         :: fun ((Arg) -> {ok, Value} | {error, Reason}),
+      List        :: [Arg],
+      Timeout     :: timeout(),
+      Values      :: [Value],
+      Arg         :: term(),
+      Value       :: term(),
+      Reason      :: ExitError | ExitTimeout | term(),
+      ExitError   :: {'EXIT', {ExitReason::term(), StackTrace::term()}},
+      ExitTimeout :: {'EXIT', timeout}.
+maybe_pmap(Fun, List, Timeout) ->
+    maybe_map(fun (Result) -> Result end,
+              pmap_monitor(Fun, List, Timeout)).
 
 %% @doc `Lists'内のリスト群のLongestCommonPrefixの長さを返す
 %%
@@ -341,20 +348,69 @@ group_by(N, TupleList) ->
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
 %% @private
--spec pmap_call(Fun, Arg) -> {ok, Value} | {error, Reason} when
-      Fun    :: fun ((Arg) -> {ok, Value} | {error, Reason}),
+-spec pmap_monitor(Fun, Args, Timeout) -> [{ok, Result} | {error, Reason}] when
+      Fun     :: fun((Arg) -> {ok, Result} | {error, Reason}),
+      Arg     :: term(),
+      Args    :: [Arg],
+      Timeout :: timeout(),
+      Result  :: term(),
+      Reason  :: term().
+pmap_monitor(Fun, Args, Timeout) ->
+    {Pid, MonitorRef} = spawn_monitor(fun() -> exit(self(), pmap_link(Fun, Args)) end),
+    receive
+        {'DOWN', MonitorRef, _, _, Results} when is_list(Results) -> Results;
+        {'DOWN', MonitorRef, _, _, SomeReason} -> [{error, {'EXIT', SomeReason}}]
+    after Timeout ->
+        true = exit(Pid, kill),
+        receive
+            {'DOWN', MonitorRef, _, _, _} -> [{error, {'EXIT', timeout}}]
+        end
+    end.
+
+-spec pmap_link(Fun, Args) -> [{ok, Result} | {error, Reason}] when
+      Fun    :: fun((Arg) -> {ok, Result} | {error, Reason}),
       Arg    :: term(),
-      Value  :: term(),
+      Args   :: [Arg],
+      Result :: term(),
+      Reason :: term().
+pmap_link(Fun, Args) ->
+    Self = self(),
+    Ref = make_ref(),
+    Pids = [spawn_link(fun() -> Self ! {Ref, self(), pmap_call(Fun, Arg)} end) || Arg <- Args],
+    Results = pmap_receive(Ref, {length(Pids), #{}}),
+    [maps:get(Pid, Results) || Pid <- Pids, maps:is_key(Pid, Results)].
+
+-spec pmap_call(Fun, Arg) -> {ok, Result} | {error, Reason} when
+      Fun    :: fun((Arg) -> {ok, Result} | {error, Reason}),
+      Arg    :: term(),
+      Result :: term(),
       Reason :: term().
 pmap_call(Fun ,Arg) ->
+    process_flag(trap_exit, true),
     try
         case Fun(Arg) of
-            {ok, Value}     -> {ok, Value};
-            {error, Reason} -> {error, Reason}
+            {ok,    Result} -> {ok,    Result};
+            {error, Reason} -> {error, Reason};
+            SomeResult      -> {error, {'EXIT', SomeResult}}
         end
     catch
-        throw:ThrowReason ->
-            {error, {'EXIT', {ThrowReason, erlang:get_stacktrace()}}}
+        ExceptionClass:SomeReason -> {error, {'EXIT', ExceptionClass, SomeReason, erlang:get_stacktrace()}}
+    end.
+
+-spec pmap_receive(Ref, {Count, Results}) -> Results when
+      Ref     :: reference(),
+      Count   :: non_neg_integer(),
+      Results :: #{pid() => {ok, Result} | {error, Reason}},
+      Result  :: term(),
+      Reason  :: term().
+pmap_receive(_,   {0,      Results}) -> Results;
+pmap_receive(Ref, {Count, Results}) ->
+    receive {Ref, Pid, Result} when is_pid(Pid) ->
+        ReceivedResults = maps:put(Pid, Result, Results),
+        case Result of
+            {error, _} -> ReceivedResults;
+            {ok,    _} -> pmap_receive(Ref, {Count - 1, ReceivedResults})
+        end
     end.
 
 -spec take_if_impl(PredFun, List1, Acc) -> {ok, Element, List2} | error when

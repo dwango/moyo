@@ -233,41 +233,102 @@ maybe_foreach_test_() ->
     ].
 
 maybe_pmap_test_() ->
+    random:seed(now()),
     [
+     {"空のリストの要素をマッピングする",
+      fun () ->
+              List   = [],
+              Fun    = fun (X) -> {ok, X * 2} end,
+              Result = [],
+
+              ?assertEqual({ok, Result}, moyo_list:maybe_pmap(Fun, List))
+      end},
      {"リストの要素をマッピングする",
       fun () ->
-              List   = [1, 2, 3],
-              Fun    = fun (X) -> {ok, X * 2} end,
-              Result = [2, 4, 6],
+              List   = [1, 2, 3, 4, 5, 6],
+              Fun    = fun (X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2} end,
+              Result = [2, 4, 6, 8, 10, 12],
 
               ?assertEqual({ok, Result}, moyo_list:maybe_pmap(Fun, List))
       end},
      {"マッピングに失敗した場合",
       fun () ->
-              List = [1, a, 3],
-              Fun  = fun (X) when is_number(X) -> {ok, X * 2};
-                         (X)                   -> {error, {not_a_number, X}}
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (X)                   -> timer:sleep(random:uniform(4) * 100), {error, {not_a_number, X}}
                      end,
 
-              ?assertMatch({error, {not_a_number, _}}, moyo_list:maybe_pmap(Fun, List))
+              ?assertMatch({error, {not_a_number, a}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"マッピングプロセスがerrorになった場合",
+      fun () ->
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (X)                   -> timer:sleep(random:uniform(4) * 100), error({not_a_number, X}) % error
+                     end,
+
+              ?assertMatch({error, {'EXIT', error, {not_a_number, a}, _}}, moyo_list:maybe_pmap(Fun, List))
       end},
      {"マッピングプロセスが死んだ場合",
       fun () ->
-              List = [1, a, 3],
-              Fun  = fun (X) when is_number(X) -> {ok, X * 2};
-                         (X)                   -> exit({not_a_number, X}) % exit
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (X)                   -> timer:sleep(random:uniform(4) * 100), exit({not_a_number, X}) % exit
                      end,
 
-              ?assertMatch({error, {'EXIT', {not_a_number, _}}}, moyo_list:maybe_pmap(Fun, List))
+              ?assertMatch({error, {'EXIT', exit, {not_a_number, a}, _}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"マッピングプロセスがexit(normal)で死んだ場合",
+      fun () ->
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (_)                   -> timer:sleep(random:uniform(4) * 100), exit(normal) % exit
+                     end,
+
+              ?assertMatch({error, {'EXIT', exit, normal, _}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"マッピングプロセスがexit(self(), normal)で死んだ場合",
+      fun () ->
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (_)                   -> timer:sleep(random:uniform(4) * 100), exit(self(), normal) % exit
+                     end,
+
+              ?assertMatch({error, {'EXIT', true}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"マッピングプロセスがexit(kill)で死んだ場合",
+      fun () ->
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (_)                   -> timer:sleep(random:uniform(4) * 100), exit(kill) % exit
+                     end,
+
+              ?assertMatch({error, {'EXIT', exit, kill, _}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"マッピングプロセスがexit(self(), kill)で死んだ場合",
+      fun () ->
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (_)                   -> timer:sleep(random:uniform(4) * 100), exit(self(), kill) % exit
+                     end,
+
+              ?assertMatch({error, {'EXIT', killed}}, moyo_list:maybe_pmap(Fun, List))
       end},
      {"マッピングプロセスがthrowを投げた場合",
       fun () ->
-              List = [1, a, 3],
-              Fun  = fun (X) when is_number(X) -> {ok, X * 2};
-                         (X)                   -> throw({not_a_number, X}) % throw
+              List = [1, 2, 3, a, 5, 6],
+              Fun  = fun (X) when is_number(X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2};
+                         (X)                   -> timer:sleep(random:uniform(4) * 100), throw({not_a_number, X}) % throw
                      end,
 
-              ?assertMatch({error, {'EXIT', {{not_a_number, _}, _}}}, moyo_list:maybe_pmap(Fun, List))
+              ?assertMatch({error, {'EXIT', throw, {not_a_number, a}, _}}, moyo_list:maybe_pmap(Fun, List))
+      end},
+     {"タイムアウトした場合",
+      fun () ->
+              List = [1, 2, 3, 4, 5, 6],
+              Fun  = fun (X) -> timer:sleep(random:uniform(X) * 100), {ok, X * 2} end,
+
+              ?assertMatch({error, {'EXIT', timeout}}, moyo_list:maybe_pmap(Fun, List, 0))
       end}
     ].
 
