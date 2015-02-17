@@ -14,7 +14,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ceil-1">ceil/1</a></td><td>数(number)を切り上げて整数を返す.</td></tr><tr><td valign="top"><a href="#floor-1">floor/1</a></td><td>数(number)を切り下げて整数を返す.</td></tr><tr><td valign="top"><a href="#gcd-2">gcd/2</a></td><td>最大公約数を求める.</td></tr><tr><td valign="top"><a href="#pow_int-2">pow_int/2</a></td><td>累乗関数.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ceil-1">ceil/1</a></td><td>数(number)を切り上げて整数を返す.</td></tr><tr><td valign="top"><a href="#divmod-2">divmod/2</a></td><td>除算した商と剰余を求める関数.</td></tr><tr><td valign="top"><a href="#floor-1">floor/1</a></td><td>数(number)を切り下げて整数を返す.</td></tr><tr><td valign="top"><a href="#gcd-2">gcd/2</a></td><td>最大公約数を求める.</td></tr><tr><td valign="top"><a href="#pow_int-2">pow_int/2</a></td><td>累乗関数.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -50,6 +50,21 @@ ceil(Number::number()) -&gt; integer()
   -1.
 ```
 
+<a name="divmod-2"></a>
+
+### divmod/2 ###
+
+
+<pre><code>
+divmod(A::integer(), B::integer()) -&gt; {Quotient::integer(), Remainder::integer()}
+</code></pre>
+<br />
+
+
+除算した商と剰余を求める関数.
+
+
+除数が0である場合, `badarith` errorが発生する.
 <a name="floor-1"></a>
 
 ### floor/1 ###

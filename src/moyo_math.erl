@@ -11,7 +11,8 @@
          floor/1,
 
          gcd/2,
-         pow_int/2
+         pow_int/2,
+         divmod/2
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -79,6 +80,12 @@ gcd(A, B) -> gcd_impl(abs(A), abs(B)).
 %% 具体的には、引数は整数のみで、第2引数は0以上のみを扱う.
 -spec pow_int(Base::integer(), Exponent::non_neg_integer()) -> Value::integer().
 pow_int(Base, Exponent) when Exponent >= 0, is_integer(Exponent) -> pow_int_impl(Base, Exponent, 1).
+
+%% @doc 除算した商と剰余を求める関数.
+%%
+%% 除数が0である場合, `badarith' errorが発生する.
+-spec divmod(A::integer(), B::integer()) -> {Quotient::integer(), Remainder::integer()}.
+divmod(A, B) -> {A div B, A rem B}.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Function

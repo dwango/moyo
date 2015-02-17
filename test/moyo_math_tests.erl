@@ -97,3 +97,23 @@ pow_int_test_() ->
                 ?assertError(function_clause, moyo_math:pow_int(3, 0.5))
       end}
     ].
+
+div_test_() ->
+    [
+     {"整数の除算を行い商と剰余を求める",
+      fun () ->
+              ?assertEqual({1, 0}, moyo_math:divmod(10, 10)),
+              ?assertEqual({3, 1}, moyo_math:divmod(10, 3)),
+              ?assertEqual({12499999887, 339506163}, moyo_math:divmod(12345678901234567890, 987654321)),
+              ?assertEqual({-3, -1}, moyo_math:divmod(-10, 3)),
+              ?assertEqual({-3, 1}, moyo_math:divmod(10, -3)),
+              ?assertEqual({3, -1}, moyo_math:divmod(-10, -3)),
+              ?assertEqual({0, 0}, moyo_math:divmod(0, 3))
+      end},
+
+     {"0除算を行うと例外が投げられる",
+      fun () ->
+              ?assertError(badarith, moyo_math:divmod(10, 0)),
+              ?assertError(badarith, moyo_math:divmod(0, 0))
+      end}
+    ].
