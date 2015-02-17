@@ -255,7 +255,7 @@ prepare_option_for_open_port(OptionList) ->
     %% open_portで用いないオプションを削除.
     DeletedList = lists:foldl(fun (Key, List) -> proplists:delete(Key, List) end,
                               OptionList, ?NON_OPENPORT_OPTION),
-    [exit_status, binary] ++ DeletedList.
+    [exit_status, binary | DeletedList].
 
 %% @doc 特殊なオプションを反映させる.
 -spec do_post_processing(Command::binary(), [option()]) -> binary().

@@ -366,7 +366,7 @@ pmap_call(Fun ,Arg) ->
 take_if_impl(_PredFun, [], _Acc) -> error;
 take_if_impl(PredFun, [X | List], Acc) ->
     case PredFun(X) of
-        true  -> {ok, X, lists:reverse(Acc) ++ List};
+        true  -> {ok, X, lists:reverse(Acc, List)};
         false -> take_if_impl(PredFun, List, [X | Acc])
     end.
 
@@ -376,7 +376,7 @@ replace_if_impl(_PredFun, _Value, [], Acc)       -> lists:reverse(Acc);
 replace_if_impl(PredFun, Value, [X | List], Acc) ->
     case PredFun(X) of
         false -> replace_if_impl(PredFun, Value, List, [X | Acc]);
-        true  -> lists:reverse([Value | Acc]) ++ List
+        true  -> lists:reverse([Value | Acc], List)
     end.
 
 -spec position_impl(term(), list(), pos_integer()) -> {ok, pos_integer()} | error.
