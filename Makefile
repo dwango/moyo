@@ -9,6 +9,9 @@ all: init compile xref eunit edoc dialyze
 init:
 	@./rebar get-deps compile
 
+update:
+	@./rebar update-deps compile
+
 compile:
 	@./rebar compile skip_deps=true
 

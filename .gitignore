@@ -12,3 +12,4 @@ doc/*
 !doc/*.md
 tags
 .rebar
+.idea/
