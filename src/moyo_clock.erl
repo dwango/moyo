@@ -40,6 +40,8 @@
               datetime/0,
               seconds/0,
               milliseconds/0,
+              pos_seconds/0,
+              pos_milliseconds/0,
               non_neg_seconds/0,
               non_neg_milliseconds/0,
               unix_timestamp/0,
@@ -57,6 +59,8 @@
 
 -type seconds()              :: integer().
 -type milliseconds()         :: integer().
+-type pos_seconds()          :: pos_integer().
+-type pos_milliseconds()     :: pos_integer().
 -type non_neg_seconds()      :: non_neg_integer().
 -type non_neg_milliseconds() :: non_neg_integer().
 
