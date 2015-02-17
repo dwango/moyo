@@ -1,4 +1,4 @@
-%% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
+%% @copyright 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc 連想リストに関する処理を集めたユーティリティモジュール.
 %%
@@ -68,7 +68,12 @@
          equal/2,
          intersection_and_differences/2,
          diff/2,
-         merge/2
+         merge/2,
+
+         unique_by_key/1,
+         keys/1,
+         keys_as_set/1,
+         values/1
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -586,6 +591,63 @@ diff(List1, List2) ->
 -spec merge(AssocList1 :: assoc_list(), AssocList2 :: assoc_list()) ->  Result::assoc_list().
 merge(AssocList1, AssocList2) ->
     lists:ukeysort(1, AssocList1 ++ AssocList2).
+
+%% @doc 重複したキーを持つ要素を除去した連想リストを生成する.
+%%
+%% 重複するキーが存在した場合は先に現れた値が使われる.
+%%
+%% ex:
+%% ```
+%% 1> moyo_assoc:unique_by_key([{key1, value1}, {key1, value2}]).
+%% [{key1, value1}]
+%% '''
+-spec unique_by_key(assoc_list()) -> assoc_list().
+unique_by_key(AssocList) ->
+    lists:ukeysort(1, AssocList).
+
+%% @doc キーのリストを生成する.
+%%
+%% この関数は重複キーを考慮しない.<br />
+%% 重複キーが除去された情報が欲しい場合は, 下記を検討すること.
+%%
+%% 1. {@link unique_by_key/1} との併用
+%% 1. {@link keys_as_set/1} の利用
+%%
+%% ex:
+%% ```
+%% 1> moyo_assoc:keys([{key1, value1}, {key2, value2}]).
+%% [key1, key2]
+%% '''
+-spec keys(assoc_list()) -> [key()].
+keys(AssocList) ->
+    [Key || {Key, _} <- AssocList].
+
+%% @doc キーの集合を生成する.
+%%
+%% gb_sets:set() の性質上, 重複キーは除去される
+%%
+-spec keys_as_set(assoc_list()) -> gb_sets:set(key()).
+keys_as_set(AssocList) ->
+    lists:foldl(
+        fun ({Key, _Value}, Acc) ->
+            gb_sets:add_element(Key, Acc)
+        end,
+        gb_sets:new(), AssocList).
+
+%% @doc 値のリストを生成する.
+%%
+%% この関数は重複キーを考慮しない.<br />
+%% 重複キーが除去された情報が欲しい場合は, {@link unique_by_key/1} との併用を検討すること.
+%%
+%% ex:
+%% ```
+%% 1> moyo_assoc:values([{key1, value1}, {key2, value2}]).
+%% [value1, value2]
+%% '''
+-spec values(assoc_list()) -> [value()].
+values(AssocList) ->
+    [Value || {_, Value} <- AssocList].
+
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions

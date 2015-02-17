@@ -1,6 +1,6 @@
 %% coding: latin-1
 %%
-%% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
+%% @copyright 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc moyo_assocモジュールのユニットテスト
 -module(moyo_assoc_tests).
@@ -725,3 +725,91 @@ intersection_and_differences_test_() ->
       ?_assertEqual({[], [{key, value}], []}, moyo_assoc:intersection_and_differences([{key, value}], []))}
     ].
 
+unique_by_key_test_() ->
+    [
+        {"空の連想リストのときは空のリストが生成される",
+            fun () ->
+                AssocList = [],
+                Expected = [],
+                ?assertEqual(Expected, moyo_assoc:unique_by_key(AssocList))
+            end},
+        {"重複がない場合は同一のリストが返却される",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}],
+                ?assertEqual(AssocList, moyo_assoc:unique_by_key(AssocList))
+            end},
+        {"キーが重複する場合、先に現れた値が残り、後の値は除去される",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}, {key1, value4}],
+                Expected = [{key1, value1}, {key2, value2}, {key3, value3}],
+                ?assertEqual(Expected, moyo_assoc:unique_by_key(AssocList))
+            end}
+    ].
+
+keys_test_() ->
+    [
+        {"キーを過不足なく取り出すことができる",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}],
+                Expected = [key1, key2, key3],
+                ?assertEqual(Expected, moyo_assoc:keys(AssocList))
+            end},
+        {"空の連想リストのときは空のリストが生成される",
+            fun () ->
+                AssocList = [],
+                Expected = [],
+                ?assertEqual(Expected, moyo_assoc:keys(AssocList))
+            end},
+        {"キーが重複する場合、生成後のリストにも重複したキーが残る",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}, {key1, value4}],
+                Expected = [key1, key2, key3, key1],
+                ?assertEqual(Expected, moyo_assoc:keys(AssocList))
+            end},
+        {"キーが重複する場合、生成後のリストにも重複したキーが残らないようにする",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}, {key1, value4}],
+                Expected = [key1, key2, key3],
+                ?assertEqual(Expected, moyo_assoc:keys(moyo_assoc:unique_by_key(AssocList)))
+            end}
+    ].
+
+keys_as_set_test_() ->
+    [
+        {"gb_sets:set()を生成することができる",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key1, value3}],
+                KeySet = moyo_assoc:keys_as_set(AssocList),
+                ?assert(gb_sets:is_element(key1, KeySet)),
+                ?assert(gb_sets:is_element(key2, KeySet)),
+                ?assertNot(gb_sets:is_element(key3, KeySet))
+            end}
+    ].
+
+values_test_() ->
+    [
+        {"値を過不足なく取り出すことができる",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}],
+                Expected = [value1, value2, value3],
+                ?assertEqual(Expected, moyo_assoc:values(AssocList))
+            end},
+        {"空の連想リストのときは空のリストが生成される",
+            fun () ->
+                AssocList = [],
+                Expected = [],
+                ?assertEqual(Expected, moyo_assoc:values(AssocList))
+            end},
+        {"キーが重複する場合、生成後のリストにも重複したキーの値が残る",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}, {key1, value4}],
+                Expected = [value1, value2, value3, value4],
+                ?assertEqual(Expected, moyo_assoc:values(AssocList))
+            end},
+        {"キーが重複する場合、生成後のリストにも重複したキーの値が残らないようにする",
+            fun () ->
+                AssocList = [{key1, value1}, {key2, value2}, {key3, value3}, {key1, value4}],
+                Expected = [value1, value2, value3],
+                ?assertEqual(Expected, moyo_assoc:values(moyo_assoc:unique_by_key(AssocList)))
+            end}
+    ].
