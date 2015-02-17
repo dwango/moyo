@@ -9,7 +9,8 @@
 -export([
          ensure_loaded/1,
          ensure_all_loaded/1,
-         get_key/3
+         get_key/3,
+         get_priv_dir/1
         ]).
 
 -export_type([
@@ -60,6 +61,21 @@ get_key(Application, Key, DefaultValue) ->
         {ok, Value} -> Value
     end.
 
+%% @doc {@link code:priv_dir/1}の代替となる関数。
+%%
+%% 標準あるいはERL_LIBS環境変数で指定されたディレクトリ以下に指定したアプリケーションが存在せず
+%% code:priv_dirに失敗した場合もprivディレクトリを推測して値を返す
+-spec get_priv_dir(name()) -> {ok, file:filename()} | {error, bad_name}.
+get_priv_dir(Application) ->
+    case code:priv_dir(Application) of
+        {error, bad_name} ->
+            case application:get_key(Application, modules) of % 代替方法でprivディレクトリのパスを推測する
+                undefined    -> {error, bad_name};
+                {ok, [M |_]} -> {ok, filename:join([filename:dirname(filename:dirname(code:which(M))), "priv"])}
+            end;
+        Dir -> {ok, Dir}
+    end.
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
@@ -81,3 +97,4 @@ ensure_all_loaded_impl(Queue0, Loaded0) ->
                     ensure_all_loaded_impl(gb_sets:union(Queue1, UnloadedDependings), Loaded1)
             end
     end.
+

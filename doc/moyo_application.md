@@ -34,7 +34,7 @@ name() = atom()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ensure_all_loaded-1">ensure_all_loaded/1</a></td><td>指定されたアプリケーションおよびそれが依存するプリケーション群がロードされているようにする.</td></tr><tr><td valign="top"><a href="#ensure_loaded-1">ensure_loaded/1</a></td><td>指定されたアプリケーションが確実にロードされているようにする.</td></tr><tr><td valign="top"><a href="#get_key-3">get_key/3</a></td><td><a href="applications.md#get_key-2"><code>applications:get_key/2</code></a>にデフォルト値を指定可能にしたもの.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ensure_all_loaded-1">ensure_all_loaded/1</a></td><td>指定されたアプリケーションおよびそれが依存するプリケーション群がロードされているようにする.</td></tr><tr><td valign="top"><a href="#ensure_loaded-1">ensure_loaded/1</a></td><td>指定されたアプリケーションが確実にロードされているようにする.</td></tr><tr><td valign="top"><a href="#get_key-3">get_key/3</a></td><td><a href="applications.md#get_key-2"><code>applications:get_key/2</code></a>にデフォルト値を指定可能にしたもの.</td></tr><tr><td valign="top"><a href="#get_priv_dir-1">get_priv_dir/1</a></td><td><a href="code.md#priv_dir-1"><code>code:priv_dir/1</code></a>の代替となる関数。.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -84,3 +84,19 @@ get_key(Application::<a href="#type-name">name()</a>, Key::atom(), DefaultValue:
 <br />
 
 [`applications:get_key/2`](applications.md#get_key-2)にデフォルト値を指定可能にしたもの
+<a name="get_priv_dir-1"></a>
+
+### get_priv_dir/1 ###
+
+
+<pre><code>
+get_priv_dir(Application::<a href="#type-name">name()</a>) -&gt; {ok, <a href="file.md#type-filename">file:filename()</a>} | {error, bad_name}
+</code></pre>
+<br />
+
+
+[`code:priv_dir/1`](code.md#priv_dir-1)の代替となる関数。
+
+
+標準あるいはERL_LIBS環境変数で指定されたディレクトリ以下に指定したアプリケーションが存在せず
+code:priv_dirに失敗した場合もprivディレクトリを推測して値を返す

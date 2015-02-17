@@ -61,6 +61,26 @@ get_key_test_() ->
       end}
     ].
 
+get_priv_dir_test_() ->
+    {setup,
+     fun() -> _ = meck:new(application, [unstick, passthrough]) end,
+     fun(_) -> _ = meck:unload() end,
+     [
+      {"privディレクトリが存在する場合は`code:priv_dir/1`と同じ値を返す",
+       fun () ->
+               ?assertEqual({ok, code:priv_dir(crypto)}, moyo_application:get_priv_dir(crypto))
+       end},
+      {"アプリケーションが存在しない場合はエラー値が返される",
+       fun () ->
+               ?assertEqual({error, bad_name}, moyo_application:get_priv_dir(not_existing_app))
+       end},
+      {"アプリケーションが存在し、privディレクトリが存在しない場合は推測されたパスが返される",
+       fun () ->
+               ok = meck:expect(application, get_key, 2, {ok, [crypto]}), % 存在するモジュールを返す
+               ?assertEqual({ok, code:priv_dir(crypto)}, moyo_application:get_priv_dir(app_without_priv_dir))
+       end}
+     ]}.
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
