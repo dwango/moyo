@@ -101,9 +101,10 @@
 -else.
 -define(ensureExited(Pid, Reason),
         (fun() ->
+                 __MOYO_EUNIT_Pid = Pid,
                  __MOYO_EUNIT_Old = process_flag(trap_exit, true),
-                 __MOYO_EUNIT_Ref = monitor(process, Pid),
-                 exit(Pid, Reason),
+                 __MOYO_EUNIT_Ref = monitor(process, __MOYO_EUNIT_Pid),
+                 exit(__MOYO_EUNIT_Pid, Reason),
                  ?assertDown(__MOYO_EUNIT_Ref, _),
                  process_flag(trap_exit, __MOYO_EUNIT_Old)
          end)()).

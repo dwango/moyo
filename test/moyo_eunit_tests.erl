@@ -55,6 +55,10 @@ moyo_eunit_test_() ->
                ?ensureExited(Pid),
                ?assertNot(is_process_alive(Pid))
        end},
+      {"ensureExitedでPidに関数を入れても2回実行されない",
+       fun() ->
+               ?ensureExited(spawn_link(fun() -> ?assertEqual(true, register(moyo_eunit_ensure_exited_test, self())), timer:sleep(infinity) end))
+       end},
       {"プロセスの終了理由が指定できる",
        fun() ->
                Pid = spawn(fun() -> timer:sleep(infinity) end),
