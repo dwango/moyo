@@ -2,19 +2,37 @@
 
 # Module moyo_math #
 * [Description](#description)
+* [Data Types](#types)
 * [Function Index](#index)
 * [Function Details](#functions)
 
 
 数学的な関数を集めたモジュール.
-Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
+Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
+
+
+<a name="types"></a>
+
+## Data Types ##
+
+
+
+
+### <a name="type-random_sequence_symbols">random_sequence_symbols()</a> ###
+
+
+
+<pre><code>
+random_sequence_symbols() = alphabetical | numeric | alphanumeric
+</code></pre>
+
 
 <a name="index"></a>
 
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ceil-1">ceil/1</a></td><td>数(number)を切り上げて整数を返す.</td></tr><tr><td valign="top"><a href="#divmod-2">divmod/2</a></td><td>除算した商と剰余を求める関数.</td></tr><tr><td valign="top"><a href="#floor-1">floor/1</a></td><td>数(number)を切り下げて整数を返す.</td></tr><tr><td valign="top"><a href="#gcd-2">gcd/2</a></td><td>最大公約数を求める.</td></tr><tr><td valign="top"><a href="#pow_int-2">pow_int/2</a></td><td>累乗関数.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ceil-1">ceil/1</a></td><td>数(number)を切り上げて整数を返す.</td></tr><tr><td valign="top"><a href="#divmod-2">divmod/2</a></td><td>除算した商と剰余を求める関数.</td></tr><tr><td valign="top"><a href="#floor-1">floor/1</a></td><td>数(number)を切り下げて整数を返す.</td></tr><tr><td valign="top"><a href="#gcd-2">gcd/2</a></td><td>最大公約数を求める.</td></tr><tr><td valign="top"><a href="#pow_int-2">pow_int/2</a></td><td>累乗関数.</td></tr><tr><td valign="top"><a href="#random_sequence-1">random_sequence/1</a></td><td>Equivalent to <a href="#random_sequence-2"><tt>random_sequence(Length, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#random_sequence-2">random_sequence/2</a></td><td>ランダム文字列を返す.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -125,3 +143,31 @@ pow_int(Base::integer(), Exponent::non_neg_integer()) -&gt; Value::integer()
 
 計算結果がinteger()になる計算のみ行える.
 具体的には、引数は整数のみで、第2引数は0以上のみを扱う.
+<a name="random_sequence-1"></a>
+
+### random_sequence/1 ###
+
+
+<pre><code>
+random_sequence(Length::non_neg_integer()) -&gt; binary()
+</code></pre>
+<br />
+
+Equivalent to [`random_sequence(Length, [])`](#random_sequence-2).
+<a name="random_sequence-2"></a>
+
+### random_sequence/2 ###
+
+
+<pre><code>
+random_sequence(Length::non_neg_integer(), Options) -&gt; binary()
+</code></pre>
+
+<ul class="definitions"><li><code>Options = [{symbol, Symbols}]</code></li><li><code>Symbols = <a href="#type-random_sequence_symbols">random_sequence_symbols()</a></code></li></ul>
+
+
+ランダム文字列を返す
+
+
+この関数を利用する時は、random:seed を実行して乱数初期化をする必要があります。
+DataTypeで出力形式を指定し、Symbolで出力内容を指定する．

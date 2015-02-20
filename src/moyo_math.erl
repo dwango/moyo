@@ -1,4 +1,4 @@
-%% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
+%% @copyright 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc 数学的な関数を集めたモジュール.
 -module(moyo_math).
@@ -12,11 +12,23 @@
 
          gcd/2,
          pow_int/2,
-         divmod/2
+         divmod/2,
+         random_sequence/1,
+         random_sequence/2
         ]).
 
+-export_type([
+              random_sequence_symbols/0
+             ]).
+
 %%----------------------------------------------------------------------------------------------------------------------
-%% Functions
+%% Macros & Records & Types
+%%----------------------------------------------------------------------------------------------------------------------
+%% ランダム文字列の記号
+-type random_sequence_symbols() :: alphabetical | numeric | alphanumeric.
+
+%%----------------------------------------------------------------------------------------------------------------------
+%% Exported Functions
 %%----------------------------------------------------------------------------------------------------------------------
 %% @doc 数(number)を切り上げて整数を返す.
 %%
@@ -87,6 +99,26 @@ pow_int(Base, Exponent) when Exponent >= 0, is_integer(Exponent) -> pow_int_impl
 -spec divmod(A::integer(), B::integer()) -> {Quotient::integer(), Remainder::integer()}.
 divmod(A, B) -> {A div B, A rem B}.
 
+%% @equiv random_sequence(Length, [])
+-spec random_sequence(Length::non_neg_integer())-> binary().
+random_sequence(Length) -> random_sequence(Length, [{symbol, alphabetical}]).
+
+%% @doc ランダム文字列を返す
+%%
+%% この関数を利用する時は、random:seed を実行して乱数初期化をする必要があります。
+%% DataTypeで出力形式を指定し、Symbolで出力内容を指定する．
+-spec random_sequence(Length::non_neg_integer(), Options) -> binary() when
+    Options :: [{symbol, Symbols}],
+    Symbols::random_sequence_symbols().
+random_sequence(Length, []) -> random_sequence(Length, [{symbol, alphabetical}]);
+random_sequence(Length, [{symbol, Symbols}]) ->
+    case Symbols of
+        alphabetical -> random_alphabetical_sequence(Length);
+        numeric -> random_numeric_sequence(Length);
+        alphanumeric -> random_alphanumeric_sequence(Length)
+    end.
+
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Function
 %%----------------------------------------------------------------------------------------------------------------------
@@ -104,3 +136,24 @@ gcd_impl(A, B) ->
 pow_int_impl(_, 0, K) -> K;
 pow_int_impl(Base, Exponent, K) when Exponent rem 2 =:= 1 -> pow_int_impl(Base*Base, Exponent div 2, Base*K);
 pow_int_impl(Base, Exponent, K) -> pow_int_impl(Base*Base, Exponent div 2, K).
+
+%% アルファベットの乱数列を返す
+-spec random_alphabetical_sequence(Length::non_neg_integer()) -> binary().
+random_alphabetical_sequence(Length) ->
+    random_sequence_with_table(Length, <<"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ">>).
+
+%% 数字の乱数列を返す
+-spec random_numeric_sequence(Length::non_neg_integer()) -> binary().
+random_numeric_sequence(Length) ->
+    random_sequence_with_table(Length, <<"0123456789">>).
+
+%% アルファベットと数字の乱数列を返す
+-spec random_alphanumeric_sequence(Length::non_neg_integer()) -> binary().
+random_alphanumeric_sequence(Length) ->
+    random_sequence_with_table(Length, <<"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789">>).
+
+%% 乱数列を返す
+-spec random_sequence_with_table(Length::non_neg_integer(), Table::binary()) -> binary().
+random_sequence_with_table(Length, Table) ->
+    TailPos = byte_size(Table) - 1,
+    << <<(binary:at(Table, random:uniform(TailPos)))>> || _ <- lists:seq(1, Length)>>.

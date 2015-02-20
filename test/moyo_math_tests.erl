@@ -110,10 +110,38 @@ div_test_() ->
               ?assertEqual({3, -1}, moyo_math:divmod(-10, -3)),
               ?assertEqual({0, 0}, moyo_math:divmod(0, 3))
       end},
-
      {"0除算を行うと例外が投げられる",
       fun () ->
               ?assertError(badarith, moyo_math:divmod(10, 0)),
               ?assertError(badarith, moyo_math:divmod(0, 0))
+      end}
+    ].
+
+random_sequence_test_() ->
+    [
+     {"指定したタイプ毎にランダムの文字列を返し、毎回異なる",
+      fun () ->
+              random:seed(0, 0, 0),
+              ?assertEqual(<<"bUgWhkqseQTjIzrkXBoc">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
+              ?assertEqual(<<"JJILZMlkyOBFWlwuhPzh">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
+              ?assertEqual(<<"48215335197823716591">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
+              ?assertEqual(<<"97138257657278695563">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
+              ?assertEqual(<<"z14ofqGN4feGzu5VDlH1">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}])),
+              ?assertEqual(<<"Qm47AcX5M8Glxf9MmJEc">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}]))
+      end},
+     {"指定した長さで指定した文字しか存在しない文字列を返す",
+      fun () ->
+              Length = 1000,
+              ?assertMatch({_,[{0, Length}]}, re:run(moyo_math:random_sequence(Length, [{symbol, alphabetical}]), "[a-zA-Z]+")),
+              ?assertMatch({_,[{0, Length}]}, re:run(moyo_math:random_sequence(Length, [{symbol, numeric}]), "[0-9]+")),
+              ?assertMatch({_,[{0, Length}]}, re:run(moyo_math:random_sequence(Length, [{symbol, alphanumeric}]), "[a-zA-Z0-9]+"))
+      end},
+     {"Symbolを省略し、デフォルト値alphabeticalで利用できる",
+      fun () ->
+              random:seed(0, 0, 0),
+              R1 = moyo_math:random_sequence(20, [{symbol, alphabetical}]),
+              random:seed(0, 0, 0),
+              R2 = moyo_math:random_sequence(20),
+              ?assertEqual(R1, R2)
       end}
     ].
