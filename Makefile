@@ -4,7 +4,7 @@ DIALYZER_OPTS=-Werror_handling -Wrace_conditions -Wunmatched_returns
 
 LIBS=$(ERL_LIBS):deps
 
-all: init compile xref eunit edoc dialyze
+all: init compile xref eunit ct edoc dialyze
 
 init:
 	@./rebar get-deps compile
@@ -23,6 +23,9 @@ clean:
 
 eunit:
 	@./rebar eunit skip_deps=true
+
+ct:
+	@./rebar ct skip_deps=true
 
 edoc:
 	@./rebar doc skip_deps=true
