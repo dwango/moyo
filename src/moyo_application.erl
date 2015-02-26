@@ -9,6 +9,7 @@
 -export([
          ensure_loaded/1,
          ensure_all_loaded/1,
+         ensure_all_unloaded/1,
          get_key/3,
          get_priv_dir/1
         ]).
@@ -51,6 +52,23 @@ ensure_all_loaded(Application) ->
             %%       念のために`ordsets:from_list/1'を呼び出しておく
             LoadedDiff = ordsets:from_list(gb_sets:to_list(gb_sets:difference(Loaded, AlreadyLoaded))),
             {ok, LoadedDiff}
+    end.
+
+%% @doc `Pred(Application)'が`true'を返したアプリケーションを全て停止してアンロードする.
+%%
+%% {@link application:loaded_applications/0}の結果に基づき、<br />
+%% ロードされているアプリケーションについて`Pred(Application)'を呼び出し、<br />
+%% `Pred(Application)'が`true'を返したアプリケーションを全て停止してアンロードする.
+%%
+%% 一つでもアンロードに失敗した場合は、即座に`{error, Reason}'を返す.
+%%
+%% ※`kernel'と`stdlib'はアンロードしない.
+-spec ensure_all_unloaded(fun((Application :: atom()) -> boolean())) -> ok | {error, Reason :: term()}.
+ensure_all_unloaded(Pred) ->
+    try
+        ensure_all_unloaded_or_error(Pred)
+    catch
+        throw:Reason -> {error, Reason}
     end.
 
 %% @doc {@link applications:get_key/2}にデフォルト値を指定可能にしたもの
@@ -98,3 +116,22 @@ ensure_all_loaded_impl(Queue0, Loaded0) ->
             end
     end.
 
+-spec ensure_all_unloaded_or_error(fun((Application :: atom()) -> boolean())) -> ok.
+ensure_all_unloaded_or_error(Pred) ->
+    [
+     begin
+         ok = case application:stop(Application) of
+                  ok -> ok;
+                  {error, {not_started, Application}} -> ok
+              end,
+         ok = case application:unload(Application) of
+                  ok -> ok;
+                  {error, {not_loaded, Application}} -> ok;
+                  {error, {running, Application}} -> throw({running, Application})
+              end
+     end
+     || {Application, _, _} <-
+         application:loaded_applications(),
+         Application =/= kernel andalso Application =/= stdlib andalso Pred(Application)
+    ],
+    ok.

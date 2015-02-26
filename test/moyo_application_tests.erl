@@ -45,6 +45,55 @@ ensure_all_loaded_test_() ->
       end}
     ].
 
+ensure_all_unloaded_test_() ->
+    {ok, RE} = re:compile("^rebar.*$"),
+    [
+     {"ロードされているアプリケーションを全てアンロードする.",
+      fun () ->
+              %% ロードしておく.
+              ?assertEqual(ok, moyo_application:ensure_loaded(moyo)),
+              ?assertEqual(ok, moyo_application:ensure_loaded(crypto)),
+              %% 全てアンロードする(rebar関連以外).
+              ?assertEqual(ok, moyo_application:ensure_all_unloaded(fun(Application) -> re:run(atom_to_list(Application), RE, [{capture, none}]) =/= match end)),
+              %% 全てアンロードされている.
+              Applications = application:loaded_applications(),
+              ?assertEqual(false, lists:keymember(moyo, 1, Applications)),
+              ?assertEqual(false, lists:keymember(crypto, 1, Applications)),
+              %% リロードしておく.
+              ?assertEqual(ok, moyo_application:ensure_loaded(moyo))
+      end},
+     {"ロードされている特定のアプリケーションをアンロードする.",
+      fun () ->
+              %% ロードしておく.
+              ?assertEqual(ok, moyo_application:ensure_loaded(moyo)),
+              ?assertEqual(ok, moyo_application:ensure_loaded(crypto)),
+              %% `crypto'をアンロードする.
+              ?assertEqual(ok, moyo_application:ensure_all_unloaded(fun(Application) -> Application =:= crypto end)),
+              %% `crypto'がアンロードされている.
+              Applications = application:loaded_applications(),
+              ?assertEqual(true, lists:keymember(moyo, 1, Applications)), % `moyo'はアンロードされない.
+              ?assertEqual(false, lists:keymember(crypto, 1, Applications))
+      end},
+     {"`kernel'と`stdlib'はアンロードされない.",
+      fun () ->
+              %% 全てアンロードする(rebar関連以外).
+              ?assertEqual(ok, moyo_application:ensure_all_unloaded(fun(Application) -> re:run(atom_to_list(Application), RE, [{capture, none}]) =/= match end)),
+              %% cryptoがアンロードされている.
+              Applications = application:loaded_applications(),
+              ?assertEqual(true, lists:keymember(kernel, 1, Applications)),
+              ?assertEqual(true, lists:keymember(stdlib, 1, Applications)),
+              %% リロードしておく.
+              ?assertEqual(ok, moyo_application:ensure_loaded(moyo))
+      end},
+     {"アンロードに失敗した場合.",
+      fun () ->
+              ok = meck:new(application, [passthrough, unstick]),
+              ok = meck:expect(application, unload, 1, {error, {running, moyo}}),
+              ?assertEqual({error, {running, moyo}}, moyo_application:ensure_all_unloaded(fun(Application) -> Application =:= moyo end)),
+              [application] = meck:unload()
+      end}
+    ].
+
 get_key_test_() ->
     [
      {"*.appに項目が存在する場合は`application:get_key/2'と同じ挙動となる",

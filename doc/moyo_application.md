@@ -34,7 +34,7 @@ name() = atom()
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ensure_all_loaded-1">ensure_all_loaded/1</a></td><td>指定されたアプリケーションおよびそれが依存するプリケーション群がロードされているようにする.</td></tr><tr><td valign="top"><a href="#ensure_loaded-1">ensure_loaded/1</a></td><td>指定されたアプリケーションが確実にロードされているようにする.</td></tr><tr><td valign="top"><a href="#get_key-3">get_key/3</a></td><td><a href="applications.md#get_key-2"><code>applications:get_key/2</code></a>にデフォルト値を指定可能にしたもの.</td></tr><tr><td valign="top"><a href="#get_priv_dir-1">get_priv_dir/1</a></td><td><a href="code.md#priv_dir-1"><code>code:priv_dir/1</code></a>の代替となる関数。.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#ensure_all_loaded-1">ensure_all_loaded/1</a></td><td>指定されたアプリケーションおよびそれが依存するプリケーション群がロードされているようにする.</td></tr><tr><td valign="top"><a href="#ensure_all_unloaded-1">ensure_all_unloaded/1</a></td><td><code>Pred(Application)</code>が<code>true</code>を返したアプリケーションを全て停止してアンロードする.</td></tr><tr><td valign="top"><a href="#ensure_loaded-1">ensure_loaded/1</a></td><td>指定されたアプリケーションが確実にロードされているようにする.</td></tr><tr><td valign="top"><a href="#get_key-3">get_key/3</a></td><td><a href="applications.md#get_key-2"><code>applications:get_key/2</code></a>にデフォルト値を指定可能にしたもの.</td></tr><tr><td valign="top"><a href="#get_priv_dir-1">get_priv_dir/1</a></td><td><a href="code.md#priv_dir-1"><code>code:priv_dir/1</code></a>の代替となる関数。.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -57,6 +57,31 @@ ensure_all_loaded(Application::<a href="#type-name">name()</a>) -&gt; {ok, Loade
 
 
 `Loaded`は、関数呼び出し中に新規にロードされたアプリケーション群
+<a name="ensure_all_unloaded-1"></a>
+
+### ensure_all_unloaded/1 ###
+
+
+<pre><code>
+ensure_all_unloaded(Pred::fun((Application::atom()) -&gt; boolean())) -&gt; ok | {error, Reason::term()}
+</code></pre>
+<br />
+
+
+`Pred(Application)`が`true`を返したアプリケーションを全て停止してアンロードする.
+
+
+
+[`application:loaded_applications/0`](application.md#loaded_applications-0)の結果に基づき、<br />
+ロードされているアプリケーションについて`Pred(Application)`を呼び出し、<br />
+`Pred(Application)`が`true`を返したアプリケーションを全て停止してアンロードする.
+
+
+
+一つでもアンロードに失敗した場合は、即座に`{error, Reason}`を返す.
+
+
+※`kernel`と`stdlib`はアンロードしない.
 <a name="ensure_loaded-1"></a>
 
 ### ensure_loaded/1 ###
