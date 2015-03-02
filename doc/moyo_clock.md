@@ -165,6 +165,18 @@ timezone() = {Sign::1 | -1, <a href="calendar.md#type-time">calendar:time()</a>}
 
 
 
+### <a name="type-timezone_minutes">timezone_minutes()</a> ###
+
+
+
+<pre><code>
+timezone_minutes() = integer()
+</code></pre>
+
+
+
+
+
 ### <a name="type-unix_timestamp">unix_timestamp()</a> ###
 
 
@@ -181,7 +193,8 @@ unix_timestamp() = <a href="#type-non_neg_seconds">non_neg_seconds()</a>
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#datetime_add-2">datetime_add/2</a></td><td>引数の日時に指定秒数を加算する.</td></tr><tr><td valign="top"><a href="#datetime_diff-1">datetime_diff/1</a></td><td>引数の日時と現在時刻の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_diff-2">datetime_diff/2</a></td><td>二つの日時の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_format-2">datetime_format/2</a></td><td>Equivalent to <a href="#now_format-2"><tt>now_format(Format, datetime_to_now(DateTime))</tt></a>.</td></tr><tr><td valign="top"><a href="#datetime_to_iso8601ext-1">datetime_to_iso8601ext/1</a></td><td><code>datetime()</code>型のローカル時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_now-1">datetime_to_now/1</a></td><td><code>calendar:datetime()</code>形式の日時を<code>erlang:timestamp()</code>形式に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_seconds-1">datetime_to_seconds/1</a></td><td><code>datetime()</code>形式の日時をUNIXタイプスタンプ形式の数値に変換する.</td></tr><tr><td valign="top"><a href="#is_date-1">is_date/1</a></td><td>iso8601もしくはunixtime形式、date()、datetime()、time()であるかを判定する。.</td></tr><tr><td valign="top"><a href="#is_date-2">is_date/2</a></td><td>Optionsに指定したiso8601形式のどれかであるかを判定する.</td></tr><tr><td valign="top"><a href="#is_valid_datetime-1">is_valid_datetime/1</a></td><td>正しい日時になっているかどうかを判定する.</td></tr><tr><td valign="top"><a href="#iso8601_to_datetime-1">iso8601_to_datetime/1</a></td><td>iso8601を<code>datetime()</code>形式に変換する。.</td></tr><tr><td valign="top"><a href="#iso8601ext_to_datetime-1">iso8601ext_to_datetime/1</a></td><td>ISO8601の拡張表記の日付文字列をローカル時刻の<code>datetime()</code>型に変換する.</td></tr><tr><td valign="top"><a href="#now-0">now/0</a></td><td>現在時刻を<code>erlang:timestamp()</code>形式で返す.</td></tr><tr><td valign="top"><a href="#now_format-1">now_format/1</a></td><td>Equivalent to <a href="#now_format-2"><tt>now_format(Format, now())</tt></a>.</td></tr><tr><td valign="top"><a href="#now_format-2">now_format/2</a></td><td>日付/時刻を書式化する.</td></tr><tr><td valign="top"><a href="#now_seconds-0">now_seconds/0</a></td><td>UNIXタイムスタンプ形式の現在時間(ローカル時刻)を取得する.</td></tr><tr><td valign="top"><a href="#now_unix_time_in_float-0">now_unix_time_in_float/0</a></td><td>UNIX Time をfloatで返す.</td></tr><tr><td valign="top"><a href="#parse_iso8601-1">parse_iso8601/1</a></td><td>iso8601形式をパースし, 結果をタプルで返す。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_date-1">parse_iso8601_date/1</a></td><td>iso8601の日付部分のパースを提供する。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_time-1">parse_iso8601_time/1</a></td><td>iso8601形式の時刻部分のパースを提供する。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_timezone-1">parse_iso8601_timezone/1</a></td><td>タイムゾーンをtime形式に変換する.</td></tr><tr><td valign="top"><a href="#seconds_to_datetime-1">seconds_to_datetime/1</a></td><td>UNIXタイムスタンプ形式の日時を<code>datetime()</code>形式に変換する.</td></tr><tr><td valign="top"><a href="#seconds_to_now-1">seconds_to_now/1</a></td><td>UNIXタイムスタンプ形式の日時を<code>erlang:timestamp()</code>形式に変換する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#datetime_add-2">datetime_add/2</a></td><td>引数の日時に指定秒数を加算する.</td></tr><tr><td valign="top"><a href="#datetime_diff-1">datetime_diff/1</a></td><td>引数の日時と現在時刻の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_diff-2">datetime_diff/2</a></td><td>同一タイムゾーンの二つの日時の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_diff_tz-2">datetime_diff_tz/2</a></td><td>引数のタイムゾーン指定日時と現在時刻の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_diff_tz-4">datetime_diff_tz/4</a></td><td>タイムゾーン指定の二つの日時の差を求める.</td></tr><tr><td valign="top"><a href="#datetime_format-2">datetime_format/2</a></td><td>Equivalent to <a href="#now_format-2"><tt>now_format(Format, datetime_to_now(DateTime))</tt></a>.</td></tr><tr><td valign="top"><a href="#datetime_format_tz-4">datetime_format_tz/4</a></td><td>Equivalent to <a href="#now_format_tz-3"><tt>now_format_tz(Format, timezone_minutes(),
+datetime_to_now(DateTime))</tt></a>.</td></tr><tr><td valign="top"><a href="#datetime_to_datetime_tz-3">datetime_to_datetime_tz/3</a></td><td><code>datetime()</code>のタイムゾーンを変更した<code>datetime()</code>を得る.</td></tr><tr><td valign="top"><a href="#datetime_to_iso8601ext-1">datetime_to_iso8601ext/1</a></td><td><code>datetime()</code>型のローカル時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_iso8601ext_tz-2">datetime_to_iso8601ext_tz/2</a></td><td><code>datetime()</code>型の指定タイムゾーン時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_now-1">datetime_to_now/1</a></td><td><code>calendar:datetime()</code>形式の日時を<code>erlang:timestamp()</code>形式に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_seconds-1">datetime_to_seconds/1</a></td><td><code>datetime()</code>形式のローカル日時をUNIXタイプスタンプ形式の数値に変換する.</td></tr><tr><td valign="top"><a href="#datetime_to_seconds_tz-2">datetime_to_seconds_tz/2</a></td><td><code>datetime()</code>形式の指定タイムゾーン日時をUNIXタイプスタンプ形式の数値に変換する.</td></tr><tr><td valign="top"><a href="#is_date-1">is_date/1</a></td><td>iso8601もしくはunixtime形式、date()、datetime()、time()であるかを判定する。.</td></tr><tr><td valign="top"><a href="#is_date-2">is_date/2</a></td><td>Optionsに指定したiso8601形式のどれかであるかを判定する.</td></tr><tr><td valign="top"><a href="#is_valid_datetime-1">is_valid_datetime/1</a></td><td>正しい日時になっているかどうかを判定する.</td></tr><tr><td valign="top"><a href="#iso8601_to_datetime-1">iso8601_to_datetime/1</a></td><td>iso8601を<code>datetime()</code>形式に変換する。.</td></tr><tr><td valign="top"><a href="#iso8601_to_datetime_tz-2">iso8601_to_datetime_tz/2</a></td><td>iso8601を指定タイムゾーンの<code>datetime()</code>形式に変換する。.</td></tr><tr><td valign="top"><a href="#iso8601ext_to_datetime-1">iso8601ext_to_datetime/1</a></td><td>ISO8601の拡張表記の日付文字列をローカル時刻の<code>datetime()</code>型に変換する.</td></tr><tr><td valign="top"><a href="#iso8601ext_to_datetime_tz-2">iso8601ext_to_datetime_tz/2</a></td><td>ISO8601の拡張表記の日付文字列を指定タイムゾーンの<code>datetime()</code>型に変換する.</td></tr><tr><td valign="top"><a href="#local_timezone_offset_minutes-0">local_timezone_offset_minutes/0</a></td><td>ローカル時間のタイムゾーンオフセット[分]を返す。.</td></tr><tr><td valign="top"><a href="#now-0">now/0</a></td><td>現在時刻を<code>erlang:timestamp()</code>形式で返す.</td></tr><tr><td valign="top"><a href="#now_format-1">now_format/1</a></td><td>Equivalent to <a href="#now_format-2"><tt>now_format(Format, now())</tt></a>.</td></tr><tr><td valign="top"><a href="#now_format-2">now_format/2</a></td><td>日付/時刻を書式化する.</td></tr><tr><td valign="top"><a href="#now_format_tz-2">now_format_tz/2</a></td><td>Equivalent to <a href="#now_format_tz-3"><tt>now_format_tz(Format, TzMinutes, now())</tt></a>.</td></tr><tr><td valign="top"><a href="#now_format_tz-3">now_format_tz/3</a></td><td></td></tr><tr><td valign="top"><a href="#now_seconds-0">now_seconds/0</a></td><td>UNIXタイムスタンプ形式の現在時間を取得する.</td></tr><tr><td valign="top"><a href="#now_unix_time_in_float-0">now_unix_time_in_float/0</a></td><td>UNIX Time をfloatで返す.</td></tr><tr><td valign="top"><a href="#parse_iso8601-1">parse_iso8601/1</a></td><td>iso8601形式をパースし, 結果をタプルで返す。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_date-1">parse_iso8601_date/1</a></td><td>iso8601の日付部分のパースを提供する。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_time-1">parse_iso8601_time/1</a></td><td>iso8601形式の時刻部分のパースを提供する。.</td></tr><tr><td valign="top"><a href="#parse_iso8601_timezone-1">parse_iso8601_timezone/1</a></td><td>タイムゾーンをtime形式に変換する.</td></tr><tr><td valign="top"><a href="#seconds_to_datetime-1">seconds_to_datetime/1</a></td><td>UNIXタイムスタンプ形式の日時をローカルタイムゾーンの<code>datetime()</code>形式に変換する.</td></tr><tr><td valign="top"><a href="#seconds_to_datetime_tz-2">seconds_to_datetime_tz/2</a></td><td>UNIXタイムスタンプ形式の日時を指定タイムゾーンの<code>datetime()</code>形式に変換する.</td></tr><tr><td valign="top"><a href="#seconds_to_now-1">seconds_to_now/1</a></td><td>UNIXタイムスタンプ形式の日時を<code>erlang:timestamp()</code>形式に変換する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -225,7 +238,37 @@ datetime_diff(DateTime1::<a href="#type-datetime">datetime()</a>, DateTime2::<a 
 <br />
 
 
-二つの日時の差を求める.
+同一タイムゾーンの二つの日時の差を求める.
+
+
+`DateTime1` - `DateTime2` = 秒数
+<a name="datetime_diff_tz-2"></a>
+
+### datetime_diff_tz/2 ###
+
+
+<pre><code>
+datetime_diff_tz(DateTime::<a href="#type-datetime">datetime()</a>, TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-seconds">seconds()</a>
+</code></pre>
+<br />
+
+
+引数のタイムゾーン指定日時と現在時刻の差を求める.
+
+
+`Datetime` - 現在時刻 = 秒数
+<a name="datetime_diff_tz-4"></a>
+
+### datetime_diff_tz/4 ###
+
+
+<pre><code>
+datetime_diff_tz(DateTime1::<a href="#type-datetime">datetime()</a>, TzMinutes1::<a href="#type-timezone_minutes">timezone_minutes()</a>, DateTime2::<a href="#type-datetime">datetime()</a>, TzMinutes2::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-seconds">seconds()</a>
+</code></pre>
+<br />
+
+
+タイムゾーン指定の二つの日時の差を求める.
 
 
 `DateTime1` - `DateTime2` = 秒数
@@ -240,6 +283,32 @@ datetime_format(Format::binary(), DateTime::<a href="calendar.md#type-datetime">
 <br />
 
 Equivalent to [`now_format(Format, datetime_to_now(DateTime))`](#now_format-2).
+<a name="datetime_format_tz-4"></a>
+
+### datetime_format_tz/4 ###
+
+
+<pre><code>
+datetime_format_tz(Format::binary(), TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>, DateTime::<a href="calendar.md#type-datetime">calendar:datetime()</a>, TzMinutes2::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; binary()
+</code></pre>
+<br />
+
+Equivalent to [`now_format_tz(Format, timezone_minutes(),datetime_to_now(DateTime))`](#now_format_tz-3).
+<a name="datetime_to_datetime_tz-3"></a>
+
+### datetime_to_datetime_tz/3 ###
+
+
+<pre><code>
+datetime_to_datetime_tz(DateTime::<a href="#type-datetime">datetime()</a>, FromTzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>, ToTzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-datetime">datetime()</a>
+</code></pre>
+<br />
+
+
+`datetime()`のタイムゾーンを変更した`datetime()`を得る.
+
+
+変換可能な範囲外の日時が渡された場合は、例外が送出される
 <a name="datetime_to_iso8601ext-1"></a>
 
 ### datetime_to_iso8601ext/1 ###
@@ -257,6 +326,26 @@ datetime_to_iso8601ext(DataTime::<a href="calendar.md#type-datetime">calendar:da
 
 ```
   > datetime_to_iso8601ext({{2014,4,20}, {9,9,9}}).
+  <<"2014-04-20T09:09:09+09:00">>
+```
+
+<a name="datetime_to_iso8601ext_tz-2"></a>
+
+### datetime_to_iso8601ext_tz/2 ###
+
+
+<pre><code>
+datetime_to_iso8601ext_tz(Value::<a href="calendar.md#type-datetime">calendar:datetime()</a>, TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; binary()
+</code></pre>
+<br />
+
+
+`datetime()`型の指定タイムゾーン時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換する
+
+
+
+```
+  > datetime_to_iso8601ext_tz({{2014,4,20}, {9,9,9}}, 540).
   <<"2014-04-20T09:09:09+09:00">>
 ```
 
@@ -282,7 +371,22 @@ datetime_to_seconds(DateTime::<a href="#type-datetime">datetime()</a>) -&gt; <a 
 <br />
 
 
-`datetime()`形式の日時をUNIXタイプスタンプ形式の数値に変換する.
+`datetime()`形式のローカル日時をUNIXタイプスタンプ形式の数値に変換する.
+
+
+変換可能な範囲外の日時が渡された場合は、例外が送出される
+<a name="datetime_to_seconds_tz-2"></a>
+
+### datetime_to_seconds_tz/2 ###
+
+
+<pre><code>
+datetime_to_seconds_tz(DateTime::<a href="#type-datetime">datetime()</a>, TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-unix_timestamp">unix_timestamp()</a>
+</code></pre>
+<br />
+
+
+`datetime()`形式の指定タイムゾーン日時をUNIXタイプスタンプ形式の数値に変換する.
 
 
 変換可能な範囲外の日時が渡された場合は、例外が送出される
@@ -360,6 +464,25 @@ iso8601のtimezoneがある場合はUTCに変換する。
 
 
 また、iso8601形式のbinary以外はerror(badarg, [Bin])が投げられる
+<a name="iso8601_to_datetime_tz-2"></a>
+
+### iso8601_to_datetime_tz/2 ###
+
+
+<pre><code>
+iso8601_to_datetime_tz(Bin::binary(), TzMinutes2::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-datetime">datetime()</a>
+</code></pre>
+<br />
+
+
+iso8601を指定タイムゾーンの`datetime()`形式に変換する。
+
+
+
+iso8601のtimezoneがある場合はUTCに変換する。
+
+
+また、iso8601形式のbinary以外はerror(badarg, [Bin])が投げられる
 <a name="iso8601ext_to_datetime-1"></a>
 
 ### iso8601ext_to_datetime/1 ###
@@ -388,6 +511,45 @@ ISO8601の拡張表記の日付文字列をローカル時刻の`datetime()`型�
   {{2014,4,20}, {9,9,9}}
 ```
 
+<a name="iso8601ext_to_datetime_tz-2"></a>
+
+### iso8601ext_to_datetime_tz/2 ###
+
+
+<pre><code>
+iso8601ext_to_datetime_tz(Value::binary(), TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="calendar.md#type-datetime">calendar:datetime()</a>
+</code></pre>
+<br />
+
+
+ISO8601の拡張表記の日付文字列を指定タイムゾーンの`datetime()`型に変換する
+
+
+
+なお、現状許容している形式は'YYYY-MM-DDThh:mm:ss(Z|(+|-)hh:mm)'のみで、月や時間等の省略は不可。
+
+
+
+不正な文字列が渡された場合は、エラーが送出される.
+
+
+
+```
+  > iso8601ext_to_datetime(<<"2014-04-20T09:09:09+09:00">>, 0).
+  {{2014,4,20}, {0,9,9}}
+```
+
+<a name="local_timezone_offset_minutes-0"></a>
+
+### local_timezone_offset_minutes/0 ###
+
+
+<pre><code>
+local_timezone_offset_minutes() -&gt; <a href="#type-timezone_minutes">timezone_minutes()</a>
+</code></pre>
+<br />
+
+ローカル時間のタイムゾーンオフセット[分]を返す。
 <a name="now-0"></a>
 
 ### now/0 ###
@@ -468,6 +630,28 @@ ex:
   <<"Year: 2013\\">>
 ```
 
+<a name="now_format_tz-2"></a>
+
+### now_format_tz/2 ###
+
+
+<pre><code>
+now_format_tz(Format::binary(), TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; binary()
+</code></pre>
+<br />
+
+Equivalent to [`now_format_tz(Format, TzMinutes, now())`](#now_format_tz-3).
+<a name="now_format_tz-3"></a>
+
+### now_format_tz/3 ###
+
+
+<pre><code>
+now_format_tz(Format::binary(), TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>, Now::<a href="erlang.md#type-timestamp">erlang:timestamp()</a>) -&gt; binary()
+</code></pre>
+<br />
+
+
 <a name="now_seconds-0"></a>
 
 ### now_seconds/0 ###
@@ -478,7 +662,7 @@ now_seconds() -&gt; <a href="#type-unix_timestamp">unix_timestamp()</a>
 </code></pre>
 <br />
 
-UNIXタイムスタンプ形式の現在時間(ローカル時刻)を取得する.
+UNIXタイムスタンプ形式の現在時間を取得する.
 <a name="now_unix_time_in_float-0"></a>
 
 ### now_unix_time_in_float/0 ###
@@ -632,7 +816,18 @@ seconds_to_datetime(Seconds::<a href="#type-unix_timestamp">unix_timestamp()</a>
 </code></pre>
 <br />
 
-UNIXタイムスタンプ形式の日時を`datetime()`形式に変換する.
+UNIXタイムスタンプ形式の日時をローカルタイムゾーンの`datetime()`形式に変換する.
+<a name="seconds_to_datetime_tz-2"></a>
+
+### seconds_to_datetime_tz/2 ###
+
+
+<pre><code>
+seconds_to_datetime_tz(Seconds::<a href="#type-unix_timestamp">unix_timestamp()</a>, TzMinutes::<a href="#type-timezone_minutes">timezone_minutes()</a>) -&gt; <a href="#type-datetime">datetime()</a>
+</code></pre>
+<br />
+
+UNIXタイムスタンプ形式の日時を指定タイムゾーンの`datetime()`形式に変換する.
 <a name="seconds_to_now-1"></a>
 
 ### seconds_to_now/1 ###

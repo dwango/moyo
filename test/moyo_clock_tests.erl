@@ -37,6 +37,24 @@ seconds_to_datetime_test_() ->
       end}
     ].
 
+seconds_to_datetime_tz_test_() ->
+    [
+     {"時刻をUNIXタイムスタンプからdatetime()形式に変換する",
+      fun () ->
+              Input    = 1379985657,
+              ExpectedJst = {{2013, 9, 24}, {10, 20, 57}},
+              ExpectedUtc = {{2013, 9, 24}, { 1, 20, 57}},
+              ?assertEqual(ExpectedJst, moyo_clock:seconds_to_datetime_tz(Input, 540)),
+              ?assertEqual(ExpectedUtc, moyo_clock:seconds_to_datetime_tz(Input, 0))
+      end},
+     {"NIXタイムスタンプとして負数は非許可",
+      fun () ->
+              Input = -1,
+              ?assertError(_, moyo_clock:seconds_to_datetime_tz(Input, 0))
+      end}
+    ].
+
+
 datetime_to_seconds_test_() ->
     [
      {"時刻をdatetime()形式からUNIXタイムスタンプ形式に変換する",
@@ -49,6 +67,35 @@ datetime_to_seconds_test_() ->
       fun () ->
               Input = {{1960,1,1}, {1,1,1}},
               ?assertError(_, moyo_clock:datetime_to_seconds(Input))
+      end}
+    ].
+
+datetime_to_seconds_tz_test_() ->
+    [
+     {"時刻をdatetime()形式からUNIXタイムスタンプ形式に変換する",
+      fun () ->
+              Input    = {{2013, 9, 24}, {10, 20, 57}},
+              ExpectedJst = 1379985657,
+              ExpectedUtc = ExpectedJst + 32400,
+              ?assertEqual(ExpectedJst, moyo_clock:datetime_to_seconds_tz(Input, 540)),
+              ?assertEqual(ExpectedUtc, moyo_clock:datetime_to_seconds_tz(Input, 0))
+      end},
+     {"UNIXタイムスタンプのエポック以前の日時を受け取るとエラーが送出される",
+      fun () ->
+              Input = {{1960,1,1}, {1,1,1}},
+              ?assertError(_, moyo_clock:datetime_to_seconds(Input, 0))
+      end}
+    ].
+
+datetime_to_datetime_tz_test_() ->
+    [
+     {"datetime()のタイムゾーンを変換する",
+      fun () ->
+              Input           = {{2013, 9, 24}, {10, 20, 57}},
+              ExpectedUtc2Jst = {{2013, 9, 24}, {19, 20, 57}},
+              ExpectedJst2Utc = {{2013, 9, 24}, { 1, 20, 57}},
+              ?assertEqual(ExpectedUtc2Jst, moyo_clock:datetime_to_datetime_tz(Input, 0, 540)),
+              ?assertEqual(ExpectedJst2Utc, moyo_clock:datetime_to_datetime_tz(Input, 540, 0))
       end}
     ].
 
@@ -74,6 +121,34 @@ datetime_diff_test_() ->
               ok = meck:expect(calendar, local_time, 0, Now),
 
               ?assertEqual(Delta, moyo_clock:datetime_diff(Input)),
+
+              ok = meck:unload(calendar)
+      end}
+    ].
+
+datetime_diff_tz_test_() ->
+    [
+     {"二つの日時の差を求める",
+      fun () ->
+              Input1 = {{2013, 9, 24}, {10, 20, 57}},
+              Input2 = {{2012, 10, 1}, {2, 23, 52}},
+              Delta  = 30959825,
+
+              ?assertEqual(Delta - 32400, moyo_clock:datetime_diff_tz(Input1, 540, Input2, 0)),
+              ?assertEqual(-(Delta - 32400), moyo_clock:datetime_diff_tz(Input2, 0, Input1, 540))
+      end},
+     {"現在時刻との差を求める",
+      fun () ->
+              Input = {{2013, 9, 24}, {10, 20, 57}},
+              Now   = {{2012, 10, 1}, {2, 23, 52}},
+              Delta = 30959825,
+
+              %% 現在時刻はモックする
+              ok = meck:new(calendar, [unstick, passthrough]),
+              ok = meck:expect(calendar, local_time, 0, Now),
+
+              ?assertEqual(Delta, moyo_clock:datetime_diff_tz(Input, 540)),
+              ?assertEqual(Delta + 32400, moyo_clock:datetime_diff_tz(Input, 0)),
 
               ok = meck:unload(calendar)
       end}
@@ -114,6 +189,31 @@ now_format_test_() ->
       end}
     ].
 
+now_format_tz_test_() ->
+    [
+     {"現在日時の書式化が可能",
+      fun () ->
+              %% 具体的な返り値の内容は、テスト時実施タイミングによって変わるので、ここでは型レベルのチェックまで
+              ?assert(is_binary(moyo_clock:now_format_tz(<<"Y/m/d-H:i:s(p)">>, 3600)))
+      end},
+     {"引数で指定した日時(タイムスタンプ)の書式化が可能",
+      fun () ->
+              Now      = {1381,309348,569954},  % {{2013,10,9},{18,2,28}} JST 相当
+              Format   = <<"Y/m/d-H:i:s(p)">>,
+              TzMinutes = 60, % one hour
+              Expected = <<"2013/10/09-10:02:28(569)">>,
+              ?assertEqual(Expected, moyo_clock:now_format_tz(Format, TzMinutes, Now))
+      end},
+     {"エスケースすることで、書式指定文字を通常の文字として扱うことが可能",
+      fun () ->
+              Now      = {1381,309348,569954},  % {{2013,10,9},{18,2,28}} JST 相当
+              Format   = <<"Y\\Y">>,
+              TzMinutes = 60, % one hour
+              Expected = <<"2013Y">>,
+              ?assertEqual(Expected, moyo_clock:now_format_tz(Format, TzMinutes, Now))
+      end}
+    ].
+
 datetime_format_test_() ->
     [
      {"引数で指定した日時の書式化が可能",
@@ -122,6 +222,18 @@ datetime_format_test_() ->
               Format   = <<"Y/m/d-H:i:s(p)">>,
               Expected = <<"2013/10/09-18:02:28(000)">>,
               ?assertEqual(Expected, moyo_clock:datetime_format(Format, DateTime))
+      end}
+    ].
+
+datetime_format_tz_test_() ->
+    [
+     {"引数で指定した日時の書式化が可能",
+      fun () ->
+              DateTime = {{2013,10,9},{18,2,28}}, %JST
+              Format   = <<"Y/m/d-H:i:s(p)">>,
+              TzMinutes = 60, % one hour
+              Expected = <<"2013/10/09-10:02:28(000)">>,
+              ?assertEqual(Expected, moyo_clock:datetime_format_tz(Format, TzMinutes, DateTime, 540))
       end}
     ].
 
@@ -136,6 +248,24 @@ datetime_to_iso8601ext_test_() ->
      {"入力が不正な場合はエラーとなる",
       fun () ->
               ?assertError(badarg, moyo_clock:datetime_to_iso8601ext(hoge))
+      end}
+    ].
+
+datetime_to_iso8601ext_tz_test_() ->
+    [
+     {"`datetime()'型の指定タイムゾーン時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換できる",
+      fun () ->
+              Input    = {{2004, 4, 1}, {16, 30, 0}},
+              ExpectedUtc = <<"2004-04-01T16:30:00+00:00">>,
+              ExpectedJst = <<"2004-04-01T16:30:00+09:00">>,
+              ExpectedPst = <<"2004-04-01T16:30:00-08:00">>,
+              ?assertEqual(ExpectedUtc, moyo_clock:datetime_to_iso8601ext_tz(Input, 0)),
+              ?assertEqual(ExpectedJst, moyo_clock:datetime_to_iso8601ext_tz(Input, 540)),
+              ?assertEqual(ExpectedPst, moyo_clock:datetime_to_iso8601ext_tz(Input, -480))
+      end},
+     {"入力が不正な場合はエラーとなる",
+      fun () ->
+              ?assertError(badarg, moyo_clock:datetime_to_iso8601ext_tz(hoge, 0))
       end}
     ].
 
@@ -172,6 +302,48 @@ iso8601ext_to_datetime_test_() ->
 
               %% ロケールの符号部分が間違っている
               ?assertError(badarg, moyo_clock:iso8601ext_to_datetime(<<"2014-05-01T01:01:01/01:00">>))
+      end}
+    ].
+
+iso8601ext_to_datetime_tz_test_() ->
+    [
+     {"'YYYY-MM-DDThh:mm:ssZ'形式の日付文字列がパースできる",
+      fun () ->
+              Input    = <<"2004-04-01T12:00:00Z">>,
+              ExpectedUtc = {{2004, 4, 1}, {12, 0, 0}},
+              ExpectedJst = {{2004, 4, 1}, {21, 0, 0}},
+              ?assertEqual(ExpectedUtc, moyo_clock:iso8601ext_to_datetime_tz(Input, 0)),
+              ?assertEqual(ExpectedJst, moyo_clock:iso8601ext_to_datetime_tz(Input, 540))
+      end},
+     {"'YYYY-MM-DDThh:mm:ss+hh:mm'形式の日付文字列がパースできる",
+      fun () ->
+              Input    = <<"2004-04-02T00:00:00+07:30">>,
+              ExpectedUtc = {{2004, 4, 1}, {16, 30, 0}},
+              ExpectedJst = {{2004, 4, 2}, { 1, 30, 0}},
+              ?assertEqual(ExpectedUtc, moyo_clock:iso8601ext_to_datetime_tz(Input, 0)),
+              ?assertEqual(ExpectedJst, moyo_clock:iso8601ext_to_datetime_tz(Input, 540))
+      end},
+     {"'YYYY-MM-DDThh:mm:ss-hh:mm'形式の日付文字列がパースできる",
+      fun () ->
+              Input    = <<"2004-04-01T23:00:00-02:00">>,
+              ExpectedUtc = {{2004, 4, 2}, { 1, 0, 0}},
+              ExpectedJst = {{2004, 4, 2}, {10, 0, 0}},
+              ?assertEqual(ExpectedUtc, moyo_clock:iso8601ext_to_datetime_tz(Input, 0)),
+              ?assertEqual(ExpectedJst, moyo_clock:iso8601ext_to_datetime_tz(Input, 540))
+      end},
+     {"不正な入力が渡された場合はエラーとなる",
+      fun () ->
+              %% 非バイナリ
+              ?assertError(badarg, moyo_clock:iso8601ext_to_datetime_tz(10, 0)),
+
+              %% iso8601拡張表記以外
+              ?assertError(badarg, moyo_clock:iso8601ext_to_datetime_tz(<<"2014/05/01 01:01:01">>, 0)),
+
+              %% ロケール部分が省略されている
+              ?assertError(badarg, moyo_clock:iso8601ext_to_datetime_tz(<<"2014-05-01T01:01:01">>, 0)),
+
+              %% ロケールの符号部分が間違っている
+              ?assertError(badarg, moyo_clock:iso8601ext_to_datetime_tz(<<"2014-05-01T01:01:01/01:00">>, 0))
       end}
     ].
 
@@ -511,5 +683,18 @@ iso8601_to_datetime_test_() ->
      {"他のbinaryが入力されるとbadarg",
       fun() ->
               ?assertError(badarg, moyo_clock:iso8601_to_datetime(<<"2014-04-02T01a">>))
+      end}
+    ].
+
+iso8601_to_datetime_tz_test_() ->
+    [
+     {"iso8601形式がdatetime()になる",
+     fun() ->
+             ?assertEqual({{2007,2,7},{0,0,0}}, moyo_clock:iso8601_to_datetime_tz(<<"2007-02-07T09:00:00+09:00">>, 0)),
+             ?assertEqual({{2007,2,7},{9,0,0}}, moyo_clock:iso8601_to_datetime_tz(<<"2007-02-07T09:00:00+09:00">>, 540))
+     end},
+     {"他のbinaryが入力されるとbadarg",
+      fun() ->
+              ?assertError(badarg, moyo_clock:iso8601_to_datetime_tz(<<"2014-04-02T01a">>, 0))
       end}
     ].

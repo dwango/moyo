@@ -10,20 +10,32 @@
 -export([
          now/0,
          now_seconds/0,
+         local_timezone_offset_minutes/0,
          seconds_to_datetime/1,
+         seconds_to_datetime_tz/2,
          seconds_to_now/1,
          datetime_to_seconds/1,
+         datetime_to_seconds_tz/2,
+         datetime_to_datetime_tz/3,
          datetime_to_now/1,
          datetime_diff/2,
+         datetime_diff_tz/4,
          datetime_diff/1,
+         datetime_diff_tz/2,
          datetime_add/2,
          now_format/1,
          now_format/2,
+         now_format_tz/2,
+         now_format_tz/3,
          datetime_format/2,
+         datetime_format_tz/4,
          now_unix_time_in_float/0,
          datetime_to_iso8601ext/1,
+         datetime_to_iso8601ext_tz/2,
          iso8601ext_to_datetime/1,
+         iso8601ext_to_datetime_tz/2,
          iso8601_to_datetime/1,
+         iso8601_to_datetime_tz/2,
          is_date/1,
          is_date/2,
          parse_iso8601/1,
@@ -38,6 +50,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 -export_type([
               datetime/0,
+              timezone_minutes/0,
               seconds/0,
               milliseconds/0,
               pos_seconds/0,
@@ -63,6 +76,8 @@
 -type pos_milliseconds()     :: pos_integer().
 -type non_neg_seconds()      :: non_neg_integer().
 -type non_neg_milliseconds() :: non_neg_integer().
+
+-type timezone_minutes()     :: integer().
 
 -type unix_timestamp()       :: non_neg_seconds().  % 1970-01-01T00:00:00Z からの経過秒数
 
@@ -122,22 +137,34 @@
 now() ->
     os:timestamp().
 
-%% @doc UNIXタイムスタンプ形式の現在時間(ローカル時刻)を取得する.
+%% @doc UNIXタイムスタンプ形式の現在時間を取得する.
 -spec now_seconds() -> unix_timestamp().
 now_seconds() ->
     calendar:datetime_to_gregorian_seconds(calendar:local_time()) - unix_timestamp_epoch_local().
 
-%% @doc UNIXタイムスタンプ形式の日時を`datetime()'形式に変換する.
+%% @doc ローカル時間のタイムゾーンオフセット[分]を返す。
+-spec local_timezone_offset_minutes() -> timezone_minutes().
+local_timezone_offset_minutes() ->
+    EpochAsUtc   = ?UNIX_TIMESTAMP_EPOCH,
+    EpochAsLocal = calendar:universal_time_to_local_time(EpochAsUtc),
+    (calendar:datetime_to_gregorian_seconds(EpochAsLocal) - calendar:datetime_to_gregorian_seconds(EpochAsUtc)) div 60.
+
+%% @doc UNIXタイムスタンプ形式の日時をローカルタイムゾーンの`datetime()'形式に変換する.
 -spec seconds_to_datetime(unix_timestamp()) -> datetime().
 seconds_to_datetime(Seconds) when is_integer(Seconds) andalso Seconds >= 0 ->
     calendar:gregorian_seconds_to_datetime(Seconds + unix_timestamp_epoch_local()).
+
+%% @doc UNIXタイムスタンプ形式の日時を指定タイムゾーンの`datetime()'形式に変換する.
+-spec seconds_to_datetime_tz(unix_timestamp(), timezone_minutes()) -> datetime().
+seconds_to_datetime_tz(Seconds, TzMinutes) when is_integer(Seconds) andalso Seconds >= 0 andalso is_integer(TzMinutes) ->
+    calendar:gregorian_seconds_to_datetime(Seconds + unix_timestamp_epoch_utc() + TzMinutes * 60).
 
 %% @doc UNIXタイムスタンプ形式の日時を`erlang:timestamp()'形式に変換する.
 -spec seconds_to_now(unix_timestamp()) -> erlang:timestamp().
 seconds_to_now(Seconds) when is_integer(Seconds) andalso Seconds >= 0 ->
     {Seconds div (1000 * 1000), Seconds rem (1000 * 1000), 0}.
 
-%% @doc `datetime()'形式の日時をUNIXタイプスタンプ形式の数値に変換する.
+%% @doc `datetime()'形式のローカル日時をUNIXタイプスタンプ形式の数値に変換する.
 %%
 %% 変換可能な範囲外の日時が渡された場合は、例外が送出される
 -spec datetime_to_seconds(datetime()) -> unix_timestamp().
@@ -147,12 +174,38 @@ datetime_to_seconds(DateTime) ->
         Seconds                  -> Seconds
     end.
 
-%% @doc 二つの日時の差を求める.
+%% @doc `datetime()'形式の指定タイムゾーン日時をUNIXタイプスタンプ形式の数値に変換する.
+%%
+%% 変換可能な範囲外の日時が渡された場合は、例外が送出される
+-spec datetime_to_seconds_tz(datetime(), timezone_minutes()) -> unix_timestamp().
+datetime_to_seconds_tz(DateTime, TzMinutes) when is_integer(TzMinutes) ->
+    case calendar:datetime_to_gregorian_seconds(DateTime) - (TzMinutes * 60) - unix_timestamp_epoch_utc() of
+        Seconds when Seconds < 0 -> error({too_old_datetime, DateTime});
+        Seconds                  -> Seconds
+    end.
+
+%% @doc `datetime()'のタイムゾーンを変更した`datetime()'を得る.
+%%
+%% 変換可能な範囲外の日時が渡された場合は、例外が送出される
+-spec datetime_to_datetime_tz(datetime(), timezone_minutes(), timezone_minutes()) -> datetime().
+datetime_to_datetime_tz(DateTime, FromTzMinutes, ToTzMinutes) when is_integer(FromTzMinutes) andalso is_integer(ToTzMinutes) ->
+    calendar:gregorian_seconds_to_datetime( calendar:datetime_to_gregorian_seconds(DateTime) - (FromTzMinutes * 60) + (ToTzMinutes * 60) ).
+
+%% @doc 同一タイムゾーンの二つの日時の差を求める.
 %%
 %% `DateTime1' - `DateTime2' = 秒数
 -spec datetime_diff(datetime(), datetime()) -> seconds().
 datetime_diff(DateTime1, DateTime2) ->
     calendar:datetime_to_gregorian_seconds(DateTime1) - calendar:datetime_to_gregorian_seconds(DateTime2).
+
+%% @doc タイムゾーン指定の二つの日時の差を求める.
+%%
+%% `DateTime1' - `DateTime2' = 秒数
+-spec datetime_diff_tz(datetime(), timezone_minutes(), datetime(), timezone_minutes()) -> seconds().
+datetime_diff_tz(DateTime1, TzMinutes1, DateTime2, TzMinutes2) when is_integer(TzMinutes1) andalso is_integer(TzMinutes2) ->
+    TzSeconds1 = TzMinutes1 * 60,
+    TzSeconds2 = TzMinutes2 * 60,
+    (calendar:datetime_to_gregorian_seconds(DateTime1) - TzSeconds1) - (calendar:datetime_to_gregorian_seconds(DateTime2) - TzSeconds2).
 
 %% @doc 引数の日時と現在時刻の差を求める.
 %%
@@ -160,6 +213,13 @@ datetime_diff(DateTime1, DateTime2) ->
 -spec datetime_diff(datetime()) -> seconds().
 datetime_diff(DateTime) ->
     datetime_diff(DateTime, calendar:local_time()).
+
+%% @doc 引数のタイムゾーン指定日時と現在時刻の差を求める.
+%%
+%% `Datetime' - 現在時刻 = 秒数
+-spec datetime_diff_tz(datetime(), timezone_minutes()) -> seconds().
+datetime_diff_tz(DateTime, TzMinutes) when is_integer(TzMinutes) ->
+    datetime_diff_tz(DateTime, TzMinutes, calendar:local_time(), local_timezone_offset_minutes()).
 
 %% @doc 引数の日時に指定秒数を加算する.
 -spec datetime_add(datetime(), seconds()) -> datetime().
@@ -171,6 +231,11 @@ datetime_add(DateTime, Seconds) ->
 -spec now_format(binary()) -> binary().
 now_format(Format) ->
     now_format(Format, erlang:now()).
+
+%% @equiv now_format_tz(Format, TzMinutes, now())
+-spec now_format_tz(binary(), timezone_minutes()) -> binary().
+now_format_tz(Format, TzMinutes) when is_integer(TzMinutes) ->
+    now_format_tz(Format, TzMinutes, erlang:now()).
 
 %% @doc 日付/時刻を書式化する.
 %%
@@ -208,15 +273,30 @@ now_format(Format, Now) ->
     LocalTime = calendar:now_to_local_time(Now),
     now_format_impl(Format, [], [{now, Now}, {datetime, LocalTime}]).
 
+-spec now_format_tz(binary(), timezone_minutes(), erlang:timestamp()) -> binary().
+now_format_tz(Format, TzMinutes, Now) when is_integer(TzMinutes) ->
+    UniversalTime = moyo_clock:datetime_add( calendar:now_to_universal_time(Now), TzMinutes * 60 ),
+    now_format_impl(Format, [], [{now, Now}, {datetime, UniversalTime}]).
+
 %% @equiv now_format(Format, datetime_to_now(DateTime))
 -spec datetime_format(binary(), calendar:datetime()) -> binary().
 datetime_format(Format, DateTime) ->
     now_format(Format, datetime_to_now(DateTime)).
 
+%% @equiv now_format_tz(Format, timezone_minutes(), datetime_to_now(DateTime))
+-spec datetime_format_tz(binary(), timezone_minutes(), calendar:datetime(), timezone_minutes()) -> binary().
+datetime_format_tz(Format, TzMinutes, DateTime, TzMinutes2) when is_integer(TzMinutes) andalso is_integer(TzMinutes) ->
+    now_format_tz(Format, TzMinutes, datetime_to_now_tz(DateTime, TzMinutes2)).
+
 %% @doc `calendar:datetime()'形式の日時を`erlang:timestamp()'形式に変換する.
 -spec datetime_to_now(calendar:datetime()) -> erlang:timestamp().
 datetime_to_now(DateTime) ->
     seconds_to_now(datetime_to_seconds(DateTime)).
+
+%% @doc `calendar:datetime()'形式の日時を`erlang:timestamp()'形式に変換する.
+-spec datetime_to_now_tz(calendar:datetime(), timezone_minutes()) -> erlang:timestamp().
+datetime_to_now_tz(DateTime, TzMinutes) ->
+    seconds_to_now(datetime_to_seconds_tz(DateTime, TzMinutes)).
 
 %% @doc UNIX Time をfloatで返す
 -spec now_unix_time_in_float() -> float().
@@ -242,6 +322,21 @@ datetime_to_iso8601ext(DataTime = {{Y, Mo, D}, {H, Mi, S}}) ->
                        [Y, Mo, D, H, Mi, S, Sign, DiffHour, DiffMinute]);
 datetime_to_iso8601ext(Value) ->
     error(badarg, [Value]).
+
+%% @doc `datetime()'型の指定タイムゾーン時刻をISO8601の拡張表記の日付文字列(バイナリ)に変換する
+%%
+%% ```
+%% > datetime_to_iso8601ext_tz({{2014,4,20}, {9,9,9}}, 540).
+%% <<"2014-04-20T09:09:09+09:00">>
+%% '''
+-spec datetime_to_iso8601ext_tz(calendar:datetime(), timezone_minutes()) -> binary().
+datetime_to_iso8601ext_tz({{Y, Mo, D}, {H, Mi, S}}, TzMinutes) when is_integer(TzMinutes) ->
+    Sign = moyo_cond:conditional(TzMinutes < 0, "-", "+"),
+    {DiffHour, DiffMinute, 0} = calendar:seconds_to_time(abs(TzMinutes * 60)),
+    moyo_binary:format("~4..0B-~2..0B-~2..0BT~2..0B:~2..0B:~2..0B~s~2..0B:~2..0B",
+                       [Y, Mo, D, H, Mi, S, Sign, DiffHour, DiffMinute]);
+datetime_to_iso8601ext_tz(Value, TzMinutes) ->
+    error(badarg, [Value, TzMinutes]).
 
 %% @doc ISO8601の拡張表記の日付文字列をローカル時刻の`datetime()'型に変換する
 %%
@@ -277,6 +372,22 @@ iso8601ext_to_datetime(<<Text/binary>>) ->
     end;
 iso8601ext_to_datetime(Value) -> error(badarg, [Value]).
 
+%% @doc ISO8601の拡張表記の日付文字列を指定タイムゾーンの`datetime()'型に変換する
+%%
+%% なお、現状許容している形式は'YYYY-MM-DDThh:mm:ss(Z|(+|-)hh:mm)'のみで、月や時間等の省略は不可。
+%%
+%% 不正な文字列が渡された場合は、エラーが送出される.
+%%
+%% ```
+%% > iso8601ext_to_datetime(<<"2014-04-20T09:09:09+09:00">>, 0).
+%% {{2014,4,20}, {0,9,9}}
+%% '''
+-spec iso8601ext_to_datetime_tz(binary(), timezone_minutes()) -> calendar:datetime().
+iso8601ext_to_datetime_tz(<<Text/binary>>, TzMinutes) when is_integer(TzMinutes) ->
+    LocalDateTime = iso8601ext_to_datetime(Text),
+    moyo_clock:datetime_to_datetime_tz(LocalDateTime, local_timezone_offset_minutes(), TzMinutes);
+iso8601ext_to_datetime_tz(Value, TzMinutes) -> error(badarg, [Value, TzMinutes]).
+
 %% @doc iso8601を`datetime()'形式に変換する。
 %%
 %% iso8601のtimezoneがある場合はUTCに変換する。
@@ -293,6 +404,24 @@ iso8601_to_datetime(Bin) when is_binary(Bin) ->
             error(badarg, [Bin])
     end;
 iso8601_to_datetime(Input) -> error(badarg, [Input]).
+
+%% @doc iso8601を指定タイムゾーンの`datetime()'形式に変換する。
+%%
+%% iso8601のtimezoneがある場合はUTCに変換する。
+%%
+%% また、iso8601形式のbinary以外はerror(badarg, [Bin])が投げられる
+
+-spec iso8601_to_datetime_tz(binary(), timezone_minutes()) -> datetime().
+
+iso8601_to_datetime_tz(Bin, TzMinutes2) when is_binary(Bin) andalso is_integer(TzMinutes2) ->
+    case parse_iso8601(Bin) of
+        {ok, {_, DateTime, {Sign, {H, M, _}}}} ->
+            TzMinutes1 = Sign * ((H * 60) + M),
+            moyo_clock:datetime_to_datetime_tz(DateTime, TzMinutes1, TzMinutes2);
+        error ->
+            error(badarg, [Bin, TzMinutes2])
+    end;
+iso8601_to_datetime_tz(Input, TzMinutes) -> error(badarg, [Input, TzMinutes]).
 
 %% @doc iso8601もしくはunixtime形式、date()、datetime()、time()であるかを判定する。
 %%
@@ -521,6 +650,9 @@ is_valid_datetime(Bin) -> error(badarg, [Bin]).
 unix_timestamp_epoch_local() ->
     calendar:datetime_to_gregorian_seconds(calendar:universal_time_to_local_time(?UNIX_TIMESTAMP_EPOCH)).
 
+-spec unix_timestamp_epoch_utc() -> unix_timestamp().
+unix_timestamp_epoch_utc() ->
+    calendar:datetime_to_gregorian_seconds(?UNIX_TIMESTAMP_EPOCH).
 
 %% @doc escape(\\). \\の次の文字がない場合はエラー.
 -spec now_format_impl(Format, Acc, Data) -> binary() when
