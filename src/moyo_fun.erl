@@ -9,12 +9,22 @@
 -export([
          try_apply/3, try_apply/4,
          try_call/1, try_call/2,
-         repeat/3
+         repeat/3,
+         apply_on_exit/4
         ]).
 
 -export_type([
               stack_item/0
              ]).
+
+%%----------------------------------------------------------------------------------------------------------------------
+%% Exported API(Internal Function)
+%%----------------------------------------------------------------------------------------------------------------------
+-export([
+         apply_on_exit_impl/4,
+         apply_on_exit_receiver/4
+        ]).
+
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Types
@@ -28,6 +38,15 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
 %%----------------------------------------------------------------------------------------------------------------------
+
+%% @doc Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.
+-spec apply_on_exit([pid()], module(), atom(), [term()]) -> Executor::pid().
+apply_on_exit(Pids = [_|_], Module, Function, Args) ->
+    spawn_opt(?MODULE, apply_on_exit_impl, [Pids, Module, Function, Args], [{min_heap_size, 0}, {min_bin_vheap_size, 0}]);
+apply_on_exit(Pids, Module, Function, Args) ->
+    error(badarg, [Pids, Module, Function, Args]).
+
+
 %% @doc 指定された関数を実行する. 実行中に例外が発生した場合は`{error, {'EXIT', {Class, Reason, Stacktrace}}}'を返す
 -spec try_apply(module(), atom(), [term()]) -> FunctionResult | ErrorResult when
       FunctionResult :: term(),
@@ -88,3 +107,22 @@ repeat(Fun, State, N) ->
 repeat(_, State, N, N) -> State;
 repeat(Fun, State, LoopIndex, N) ->
     repeat(Fun, Fun(LoopIndex, State), LoopIndex+1, N).
+
+-spec apply_on_exit_impl([pid()], module(), atom(), [term()]) -> Executor::pid().
+apply_on_exit_impl(Pids, Module, Function, Args) ->
+    RefList = [erlang:monitor(process, Pid) || Pid <- Pids],
+    apply_on_exit_receiver(RefList, Module, Function, Args).
+
+
+-spec apply_on_exit_receiver([reference()], module(), atom(), [term()]) -> Executor::pid().
+apply_on_exit_receiver(RefList, Module, Function, Args) -> 
+    receive
+        {'DOWN', Ref, process, _, _} ->
+            case lists:member(Ref,RefList) of
+                true -> apply(Module, Function, Args);
+                false -> ?MODULE:apply_on_exit_receiver(RefList, Module, Function, Args)
+            end;
+        _ ->
+            ?MODULE:apply_on_exit_receiver(RefList, Module, Function, Args) % DOWN以外のメッセージは無視
+    end.
+
