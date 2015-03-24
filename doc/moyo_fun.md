@@ -32,12 +32,45 @@ stack_item() = {Module::module(), Function::atom(), Arity::arity() | (Args::[ter
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply_on_exit-4">apply_on_exit/4</a></td><td>Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.</td></tr><tr><td valign="top"><a href="#apply_on_exit_impl-4">apply_on_exit_impl/4</a></td><td></td></tr><tr><td valign="top"><a href="#apply_on_exit_receiver-4">apply_on_exit_receiver/4</a></td><td></td></tr><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
 
 
 <a name="functions"></a>
 
 ## Function Details ##
+
+<a name="apply_on_exit-4"></a>
+
+### apply_on_exit/4 ###
+
+
+<pre><code>
+apply_on_exit(Pids::[pid()], Module::module(), Function::atom(), Args::[term()]) -&gt; Executor::pid()
+</code></pre>
+<br />
+
+Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.
+<a name="apply_on_exit_impl-4"></a>
+
+### apply_on_exit_impl/4 ###
+
+
+<pre><code>
+apply_on_exit_impl(Pids::[pid()], Module::module(), Function::atom(), Args::[term()]) -&gt; Executor::pid()
+</code></pre>
+<br />
+
+
+<a name="apply_on_exit_receiver-4"></a>
+
+### apply_on_exit_receiver/4 ###
+
+
+<pre><code>
+apply_on_exit_receiver(RefList::[reference()], Module::module(), Function::atom(), Args::[term()]) -&gt; Executor::pid()
+</code></pre>
+<br />
+
 
 <a name="repeat-3"></a>
 

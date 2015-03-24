@@ -3,6 +3,8 @@
 %% @doc eunit用の追加マクロ
 %%
 %% このファイルをincludeすれば`eunit/include/eunit.hrl'でdefineされているマクロと合わせて使用ができる.
+%%
+%% timeoutは3000にしている. (eunitのtimeoutが5sなので, それ以下の適当な値)
 
 -ifndef(MOYO_EUNIT_HRL).
 -define(MOYO_EUNIT_HRL, true).
@@ -61,7 +63,7 @@
                  receive
                      {'EXIT', Pid, __MOYO_EUNIT_RetReason} ->
                          ?assertMatch2(Reason, __MOYO_EUNIT_RetReason)
-                 after 50 ->
+                 after 3000 ->
                          ?assert(timeout)
                  end
          end)()).
@@ -83,7 +85,7 @@
                  receive
                      {'DOWN', Ref, process, _, __MOYO_EUNIT_RetReason} ->
                          ?assertMatch2(Reason, __MOYO_EUNIT_RetReason)
-                 after 50 ->
+                 after 3000 ->
                          ?assert(timeout)
                  end
          end)()).
