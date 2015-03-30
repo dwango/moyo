@@ -498,6 +498,15 @@ validate_string_test_() ->
               ?assertMatch({error, _}, moyo_validator:validate(Utf8, {string, [ascii]}))
       end},
 
+     {"string, not_empty",
+      fun () ->
+              String = "Not Empty",
+              ?assertEqual({ok, String}, moyo_validator:validate(String, {string, [not_empty]})),
+
+              Empty = "",
+              ?assertMatch({error, _}, moyo_validator:validate(Empty, {string, [not_empty]}))
+      end},
+
      {"string, binary_in",
       fun () ->
               String = "String Data",
@@ -555,6 +564,15 @@ validate_binary_test_() ->
 
               Utf8 = <<"キテラス">>,
               ?assertMatch({error, _}, moyo_validator:validate(Utf8, {binary, [ascii]}))
+      end},
+
+     {"binary, not_empty",
+      fun () ->
+              Binary = <<"Not Empty">>,
+              ?assertEqual({ok, Binary}, moyo_validator:validate(Binary, {binary, [not_empty]})),
+
+              Empty = <<>>,
+              ?assertMatch({error, _}, moyo_validator:validate(Empty, {binary, [not_empty]}))
       end},
 
      {"binary, binary_in",

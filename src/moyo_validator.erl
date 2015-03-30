@@ -62,8 +62,8 @@
                               {more, number()} | {less, number()}.
 -type number_constraint()  :: sign_constraint() | {range, min_number(), max_number()} |
                               {more, number()} | {less, number()}.
--type string_constraint()  :: {max_length, integer()} | {regexp, string()} | ascii.
--type binary_constraint()  :: {max_length, integer()} | {regexp, binary()} | ascii.
+-type string_constraint()  :: {max_length, integer()} | {regexp, string()} | ascii | not_empty.
+-type binary_constraint()  :: {max_length, integer()} | {regexp, binary()} | ascii | not_empty.
 -type datetime_constraint():: {range, calendar:datetime(), calendar:datetime()} | {equal, calendar:datetime()} |
                               {more, calendar:datetime()} | {less, calendar:datetime()}.
 
@@ -164,6 +164,8 @@
 %%         パラメータが正規表現string() | binary()にマッチしない場合はerror
 %%     ○ascii
 %%         パラメータがASCII文字列かどうか
+%%     ○not_empty
+%%         パラメータが空文字じゃないかどうか
 %% ●datetime
 %%     ◯{more,calendar:datetime(}
 %%         パラメータが値より大きいかをチェックする
@@ -519,12 +521,20 @@ check_constraints_impl(Value, {regexp, Pattern}, string) ->
     {ok, re:run(Value, Pattern, [{capture, none}]) =:= match};
 check_constraints_impl(Value, ascii,             string) ->
     {ok, moyo_string:is_ascii_string(Value)};
+check_constraints_impl("", not_empty, string) ->
+    {ok, false};
+check_constraints_impl(_, not_empty, string) ->
+    {ok, true};
 %% binary に対するconstraint
 check_constraints_impl(Value, {max_length, Len}, binary) -> {ok, byte_size(Value) =< Len};
 check_constraints_impl(Value, {regexp, Pattern}, binary) ->
     {ok, re:run(Value, Pattern, [{capture, none}]) =:= match};
 check_constraints_impl(Value, ascii,             binary) ->
     {ok, moyo_string:is_ascii_string(binary_to_list(Value))};
+check_constraints_impl(<<"">>, not_empty, binary) ->
+    {ok, false};
+check_constraints_impl(_, not_empty, binary) ->
+    {ok, true};
 %% date に対するconstraint
 check_constraints_impl(Value, {range, Min, Max}, datetime) ->
     {ok, (moyo_clock:datetime_diff(Value, Min) >= 0) andalso (moyo_clock:datetime_diff(Max, Value) >= 0)};

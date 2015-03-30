@@ -51,7 +51,7 @@ basic_type() = integer | float | number | string | binary | boolean | atom | dat
 
 
 <pre><code>
-binary_constraint() = {max_length, integer()} | {regexp, binary()} | ascii
+binary_constraint() = {max_length, integer()} | {regexp, binary()} | ascii | not_empty
 </code></pre>
 
 
@@ -238,7 +238,7 @@ spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_const
 
 
 <pre><code>
-string_constraint() = {max_length, integer()} | {regexp, string()} | ascii
+string_constraint() = {max_length, integer()} | {regexp, string()} | ascii | not_empty
 </code></pre>
 
 
@@ -356,6 +356,8 @@ validate(InputValue, Spec) -&gt; {ok, OutputValue} | {error, Reason}
           パラメータが正規表現string() | binary()にマッチしない場合はerror
       ○ascii
           パラメータがASCII文字列かどうか
+      ○not_empty
+          パラメータが空文字じゃないかどうか
   ●datetime
       ◯{more,calendar:datetime(}
           パラメータが値より大きいかをチェックする
