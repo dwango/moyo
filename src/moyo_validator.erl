@@ -57,7 +57,8 @@
 -type constraint()         :: integer_constraint() | float_constraint() |
                               string_constraint() | binary_constraint().
 -type integer_constraint() :: sign_constraint() | even | odd
-                            | {range, min(), max()} | {more, integer()} | {less, integer()}.
+                            | {range, min(), max()} | {more, integer()} | {less, integer()}
+                            | {sign(), number_of_bits()}.
 -type float_constraint()   :: sign_constraint() | {range, min_number(), max_number()} |
                               {more, number()} | {less, number()}.
 -type number_constraint()  :: sign_constraint() | {range, min_number(), max_number()} |
@@ -69,10 +70,12 @@
 
 -type sign_constraint() :: positive | negative | non_negative.
 
--type min()       :: integer().
--type max()       :: integer().
--type min_number() :: number().
--type max_number() :: number().
+-type min()            :: integer().
+-type max()            :: integer().
+-type min_number()     :: number().
+-type max_number()     :: number().
+-type sign()           :: signed | unsigned.
+-type number_of_bits() :: pos_integer().
 
 -type option() :: binary_in | {binary_in, option_binary_in_output_type()} | int_to_bool |
                   {transform, transform_fun()} | allow_integer |
@@ -129,6 +132,8 @@
 %%         パラメータがinteger()以下の場合error.
 %%     ○ {less, integer()}
 %%         パラメータがinteger()以上の場合error.
+%%     ○ {signed | unsigned, Bits}
+%%         `Bits' ビットの符号あり/なしで表現できる数値の範囲外の場合error.
 %% ● float
 %%     ○ positive
 %%         パラメータが負数, または, 0の時にerror.
@@ -499,6 +504,10 @@ check_constraints_impl(Value, {range, Min, Max}, integer) ->
     {ok, (Min =< Value) andalso (Value =< Max)};
 check_constraints_impl(Value, {more, Threshold}, integer) -> {ok, Value > Threshold};
 check_constraints_impl(Value, {less, Threshold}, integer) -> {ok, Value < Threshold};
+check_constraints_impl(Value, {signed,   Bits},  integer) when Bits > 0 ->
+    {ok, -(1 bsl (Bits - 1)) =< Value andalso  Value < (1 bsl (Bits - 1))};
+check_constraints_impl(Value, {unsigned, Bits},  integer) when Bits > 0 ->
+    {ok, 0 =< Value andalso Value < 1 bsl Bits};
 %% float に対するconstraint
 check_constraints_impl(Value, positive,          float) -> {ok, Value >  0.0};
 check_constraints_impl(Value, negative,          float) -> {ok, Value <  0.0};

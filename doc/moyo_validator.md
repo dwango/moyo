@@ -99,7 +99,7 @@ float_constraint() = <a href="#type-sign_constraint">sign_constraint()</a> | {ra
 
 
 <pre><code>
-integer_constraint() = <a href="#type-sign_constraint">sign_constraint()</a> | even | odd | {range, <a href="#type-min">min()</a>, <a href="#type-max">max()</a>} | {more, integer()} | {less, integer()}
+integer_constraint() = <a href="#type-sign_constraint">sign_constraint()</a> | even | odd | {range, <a href="#type-min">min()</a>, <a href="#type-max">max()</a>} | {more, integer()} | {less, integer()} | {<a href="#type-sign">sign()</a>, <a href="#type-number_of_bits">number_of_bits()</a>}
 </code></pre>
 
 
@@ -166,6 +166,18 @@ number_constraint() = <a href="#type-sign_constraint">sign_constraint()</a> | {r
 
 
 
+### <a name="type-number_of_bits">number_of_bits()</a> ###
+
+
+
+<pre><code>
+number_of_bits() = pos_integer()
+</code></pre>
+
+
+
+
+
 ### <a name="type-option">option()</a> ###
 
 
@@ -196,6 +208,18 @@ option_binary_in_output_type() = <a href="#type-basic_type">basic_type()</a> | e
 
 <pre><code>
 option_to_datetime_input_type() = iso8601 | unixtime
+</code></pre>
+
+
+
+
+
+### <a name="type-sign">sign()</a> ###
+
+
+
+<pre><code>
+sign() = signed | unsigned
 </code></pre>
 
 
@@ -321,6 +345,8 @@ validate(InputValue, Spec) -&gt; {ok, OutputValue} | {error, Reason}
           パラメータがinteger()以下の場合error.
       ○ {less, integer()}
           パラメータがinteger()以上の場合error.
+      ○ {signed | unsigned, Bits}
+          `Bits' ビットの符号あり/なしで表現できる数値の範囲外の場合error.
   ● float
       ○ positive
           パラメータが負数, または, 0の時にerror.

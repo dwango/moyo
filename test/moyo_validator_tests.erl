@@ -134,6 +134,30 @@ validate_integer_test_() ->
               ?assertMatch({error, _}, moyo_validator:validate(Input, integer))
       end},
 
+     {"Bitsビットの符号付整数",
+      fun () ->
+              ok = lists:foreach(fun ({Spec, {Min, Max}}) ->
+                                         ?assertMatch({error, _},   moyo_validator:validate(Min - 1, {integer, [Spec]})),
+                                         ?assertEqual({ok,    Min}, moyo_validator:validate(Min,     {integer, [Spec]})),
+                                         ?assertEqual({ok,    Max}, moyo_validator:validate(Max,     {integer, [Spec]})),
+                                         ?assertMatch({error, _},   moyo_validator:validate(Max + 1, {integer, [Spec]}))
+                                 end,
+                                 [
+                                  {{signed,   8},  {-128,                 127}},
+                                  {{signed,   16}, {-32768,               32767}},
+                                  {{signed,   32}, {-2147483648,          2147483647}},
+                                  {{signed,   64}, {-9223372036854775808, 9223372036854775807}},
+                                  {{unsigned, 8},  {0,                    255}},
+                                  {{unsigned, 16}, {0,                    65535}},
+                                  {{unsigned, 32}, {0,                    4294967295}},
+                                  {{unsigned, 64}, {0,                    18446744073709551615}}
+                                 ]),
+              ?assertMatch({error, _}, moyo_validator:validate(0, {integer, [{signed,   0}]})),
+              ?assertMatch({ok,    0}, moyo_validator:validate(0, {integer, [{signed,   1}]})),
+              ?assertMatch({error, _}, moyo_validator:validate(0, {integer, [{unsigned, 0}]})),
+              ?assertMatch({ok,    0}, moyo_validator:validate(0, {integer, [{unsigned, 1}]}))
+      end},
+
      % 以下、ホワイトボックステスト
      {"制限を複数指定時、前の制限で失敗したときの挙動",
       fun () ->
