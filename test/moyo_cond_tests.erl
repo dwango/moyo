@@ -88,3 +88,23 @@ conditional_test_() ->
       end
     }
   ].
+
+while_test_() ->
+  [
+    {"数字の累進",
+      fun() ->
+        Fun = fun ({Cur, _, Dst}) when Cur > Dst -> {false, Cur};
+                  ({Cur, Step, Dst}) -> {true, {Cur + Step, Step, Dst}} end,
+        ?assertEqual(6, moyo_cond:while(Fun, {1, 1, 5})),
+        ?assertEqual(22, moyo_cond:while(Fun, {10, 2, 20}))
+      end
+    },
+    {"別関数の実行",
+      fun() ->
+        FunA = fun ({_, Cur, Dst}) when Cur > Dst -> {false, Cur};
+                  ({Fun, Cur, Dst}) -> {true, {Fun, Fun(Cur), Dst}} end,
+        FunB = fun (Num) -> Num + 1 end,
+        ?assertEqual(6, moyo_cond:while(FunA, {FunB, 1, 5}))
+      end
+    }
+  ].
