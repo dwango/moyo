@@ -97,9 +97,9 @@ to_binary(V)                     -> list_to_binary(moyo_string:to_string(V)).
 %% バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は元のバイナリを返す.
 -spec try_binary_to_existing_atom(binary(), Encoding) -> binary() | atom() when
       Encoding :: latin1 | unicode | utf8.
-try_binary_to_existing_atom(Binary, Encodeing) ->
+try_binary_to_existing_atom(Binary, Encoding) ->
     try
-        binary_to_existing_atom(Binary, Encodeing)
+        binary_to_existing_atom(Binary, Encoding)
     catch
         _:_ -> Binary
     end.
@@ -261,7 +261,7 @@ tr(Subject, ConvertMapping) ->
 -spec fill(Int::integer(), Count::integer()) -> binary().
 fill(Int, Count) ->
     Seq = lists:seq(1, Count),
-    lists:foldl(fun (_, Bin) -> <<Int/integer, Bin/binary>> end, <<>>, Seq).
+    lists:foldl(fun (_, Bin) -> <<Bin/binary, Int/integer>> end, <<>>, Seq).
 
 %% @doc バイナリリストの要素をセパレータで区切ったバイナリを返す.
 -spec join([binary()], Separator::binary()) -> binary().
