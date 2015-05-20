@@ -127,4 +127,36 @@ repeat_test_() ->
       end}
     ].
 
+map_range_test_() ->
+    [
+     {"1から9までの平方を列挙するテスト(Start<End)",
+      fun () ->
+          ?assertEqual([1, 4, 9, 16, 25, 36, 49, 64, 81], moyo_fun:map_range(fun(X) -> X*X end, 1, 9))
+      end},
+     {"10の平方だけを求めるテスト(Start==End)",
+      fun() ->
+          ?assertEqual([100], moyo_fun:map_range(fun(X) -> X*X end, 10, 10))
+      end},
+     {"不正な範囲を与えるテスト(Start>End)",
+      fun() ->
+          ?assertEqual([], moyo_fun:map_range(fun(X) -> X*X end, 1, -1))
+      end}
+    ].
+
+fold_range_test_() ->
+    [
+     {"1から4までの和を求めるテスト(Start<End)",
+      fun () ->
+          ?assertEqual(10, moyo_fun:fold_range(fun(A, B) -> A+B end, 0, 1, 4))
+      end},
+     {"初期値10に1だけを足すテスト(Start==End)",
+      fun () ->
+          ?assertEqual(11, moyo_fun:fold_range(fun(A, B) -> A+B end, 10, 1, 1))
+      end},
+     {"不正な範囲を与えるテスト(Start>End)",
+      fun () ->
+          ?assertEqual(3, moyo_fun:fold_range(fun(A, B) -> A+B end, 3, 1, -1))
+      end}
+    ].
+
 

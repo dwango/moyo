@@ -10,7 +10,9 @@
          try_apply/3, try_apply/4,
          try_call/1, try_call/2,
          repeat/3,
-         apply_on_exit/4
+         apply_on_exit/4,
+         fold_range/4,
+         map_range/3
         ]).
 
 -export_type([
@@ -98,6 +100,20 @@ try_call(Fun, ErrorResult) ->
       Function :: fun((Index::non_neg_integer(), State::term())->NextState::term()).
 repeat(Fun, State, N) ->
     repeat(Fun, State, 0, N).
+
+%% @doc 関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.
+-spec fold_range( Function, AccIn::term(), From::integer(), To::integer() ) -> AccOut::term() when
+    Function :: fun((Index::integer(), AccIn::term()) -> AccOut::term()).
+fold_range(Function, Acc, From, To) when From =< To ->
+    fold_range(Function, Function(From, Acc), From + 1, To);
+fold_range(_, Acc, _, _) ->
+    Acc.
+
+%% @doc 関数に loop X in [From, To] を渡して各々の結果をリストで返す.
+-spec map_range( Function, From::integer(), To::integer() ) -> [AccOut::term()] when
+    Function :: fun((X::integer()) -> AccOut::term()).
+map_range(Function, From, To) ->
+    lists:reverse(fold_range(fun(X, AccIn) -> [Function(X)|AccIn] end, [], From, To)).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
