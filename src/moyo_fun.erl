@@ -11,7 +11,7 @@
          try_call/1, try_call/2,
          repeat/3,
          apply_on_exit/4,
-         fold_range/4,
+         fold_range/4, maybe_fold_range/4,
          map_range/3
         ]).
 
@@ -101,6 +101,18 @@ try_call(Fun, ErrorResult) ->
 repeat(Fun, State, N) ->
     repeat(Fun, State, 0, N).
 
+%% @doc `{error, Reason}'を返した場合に途中で処理を中断し, 結果を返す {@link fold_range/4}
+-spec maybe_fold_range(Fun, AccIn :: term(), From :: integer(), To :: integer()) -> {ok, Result :: term()} | {error, Reason} when
+      Fun     :: fun((Index :: integer(), AccIn :: term()) -> {ok, AccOut :: term()} | {error, Reason}),
+      Reason  :: term().
+maybe_fold_range(Function, AccIn, From, To) when From =< To ->
+    case Function(From, AccIn) of
+        {ok, AccOut} -> maybe_fold_range(Function, AccOut, From + 1, To);
+        Err          -> Err
+    end;
+maybe_fold_range(_, Acc, _, _) ->
+    {ok, Acc}.
+
 %% @doc 関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.
 -spec fold_range( Function, AccIn::term(), From::integer(), To::integer() ) -> AccOut::term() when
     Function :: fun((Index::integer(), AccIn::term()) -> AccOut::term()).
@@ -131,7 +143,7 @@ apply_on_exit_impl(Pids, Module, Function, Args) ->
 
 
 -spec apply_on_exit_receiver([reference()], module(), atom(), [term()]) -> Executor::pid().
-apply_on_exit_receiver(RefList, Module, Function, Args) -> 
+apply_on_exit_receiver(RefList, Module, Function, Args) ->
     receive
         {'DOWN', Ref, process, _, _} ->
             case lists:member(Ref,RefList) of
@@ -141,4 +153,3 @@ apply_on_exit_receiver(RefList, Module, Function, Args) ->
         _ ->
             ?MODULE:apply_on_exit_receiver(RefList, Module, Function, Args) % DOWN以外のメッセージは無視
     end.
-

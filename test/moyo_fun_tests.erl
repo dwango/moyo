@@ -8,7 +8,7 @@
 -include("eunit.hrl").
 
 apply_on_exit_test_() ->
-    {foreach, 
+    {foreach,
      fun() ->
              ok = meck:new(moyo_fun, [no_link, passthrough])
      end,
@@ -62,7 +62,7 @@ apply_on_exit_test_() ->
               Pid = spawn(timer, sleep, [infinity]),
               CallbackPid = spawn(timer, sleep, [infinity]),
               ExecutorPid = moyo_fun:apply_on_exit([Pid], ?MODULE, apply_on_exit_callback, [CallbackPid]),
-              ?ensureExited(ExecutorPid, shutdown), 
+              ?ensureExited(ExecutorPid, shutdown),
               ?assertEqual(true, is_process_alive(CallbackPid)),
               ?ensureExited(Pid, shutdown),
               ?ensureExited(CallbackPid, shutdown)
@@ -73,7 +73,7 @@ apply_on_exit_test_() ->
               ?assertError(badarg, moyo_fun:apply_on_exit(Pid, ?MODULE, apply_on_exit_callback, [callback_test])),
               ?ensureExited(Pid, shutdown)
       end},
-     {"Pidの指定がリストでもないしPidでもない", 
+     {"Pidの指定がリストでもないしPidでもない",
       fun() ->
               ?assertError(badarg, moyo_fun:apply_on_exit(badarg, ?MODULE, apply_on_exit_callback, [callback_test]))
       end}
@@ -159,4 +159,23 @@ fold_range_test_() ->
       end}
     ].
 
-
+maybe_fold_range_test_() ->
+    [
+     {"Start>Endの場合",
+      fun() ->
+              AccIn = input,
+              ?assertEqual({ok, AccIn}, moyo_fun:maybe_fold_range(fun(_, _) -> {error, error} end, AccIn, 3, 1))
+      end},
+     {"errorで抜ける",
+      fun() ->
+              ?assertEqual({error, lists:sum(lists:seq(1, 4))},
+                           moyo_fun:maybe_fold_range(fun(Index, Acc) when Index < 5 -> {ok, Index + Acc};
+                                                        (_,     Acc) -> {error, Acc}
+                                                     end, 0, 1, 10))
+      end},
+     {"最後まで実行される場合",
+      fun() ->
+              ?assertEqual({ok, lists:sum(lists:seq(1, 10))},
+                           moyo_fun:maybe_fold_range(fun(Index, Acc) -> {ok, Index + Acc} end, 0, 1, 10))
+      end}
+    ].

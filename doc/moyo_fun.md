@@ -32,7 +32,7 @@ stack_item() = {Module::module(), Function::atom(), Arity::arity() | (Args::[ter
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply_on_exit-4">apply_on_exit/4</a></td><td>Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.</td></tr><tr><td valign="top"><a href="#apply_on_exit_impl-4">apply_on_exit_impl/4</a></td><td></td></tr><tr><td valign="top"><a href="#apply_on_exit_receiver-4">apply_on_exit_receiver/4</a></td><td></td></tr><tr><td valign="top"><a href="#fold_range-4">fold_range/4</a></td><td>関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.</td></tr><tr><td valign="top"><a href="#map_range-3">map_range/3</a></td><td>関数に loop X in [From, To] を渡して各々の結果をリストで返す.</td></tr><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply_on_exit-4">apply_on_exit/4</a></td><td>Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.</td></tr><tr><td valign="top"><a href="#apply_on_exit_impl-4">apply_on_exit_impl/4</a></td><td></td></tr><tr><td valign="top"><a href="#apply_on_exit_receiver-4">apply_on_exit_receiver/4</a></td><td></td></tr><tr><td valign="top"><a href="#fold_range-4">fold_range/4</a></td><td>関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.</td></tr><tr><td valign="top"><a href="#map_range-3">map_range/3</a></td><td>関数に loop X in [From, To] を渡して各々の結果をリストで返す.</td></tr><tr><td valign="top"><a href="#maybe_fold_range-4">maybe_fold_range/4</a></td><td><code>{error, Reason}</code>を返した場合に途中で処理を中断し, 結果を返す <a href="#fold_range-4"><code>fold_range/4</code></a></td></tr><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -96,6 +96,18 @@ map_range(Function, From::integer(), To::integer()) -&gt; [AccOut::term()]
 <ul class="definitions"><li><code>Function = fun((X::integer()) -&gt; AccOut::term())</code></li></ul>
 
 関数に loop X in [From, To] を渡して各々の結果をリストで返す.
+<a name="maybe_fold_range-4"></a>
+
+### maybe_fold_range/4 ###
+
+
+<pre><code>
+maybe_fold_range(Fun, AccIn::term(), From::integer(), To::integer()) -&gt; {ok, Result::term()} | {error, Reason}
+</code></pre>
+
+<ul class="definitions"><li><code>Fun = fun((Index::integer(), AccIn::term()) -&gt; {ok, AccOut::term()} | {error, Reason})</code></li><li><code>Reason = term()</code></li></ul>
+
+`{error, Reason}`を返した場合に途中で処理を中断し, 結果を返す [`fold_range/4`](#fold_range-4)
 <a name="repeat-3"></a>
 
 ### repeat/3 ###
