@@ -3,6 +3,7 @@
 %% @doc 日付や時間に関する処理を集めたユーティリティモジュール.
 %%
 -module(moyo_clock).
+-compile({no_auto_import, [now/0]}).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
@@ -131,7 +132,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% @doc 現在時刻を`erlang:timestamp()'形式で返す
 %%
-%% 動作的には{@link erlang:now/0}および{@link os:timestamp/0}と同様. <br />
+%% 動作的には{@link os:timestamp/0}と同様. <br />
 %% ユニットテストでモックを行いやすくすることができるのがこの関数の存在意義.
 -spec now() -> erlang:timestamp().
 now() ->
@@ -230,12 +231,12 @@ datetime_add(DateTime, Seconds) ->
 %% @equiv now_format(Format, now())
 -spec now_format(binary()) -> binary().
 now_format(Format) ->
-    now_format(Format, erlang:now()).
+    now_format(Format, now()).
 
 %% @equiv now_format_tz(Format, TzMinutes, now())
 -spec now_format_tz(binary(), timezone_minutes()) -> binary().
 now_format_tz(Format, TzMinutes) when is_integer(TzMinutes) ->
-    now_format_tz(Format, TzMinutes, erlang:now()).
+    now_format_tz(Format, TzMinutes, now()).
 
 %% @doc 日付/時刻を書式化する.
 %%
