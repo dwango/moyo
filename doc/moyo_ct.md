@@ -5,8 +5,8 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
 Common Test Utility.
+
 Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 <a name="index"></a>
@@ -25,21 +25,18 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 ### all/1 ###
 
-
 <pre><code>
 all(SuiteModule::module()) -&gt; [Function::atom()]
 </code></pre>
 <br />
 
-
 SUITE moduleのCommon TestのCall back Functions以外を取得する.
 
-
 Arity =:= 1 以外は取得しない為, Eunit対象も外れる.
+
 <a name="eunit-1"></a>
 
 ### eunit/1 ###
-
 
 <pre><code>
 eunit(Application::atom()) -&gt; ok
@@ -47,3 +44,4 @@ eunit(Application::atom()) -&gt; ok
 <br />
 
 EunitをCommon Testに組み込む場合に使用できる.
+

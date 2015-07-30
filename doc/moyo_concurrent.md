@@ -5,8 +5,8 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
 並行処理の為のモジュール.
+
 Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.3409;0c
 
 <a name="index"></a>
@@ -26,22 +26,19 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.3409;0c
 
 ### exec/1 ###
 
-
 <pre><code>
 exec(Input::[Input]) -&gt; [{Input, RetValue::term()}]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li></ul>
 
-
 並行に複数のコマンドを実行する
 
-
 see: `exec(Input, infinity)`
+
 <a name="exec-2"></a>
 
 ### exec/2 ###
-
 
 <pre><code>
 exec(Input::[Input], Timeout) -&gt; [{Input, RetValue::term()}]
@@ -52,10 +49,10 @@ exec(Input::[Input], Timeout) -&gt; [{Input, RetValue::term()}]
 並行に複数のコマンドを実行する
 返り値は実行が終了した順番で返される. <br />
 また, 1つでも結果がerrorだった場合, その1つのerror結果を呼び出し元に投げ, 他のプロセスは強制終了される.
+
 <a name="exec_sort-1"></a>
 
 ### exec_sort/1 ###
-
 
 <pre><code>
 exec_sort(Input::[Input]) -&gt; [RetValue::term()]
@@ -63,20 +60,17 @@ exec_sort(Input::[Input]) -&gt; [RetValue::term()]
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li></ul>
 
-
 並行に複数のコマンドを実行し、その結果を入力の順に返す.
 
-
 1つでも結果がerrorだった場合, その1つのerror結果を呼び出し元に投げ, 他のプロセスは強制終了される.
+
 <a name="exec_sort-2"></a>
 
 ### exec_sort/2 ###
-
 
 <pre><code>
 exec_sort(Input::[Input], Timeout) -&gt; [RetValue::term()]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li><li><code>Timeout = timeout()</code></li></ul>
-
 

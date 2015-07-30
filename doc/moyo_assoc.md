@@ -6,15 +6,13 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
 連想リストに関する処理を集めたユーティリティモジュール.
+
 Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 
 <a name="description"></a>
 
 ## Description ##
-
-
 連想リストとは、以下のようにキーと値が対となったタプルを要素として保持するリストのことを表す。
 
 ```
@@ -26,30 +24,21 @@ Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 ```
 
 
-
-
 #### <a name="【重複キーの扱いについて】">【重複キーの扱いについて】</a> ####
-
 
 重複したキーを持つ要素を複数リスト内に保持することは可能だが、<br />
 その場合、連想リストの操作時には、同じキーを有する要素群の内の最初のもの以外は無視される。<br />
 
-
-
 例えば、検索関数の場合は、最初に出現した要素の値が採用され、<br />
 削除関数では、最初に出現した要素のみが削除されることになる。<br />
 (つまり、一回の削除関数呼び出しで、重複キーを持つ全ての要素が除去されることはない)
-
-
 
 ただし、明示的に重複キーの扱い方が定義されている関数に関しては、その限りではない。
 
 
 #### <a name="【要素の並び順に関して】">【要素の並び順に関して】</a> ####
 
-
 本モジュールは連想リストをセットの一種として扱うため、原則として要素の順番は考慮されない。
-
 
 そのため、ある関数を適用した結果、連想リストの論理的な内容は同一でも、<br />
 実際の内容(要素の並び順)は、適用前とは変わっていることもあるので、注意が必要。 <br />
@@ -64,7 +53,6 @@ Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 ### <a name="type-assoc_list">assoc_list()</a> ###
 
 
-
 <pre><code>
 assoc_list() = <a href="#type-assoc_list">assoc_list</a>(<a href="#type-key">key()</a>, <a href="#type-value">value()</a>)
 </code></pre>
@@ -72,9 +60,7 @@ assoc_list() = <a href="#type-assoc_list">assoc_list</a>(<a href="#type-key">key
 
 
 
-
 ### <a name="type-assoc_list">assoc_list()</a> ###
-
 
 
 <pre><code>
@@ -84,9 +70,7 @@ assoc_list(Key, Value) = [{Key, Value}]
 
 
 
-
 ### <a name="type-key">key()</a> ###
-
 
 
 <pre><code>
@@ -96,32 +80,22 @@ key() = term()
 
 
 
-
 ### <a name="type-validate_entry_spec">validate_entry_spec()</a> ###
-
 
 
 <pre><code>
 validate_entry_spec() = {KeySpec::(<a href="#type-key">key()</a> | {<a href="#type-key">key()</a>, <a href="#type-key">key()</a>}), ValueSpec::(<a href="moyo_validator.md#type-spec">moyo_validator:spec()</a>), Options::([<a href="moyo_validator.md#type-option">moyo_validator:option()</a> | <a href="#type-validate_option_ext">validate_option_ext()</a>])}
 </code></pre>
 
-
-
-
-  要素のバリデーション指定. <br />
-
-
+ 要素のバリデーション指定. <br />
 
 [KeySpec] <br />
 対象要素のキー名を指定する. <br />
 `{From, To}`形式で指定した場合は、検索は`From`で行われ、結果としては`To`がキー名として使用される. (キー名のリネーム)<br />
 
-
-
 [ValueSpec] <br />
 値のバリデーション方法を指定する. <br />
 詳細は`moyo_validator:spec/0`を参照のこと. <br />
-
 
 [Options] <br />
 バリデーションオプションを指定する. <br />
@@ -129,16 +103,12 @@ validate_entry_spec() = {KeySpec::(<a href="#type-key">key()</a> | {<a href="#ty
 
 
 
-
 ### <a name="type-validate_option_ext">validate_option_ext()</a> ###
-
 
 
 <pre><code>
 validate_option_ext() = {default, DefaultValue::term()} | optional
 </code></pre>
-
-
 
 `moyo_assoc`独自のバリデートオプション: <br />
 - {default, DefaultValue}: 指定された場合は、要素が存在しない場合に、エラーではなく`DefaultValue`を返す <br />
@@ -146,15 +116,12 @@ validate_option_ext() = {default, DefaultValue::term()} | optional
 
 
 
-
 ### <a name="type-value">value()</a> ###
-
 
 
 <pre><code>
 value() = term()
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -172,17 +139,16 @@ value() = term()
 
 ### delete/2 ###
 
-
 <pre><code>
 delete(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 <br />
 
 キーに対応する要素を削除する.
+
 <a name="diff-2"></a>
 
 ### diff/2 ###
-
 
 <pre><code>
 diff(AssocList1, AssocList2) -&gt; {EqualList, ValueDiffList, Only1List, Only2List}
@@ -190,10 +156,7 @@ diff(AssocList1, AssocList2) -&gt; {EqualList, ValueDiffList, Only1List, Only2Li
 
 <ul class="definitions"><li><code>AssocList1 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>AssocList2 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>EqualList = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>ValueDiffList = <a href="#type-assoc_list">assoc_list</a>(Key::term(), {Before::term(), After::term()})</code></li><li><code>Only1List = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Only2List = <a href="#type-assoc_list">assoc_list()</a></code></li></ul>
 
-
 2つの連想リストから共通のタプルとどちらかのリストにしかないタプルとキーがList1とLIst2で異なるタプルを分ける
-
-
 
 出力は, {共通のタプル, キーが同じでvalueが変更されたタプル, リスト1にだけあるタプル, リスト2にだけあるタプル}.
 
@@ -202,7 +165,6 @@ gb_treesをdictの代わりに使わないのは、gb_treesでは1と1.0が同�
 それらを元に、重複する要素を消したリストを生成する。<br />
 そのあと、EqualList,ValueDiffList,Only1List,Only2Listをリスト内包表記でフィルタリングしながら生成する。<br />
 key,valueともに値の比較は=:=で行っているため、1と1.0は別物として扱われる点に注意すること。<br />
-
 
 ex:
 
@@ -220,21 +182,16 @@ ex:
 
 ### equal/2 ###
 
-
 <pre><code>
 equal(AssocList1, AssocList2) -&gt; boolean()
 </code></pre>
 
 <ul class="definitions"><li><code>AssocList1 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>AssocList2 = <a href="#type-assoc_list">assoc_list()</a></code></li></ul>
 
-
 2つの連想リストが同じかどうかを比較する.
-
-
 
 同じ場合は, true, 異なる場合はfalse.
 ただし, 重複キーや順の扱いは他の連想リストと同じ扱いである.
-
 
 ex:
 
@@ -247,36 +204,31 @@ ex:
 
 ### fetch/2 ###
 
-
 <pre><code>
 fetch(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-value">value()</a>
 </code></pre>
 <br />
 
-
 キーに対応する値を取得する.
 
-
 キーが存在しない場合は、例外が送出される.
+
 <a name="fetch-3"></a>
 
 ### fetch/3 ###
-
 
 <pre><code>
 fetch(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>, DefaultValue::<a href="#type-value">value()</a>) -&gt; <a href="#type-value">value()</a>
 </code></pre>
 <br />
 
-
 キーに対応する値を取得する.
 
-
 キーが存在しない場合は、デフォルト値が代わりに返される.
+
 <a name="fetch_as-3"></a>
 
 ### fetch_as/3 ###
-
 
 <pre><code>
 fetch_as(Key, ValueSpec, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-value">value()</a>
@@ -284,15 +236,13 @@ fetch_as(Key, ValueSpec, AssocList::<a href="#type-assoc_list">assoc_list()</a>)
 
 <ul class="definitions"><li><code>Key = <a href="#type-key">key()</a></code></li><li><code>ValueSpec = {<a href="moyo_validator.md#type-spec">moyo_validator:spec()</a>, [<a href="moyo_validator.md#type-option">moyo_validator:option()</a>]}</code></li></ul>
 
-
 キーに対応する値を`ValueSpec`で指定された方式で取得する
 
-
 `ValuesSpec`の詳細は[`moyo_validator:validate/3`](moyo_validator.md#validate-3)を参照のこと
+
 <a name="fetch_values-2"></a>
 
 ### fetch_values/2 ###
-
 
 <pre><code>
 fetch_values(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; [<a href="#type-value">value()</a>]
@@ -300,23 +250,19 @@ fetch_values(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type
 <br />
 
 複数の値を一度に取得する
+
 <a name="from_map-1"></a>
 
 ### from_map/1 ###
-
 
 <pre><code>
 from_map(Map::#{}) -&gt; <a href="moyo_assoc.md#type-assoc_list">moyo_assoc:assoc_list()</a>
 </code></pre>
 <br />
 
-
 mapから連想リストを生成する.
 
-
-
 maps:to_list/1 の結果と同じ.
-
 
 ex:
 
@@ -333,16 +279,13 @@ ex:
 
 ### from_record/2 ###
 
-
 <pre><code>
 from_record(Fields::[atom()], Record) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 
 <ul class="definitions"><li><code>Record = tuple()</code></li></ul>
 
-
 レコードを連想リスト形式に変換する.
-
 
 `Fields` の値は `record_info(fields, RecordName)` で取得できる. <br />
 以下、使用例:
@@ -361,20 +304,15 @@ from_record(Fields::[atom()], Record) -&gt; <a href="#type-assoc_list">assoc_lis
 
 ### intersection_and_differences/2 ###
 
-
 <pre><code>
 intersection_and_differences(AssocList1, AssocList2) -&gt; {Intersec, Diff1, Diff2}
 </code></pre>
 
 <ul class="definitions"><li><code>AssocList1 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>AssocList2 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Intersec = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Diff1 = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Diff2 = <a href="#type-assoc_list">assoc_list()</a></code></li></ul>
 
-
 2つの連想リストから共通のタプルとどちらかのリストにしかないタプルを分ける.
 
-
-
 出力は, {共通のタプル, リスト1にだけあるタプル, リスト2にだけあるタプル}.
-
 
 ex:
 
@@ -391,36 +329,29 @@ ex:
 
 ### is_assoc_list/1 ###
 
-
 <pre><code>
 is_assoc_list(Value::term()) -&gt; boolean()
 </code></pre>
 <br />
 
 引数の値が連想リストかどうかを判定する.
+
 <a name="keys-1"></a>
 
 ### keys/1 ###
-
 
 <pre><code>
 keys(AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; [<a href="#type-key">key()</a>]
 </code></pre>
 <br />
 
-
 キーのリストを生成する.
-
-
 
 この関数は重複キーを考慮しない.<br />
 重複キーが除去された情報が欲しい場合は, 下記を検討すること.
 
-
-
 1. [`unique_by_key/1`](#unique_by_key-1) との併用
 1. [`keys_as_set/1`](#keys_as_set-1) の利用
-
 
 ex:
 
@@ -433,15 +364,12 @@ ex:
 
 ### keys_as_set/1 ###
 
-
 <pre><code>
 keys_as_set(AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="gb_sets.md#type-set">gb_sets:set</a>(<a href="#type-key">key()</a>)
 </code></pre>
 <br />
 
-
 キーの集合を生成する.
-
 
 gb_sets:set() の性質上, 重複キーは除去される
 
@@ -449,17 +377,16 @@ gb_sets:set() の性質上, 重複キーは除去される
 
 ### lookup/2 ###
 
-
 <pre><code>
 lookup(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; error | {ok, <a href="#type-value">value()</a>}
 </code></pre>
 <br />
 
 キーに対応する値を検索する.
+
 <a name="lookup_as-3"></a>
 
 ### lookup_as/3 ###
-
 
 <pre><code>
 lookup_as(Key, EntrySpec, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {ok, <a href="#type-value">value()</a>} | {error, Reason}
@@ -467,15 +394,13 @@ lookup_as(Key, EntrySpec, AssocList::<a href="#type-assoc_list">assoc_list()</a>
 
 <ul class="definitions"><li><code>Key = <a href="#type-key">key()</a></code></li><li><code>EntrySpec = {<a href="moyo_validator.md#type-spec">moyo_validator:spec()</a>, [<a href="moyo_validator.md#type-option">moyo_validator:option()</a>]}</code></li><li><code>Reason = not_found | term()</code></li></ul>
 
-
 キーに対応する値を`ValueSpec`で指定された方式で取得する
 
-
 `EntrySpec`の詳細は[`moyo_validator:validate/3`](moyo_validator.md#validate-3)を参照のこと
+
 <a name="lookup_entries-2"></a>
 
 ### lookup_entries/2 ###
-
 
 <pre><code>
 lookup_entries(KeyList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {ok, <a href="#type-assoc_list">assoc_list()</a>} | {error, Reason}
@@ -484,10 +409,10 @@ lookup_entries(KeyList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) 
 <ul class="definitions"><li><code>KeyList = [<a href="#type-key">key()</a>]</code></li><li><code>Reason = term()</code></li></ul>
 
 `KeyList`で指定されたエントリー(要素)一覧を取得する
+
 <a name="lookup_entries_as-2"></a>
 
 ### lookup_entries_as/2 ###
-
 
 <pre><code>
 lookup_entries_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {ok, <a href="#type-assoc_list">assoc_list()</a>} | {error, Reason}
@@ -495,13 +420,9 @@ lookup_entries_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_lis
 
 <ul class="definitions"><li><code>EntrySpecList = [<a href="#type-validate_entry_spec">validate_entry_spec()</a>]</code></li><li><code>Reason = term()</code></li></ul>
 
-
 `EntrySpecList`で指定された方式で、エントリー(要素)一覧を取得する
 
-
-
 指定方法の詳細に関しては`validate_entry_spec()`のドキュメント及び`moyo_validator`モジュールを参照のこと. <br />
-
 
 使用例:
 
@@ -527,7 +448,6 @@ lookup_entries_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_lis
 
 ### lookup_values/2 ###
 
-
 <pre><code>
 lookup_values(KeyList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {ok, [<a href="#type-value">value()</a>]} | {error, Reason::term()}
 </code></pre>
@@ -535,10 +455,10 @@ lookup_values(KeyList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -
 <ul class="definitions"><li><code>KeyList = [<a href="#type-key">key()</a>]</code></li></ul>
 
 `KeyList`で指定されたキーに対応する値一覧を取得する
+
 <a name="lookup_values_as-2"></a>
 
 ### lookup_values_as/2 ###
-
 
 <pre><code>
 lookup_values_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {ok, [<a href="#type-value">value()</a>]} | {error, Reason::term()}
@@ -546,9 +466,7 @@ lookup_values_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_list
 
 <ul class="definitions"><li><code>EntrySpecList = [{<a href="#type-key">key()</a>, <a href="moyo_validator.md#type-spec">moyo_validator:spec()</a>, [<a href="moyo_validator.md#type-option">moyo_validator:option()</a> | <a href="#type-validate_option_ext">validate_option_ext()</a>]}]</code></li></ul>
 
-
 `EntrySpecList`で指定された方式で、値一覧を取得する
-
 
 以下のコードとほぼ透過:
 
@@ -561,27 +479,18 @@ lookup_values_as(EntrySpecList, AssocList::<a href="#type-assoc_list">assoc_list
 
 ### merge/2 ###
 
-
 <pre><code>
 merge(AssocList1::<a href="#type-assoc_list">assoc_list()</a>, AssocList2::<a href="#type-assoc_list">assoc_list()</a>) -&gt; Result::<a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 <br />
 
-
 2つの連想リストをマージする.
-
-
 
 2つの連想リストにおいて、片方のリストにしかkeyが存在しないものは、そのまま結果のリストに加える。両方のリストに同じkeyがある場合、List1の方のkey、valueペアを結果のリストに加える。この関数において、keyの同値判定は=:=ではなく==で行っている。
 
-
-
 出力は, {演算した結果の連想リスト}
 
-
-
 ２つのリストを++で連結したあと、ukeysortで重複するkeyは最初のもののみ考慮するようにするという実装方法で実現している。
-
 
 ex:
 
@@ -595,48 +504,41 @@ ex:
 
 ### pop/2 ###
 
-
 <pre><code>
 pop(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {Result, <a href="#type-assoc_list">assoc_list()</a>}
 </code></pre>
 
 <ul class="definitions"><li><code>Result = {value, <a href="#type-value">value()</a>} | empty</code></li></ul>
 
-
 キーに対応するリストの先頭から値を取り出す.
-
 
 キーが存在しない場合は、要素の値が空リストとして扱われる (つまり結果として empty が返される).<br />
 キーに対応する値が存在し、かつリスト以外の場合は、例外が送出される.
+
 <a name="push-3"></a>
 
 ### push/3 ###
-
 
 <pre><code>
 push(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 <br />
 
-
 キーに対応するリストの先頭に値を追加する.
-
 
 キーが存在しない場合は、追加する値のみを含むリストが新規に生成される.<br />
 キーに対応する値が存在し、かつリスト以外の場合は、例外が送出される.
+
 <a name="rfetch-2"></a>
 
 ### rfetch/2 ###
-
 
 <pre><code>
 rfetch(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-value">value()</a>
 </code></pre>
 <br />
 
-
 再帰的にキーに対応する値を取得する.
-
 
 `KeyList`の先頭から順番に対応する値を取得し、その値に対して`fetch`を適用する<br />
 キーが存在しない場合は、例外が送出される.
@@ -653,15 +555,12 @@ rfetch(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type-assoc
 
 ### rfetch/3 ###
 
-
 <pre><code>
 rfetch(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type-assoc_list">assoc_list()</a>, DefaultValue::<a href="#type-value">value()</a>) -&gt; <a href="#type-value">value()</a>
 </code></pre>
 <br />
 
-
 再帰的にキーに対応する値を取得する.
-
 
 `KeyList`の先頭から順番に対応する値を取得し、その値に対して`fetch`を適用する<br />
 キーが存在しない場合は、デフォルト値が代わりに返される.
@@ -679,16 +578,13 @@ rfetch(KeyList::[<a href="#type-key">key()</a>], AssocList::<a href="#type-assoc
 
 ### rupdate/4 ###
 
-
 <pre><code>
 rupdate(KeyList::[<a href="#type-key">key()</a>], UpdateFun, Initial, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 
 <ul class="definitions"><li><code>UpdateFun = fun((OldValue::<a href="#type-value">value()</a>) -&gt; NewValue::<a href="#type-value">value()</a>)</code></li><li><code>Initial = <a href="#type-value">value()</a></code></li></ul>
 
-
 キーリストに対応する要素の値を更新する.
-
 
 キー(リスト)に対応する要素が存在しない場合は`Initial`を値とする要素が新たに追加される.<br />
 キーリストの初めの方でタプルがなかった場合でも追加される.<br />
@@ -703,21 +599,18 @@ rupdate(KeyList::[<a href="#type-key">key()</a>], UpdateFun, Initial, AssocList:
 
 ### store/3 ###
 
-
 <pre><code>
 store(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 <br />
 
-
 連想リストに要素を追加する.
 
-
 追加しようとしている要素のキーが既に存在している場合は、その要素が取り除かれた上で、新しい要素が追加される。
+
 <a name="store_if_not_exist-3"></a>
 
 ### store_if_not_exist/3 ###
-
 
 <pre><code>
 store_if_not_exist(Key::<a href="#type-key">key()</a>, Value::<a href="#type-value">value()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; {Stored::boolean(), <a href="#type-assoc_list">assoc_list()</a>}
@@ -725,10 +618,10 @@ store_if_not_exist(Key::<a href="#type-key">key()</a>, Value::<a href="#type-val
 <br />
 
 既にキーが存在しない場合にのみ、連想リストに要素を追加する.
+
 <a name="take-2"></a>
 
 ### take/2 ###
-
 
 <pre><code>
 take(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; error | {ok, <a href="#type-value">value()</a>, <a href="#type-assoc_list">assoc_list()</a>}
@@ -736,23 +629,19 @@ take(Key::<a href="#type-key">key()</a>, AssocList::<a href="#type-assoc_list">a
 <br />
 
 キーに対応する要素を連想リストから取り出す(取り除く)
+
 <a name="to_map-1"></a>
 
 ### to_map/1 ###
-
 
 <pre><code>
 to_map(Fields::<a href="moyo_assoc.md#type-assoc_list">moyo_assoc:assoc_list()</a>) -&gt; #{}
 </code></pre>
 <br />
 
-
 連想リストからmapを生成する.
 
-
-
 連想リスト内に重複するキーが存在した場合は先に現れた値が使われる.
-
 
 ex:
 
@@ -765,16 +654,13 @@ ex:
 
 ### to_record/3 ###
 
-
 <pre><code>
 to_record(RecordName, Fields, Params) -&gt; Record
 </code></pre>
 
 <ul class="definitions"><li><code>RecordName = atom()</code></li><li><code>Fields = [atom()]</code></li><li><code>Params = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Record = tuple()</code></li></ul>
 
-
 連想リストからレコードを生成する.
-
 
 `Fields` の値は `record_info(fields, RecordName)` で取得できる. <br />
 以下、使用例:
@@ -790,16 +676,13 @@ to_record(RecordName, Fields, Params) -&gt; Record
 
 ### to_record_as/4 ###
 
-
 <pre><code>
 to_record_as(RecordName, Fields, FieldSpecList, Params) -&gt; {ok, <a href="#type-assoc_list">assoc_list()</a>} | {error, Reason}
 </code></pre>
 
 <ul class="definitions"><li><code>RecordName = atom()</code></li><li><code>Fields = [atom()]</code></li><li><code>FieldSpecList = [<a href="#type-validate_entry_spec">validate_entry_spec()</a>]</code></li><li><code>Params = <a href="#type-assoc_list">assoc_list()</a></code></li><li><code>Reason = term()</code></li></ul>
 
-
 連想リストからレコードを生成する.
-
 
 連想リストから要素を取得する際には`moyo_validator`を使用して、値の検証および変換が行われる. <br />
 以下のコードとほぼ等価:
@@ -813,19 +696,14 @@ to_record_as(RecordName, Fields, FieldSpecList, Params) -&gt; {ok, <a href="#typ
 
 ### unique_by_key/1 ###
 
-
 <pre><code>
 unique_by_key(AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 <br />
 
-
 重複したキーを持つ要素を除去した連想リストを生成する.
 
-
-
 重複するキーが存在した場合は先に現れた値が使われる.
-
 
 ex:
 
@@ -838,36 +716,29 @@ ex:
 
 ### update/4 ###
 
-
 <pre><code>
 update(Key::<a href="#type-key">key()</a>, UpdateFun, Initial, AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; <a href="#type-assoc_list">assoc_list()</a>
 </code></pre>
 
 <ul class="definitions"><li><code>UpdateFun = fun((OldValue::<a href="#type-value">value()</a>) -&gt; NewValue::<a href="#type-value">value()</a>)</code></li><li><code>Initial = <a href="#type-value">value()</a></code></li></ul>
 
-
 キーに対応する要素の値を更新する.
 
-
 キーに対応する要素が存在しない場合は`Initial`を値とする要素が新たに追加される.
+
 <a name="values-1"></a>
 
 ### values/1 ###
-
 
 <pre><code>
 values(AssocList::<a href="#type-assoc_list">assoc_list()</a>) -&gt; [<a href="#type-value">value()</a>]
 </code></pre>
 <br />
 
-
 値のリストを生成する.
-
-
 
 この関数は重複キーを考慮しない.<br />
 重複キーが除去された情報が欲しい場合は, [`unique_by_key/1`](#unique_by_key-1) との併用を検討すること.
-
 
 ex:
 

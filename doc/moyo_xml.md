@@ -6,15 +6,13 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
 XMLに関する処理を集めたユーティリティモジュール.
+
 Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 <a name="description"></a>
 
 ## Description ##
-
-
 
 
 #### <a name="【XMLの表現形式】">【XMLの表現形式】</a> ####
@@ -25,11 +23,9 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
   {要素名, 属性連想リスト, 子要素およびテキストのリスト}
 ```
 
-
 また要素名や属性のキー及び値、テキストは、原則としてバイナリで保持されるようになっている。 <br />
 (ただし、要素名や属性のキーは、アトムで保持することも可能。 <br />
 また、XML文字列を生成する場合の入力値としては、もう少し制限の緩い表現が使用可能となっている)
-
 
 例えば `"<root attr=\"1\">text1<child />text2</root>"` といったXML文字列をパースすると次のような結果が返ってくる:
 
@@ -51,12 +47,9 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ### <a name="type-parse_option">parse_option()</a> ###
 
 
-
 <pre><code>
 parse_option() = {key_type, binary | atom | existing_atom}
 </code></pre>
-
-
 
 __[key_type オプション]__<br />
 パース結果XMLの要素名および属性名をどのような型で表現するかを指定する.<br />
@@ -69,7 +62,6 @@ __[key_type オプション]__<br />
 ### <a name="type-xml">xml()</a> ###
 
 
-
 <pre><code>
 xml() = <a href="#type-xml_element">xml_element()</a>
 </code></pre>
@@ -77,9 +69,7 @@ xml() = <a href="#type-xml_element">xml_element()</a>
 
 
 
-
 ### <a name="type-xml_attribute">xml_attribute()</a> ###
-
 
 
 <pre><code>
@@ -89,9 +79,7 @@ xml_attribute() = {<a href="#type-xml_attribute_key">xml_attribute_key()</a>, <a
 
 
 
-
 ### <a name="type-xml_attribute_key">xml_attribute_key()</a> ###
-
 
 
 <pre><code>
@@ -101,23 +89,18 @@ xml_attribute_key() = atom() | binary()
 
 
 
-
 ### <a name="type-xml_attribute_value">xml_attribute_value()</a> ###
-
 
 
 <pre><code>
 xml_attribute_value() = iodata() | term()
 </code></pre>
 
-
-
- parse系関数の結果としては常にバイナリが返る
+parse系関数の結果としては常にバイナリが返る
 
 
 
 ### <a name="type-xml_content">xml_content()</a> ###
-
 
 
 <pre><code>
@@ -127,9 +110,7 @@ xml_content() = <a href="#type-xml_element">xml_element()</a> | <a href="#type-x
 
 
 
-
 ### <a name="type-xml_element">xml_element()</a> ###
-
 
 
 <pre><code>
@@ -139,9 +120,7 @@ xml_element() = {<a href="#type-xml_element_name">xml_element_name()</a>, [<a hr
 
 
 
-
 ### <a name="type-xml_element_name">xml_element_name()</a> ###
-
 
 
 <pre><code>
@@ -151,18 +130,15 @@ xml_element_name() = atom() | binary()
 
 
 
-
 ### <a name="type-xml_text">xml_text()</a> ###
-
 
 
 <pre><code>
 xml_text() = iodata() | term()
 </code></pre>
 
+parse系関数の結果としては常にバイナリが返る
 
-
- parse系関数の結果としては常にバイナリが返る
 <a name="index"></a>
 
 ## Function Index ##
@@ -179,23 +155,20 @@ xml_text() = iodata() | term()
 
 ### parse_binary/2 ###
 
-
 <pre><code>
 parse_binary(InputXml, Options::[<a href="#type-parse_option">parse_option()</a>]) -&gt; {<a href="#type-xml">xml()</a>, RestXml}
 </code></pre>
 
 <ul class="definitions"><li><code>InputXml = binary()</code></li><li><code>RestXml = binary()</code></li></ul>
 
-
 XML文字列(バイナリ)をパースする.
-
 
 パース結果XMLの属性値およびテキストの型は常にバイナリとなる. <br />
 パースに失敗した場合は例外が送出される.
+
 <a name="parse_file-2"></a>
 
 ### parse_file/2 ###
-
 
 <pre><code>
 parse_file(FilePath, Options::[<a href="#type-parse_option">parse_option()</a>]) -&gt; {<a href="#type-xml">xml()</a>, RestXml}
@@ -203,25 +176,22 @@ parse_file(FilePath, Options::[<a href="#type-parse_option">parse_option()</a>])
 
 <ul class="definitions"><li><code>FilePath = <a href="file.md#type-name_all">file:name_all()</a></code></li><li><code>RestXml = binary()</code></li></ul>
 
-
 XMLファイルをパースする.
-
 
 パース結果XMLの属性値およびテキストの型は常にバイナリとなる. <br />
 パースに失敗した場合は例外が送出される.
+
 <a name="to_iolist-1"></a>
 
 ### to_iolist/1 ###
-
 
 <pre><code>
 to_iolist(Xml::<a href="#type-xml">xml()</a>) -&gt; XmlString::iolist()
 </code></pre>
 <br />
 
-
 XMLをiolist形式の文字列に変換する
-
 
 変換に失敗した場合は例外が送出される. <br />
 要素の属性値や内容は[`moyo_string:to_string/1`](moyo_string.md#to_string-1)によって、適宜文字列に変換される.
+

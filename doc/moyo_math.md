@@ -6,10 +6,9 @@
 * [Function Index](#index)
 * [Function Details](#functions)
 
-
 数学的な関数を集めたモジュール.
-Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 
+Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 
 <a name="types"></a>
 
@@ -21,11 +20,9 @@ Copyright (c) 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
 ### <a name="type-random_sequence_symbols">random_sequence_symbols()</a> ###
 
 
-
 <pre><code>
 random_sequence_symbols() = alphabetical | numeric | alphanumeric
 </code></pre>
-
 
 <a name="index"></a>
 
@@ -43,15 +40,12 @@ random_sequence_symbols() = alphabetical | numeric | alphanumeric
 
 ### ceil/1 ###
 
-
 <pre><code>
 ceil(Number::number()) -&gt; integer()
 </code></pre>
 <br />
 
-
 数(number)を切り上げて整数を返す.
-
 
 指定した以上の整数で最小のものを返す.
 
@@ -72,30 +66,25 @@ ceil(Number::number()) -&gt; integer()
 
 ### divmod/2 ###
 
-
 <pre><code>
 divmod(A::integer(), B::integer()) -&gt; {Quotient::integer(), Remainder::integer()}
 </code></pre>
 <br />
 
-
 除算した商と剰余を求める関数.
 
-
 除数が0である場合, `badarith` errorが発生する.
+
 <a name="floor-1"></a>
 
 ### floor/1 ###
-
 
 <pre><code>
 floor(Number::number()) -&gt; integer()
 </code></pre>
 <br />
 
-
 数(number)を切り下げて整数を返す.
-
 
 指定した以下の整数で最大のものを返す.
 
@@ -116,37 +105,32 @@ floor(Number::number()) -&gt; integer()
 
 ### gcd/2 ###
 
-
 <pre><code>
 gcd(A::integer(), B::integer()) -&gt; GCD::integer()
 </code></pre>
 <br />
 
-
 最大公約数を求める.
 
-
 両方の引数が0の場合, `both_0_error`をthrowする.
+
 <a name="pow_int-2"></a>
 
 ### pow_int/2 ###
-
 
 <pre><code>
 pow_int(Base::integer(), Exponent::non_neg_integer()) -&gt; Value::integer()
 </code></pre>
 <br />
 
-
 累乗関数.
-
 
 計算結果がinteger()になる計算のみ行える.
 具体的には、引数は整数のみで、第2引数は0以上のみを扱う.
+
 <a name="random_sequence-1"></a>
 
 ### random_sequence/1 ###
-
 
 <pre><code>
 random_sequence(Length::non_neg_integer()) -&gt; binary()
@@ -154,10 +138,10 @@ random_sequence(Length::non_neg_integer()) -&gt; binary()
 <br />
 
 Equivalent to [`random_sequence(Length, [])`](#random_sequence-2).
+
 <a name="random_sequence-2"></a>
 
 ### random_sequence/2 ###
-
 
 <pre><code>
 random_sequence(Length::non_neg_integer(), Options) -&gt; binary()
@@ -165,9 +149,8 @@ random_sequence(Length::non_neg_integer(), Options) -&gt; binary()
 
 <ul class="definitions"><li><code>Options = [{symbol, Symbols}]</code></li><li><code>Symbols = <a href="#type-random_sequence_symbols">random_sequence_symbols()</a></code></li></ul>
 
-
 ランダム文字列を返す
-
 
 この関数を利用する時は、random:seed を実行して乱数初期化をする必要があります。
 DataTypeで出力形式を指定し、Symbolで出力内容を指定する．
+
