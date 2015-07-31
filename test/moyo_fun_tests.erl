@@ -179,3 +179,56 @@ maybe_fold_range_test_() ->
                            moyo_fun:maybe_fold_range(fun(Index, Acc) -> {ok, Index + Acc} end, 0, 1, 10))
       end}
     ].
+
+composite_test_() ->
+    [
+     {"関数リストの要素数がゼロで第2引数が指定されない場合はokを返す",
+      fun() ->
+              ?assertEqual(ok, moyo_fun:composite_apply([]))
+      end},
+     {"関数リストの要素数がゼロで第2引数が指定される場合は{ok, 引数}を返す",
+      fun() ->
+              ?assertEqual({ok, data}, moyo_fun:composite_apply([], data))
+      end},
+     {"関数リストの先頭の関数が引数をとらない場合も実行できる",
+      fun() ->
+              Fun1 = fun() -> {ok, data} end,
+              Fun2 = fun(data) -> {ok, result} end,
+              ?assertEqual({ok, result}, moyo_fun:composite_apply([Fun1, Fun2]))
+      end},
+     {"関数リストの先頭の関数が引数をとる場合も実行できる",
+      fun() ->
+              Fun = fun(X) -> {ok, X} end,
+              ?assertEqual({ok, result}, moyo_fun:composite_apply([Fun, Fun], result))
+      end},
+     {"関数リスト中(先頭以外)に引数をとらない関数が混ざる場合も実行できる",
+      fun() ->
+              Fun1 = fun(_X) -> ok end,
+              Fun2 = fun() -> ok end,
+              Fun3 = fun() -> {ok, data} end,
+              ?assertEqual({ok, data}, moyo_fun:composite_apply([Fun1, Fun2, Fun3], data))
+      end},
+     {"関数リストの実行途中にerrorが発生した場合，そこで演算を終了させる",
+      fun() ->
+              Fun1  = fun(_X) -> ok end,
+              Fun2  = fun() -> {ok, data} end,
+              FunE1 = fun() -> error end,
+              FunE2 = fun() -> {error, message} end,
+              ?assertEqual(error, moyo_fun:composite_apply([Fun1, FunE1, Fun2], data)),
+              ?assertEqual({error, message}, moyo_fun:composite_apply([Fun1, FunE2, Fun2], data))
+      end},
+     {"関数リスト中のある関数の返り値の個数と次に実行される関数のarityが異なる場合，"
+      "bad_arityエラーで例外を発生する",
+      fun() ->
+              Fun1 = fun(X) -> {ok, X} end,
+              Fun2 = fun() -> {ok, result} end,
+              ?assertError(bad_arity, moyo_fun:composite_apply([Fun1, Fun2], data)),
+              ?assertError(bad_arity, moyo_fun:composite_apply([Fun1, Fun2]))
+      end},
+     {"タプルを用いて複数の引数を与えることができる",
+      fun() ->
+              Fun1 = fun(X) -> {ok, {X, X}} end,
+              Fun2 = fun({X,Y}) -> {ok, {X, Y}} end,
+              ?assertEqual({ok, {data, data}}, moyo_fun:composite_apply([Fun1, Fun2], data))
+      end}
+    ].

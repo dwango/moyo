@@ -17,6 +17,34 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 
 
+### <a name="type-computation">computation()</a> ###
+
+
+
+<pre><code>
+computation() = fun(() -&gt; <a href="#type-computation_status">computation_status()</a>) | fun((InputValue::term()) -&gt; <a href="#type-computation_status">computation_status()</a>)
+</code></pre>
+
+
+
+  合成関数を構成する関数一つ一つの定義．個々の関数はarityを0又は1とし,computation_status()を返すものとする.
+
+
+
+### <a name="type-computation_status">computation_status()</a> ###
+
+
+
+<pre><code>
+computation_status() = {ok, Response::term()} | ok | {error, Error::term()} | error
+</code></pre>
+
+
+
+  合成関数を構成する関数一つ一つの返り値の定義.
+
+
+
 ### <a name="type-stack_item">stack_item()</a> ###
 
 
@@ -29,7 +57,8 @@ stack_item() = {Module::module(), Function::atom(), Arity::arity() | (Args::[ter
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply_on_exit-4">apply_on_exit/4</a></td><td>Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.</td></tr><tr><td valign="top"><a href="#apply_on_exit_impl-4">apply_on_exit_impl/4</a></td><td></td></tr><tr><td valign="top"><a href="#apply_on_exit_receiver-4">apply_on_exit_receiver/4</a></td><td></td></tr><tr><td valign="top"><a href="#fold_range-4">fold_range/4</a></td><td>関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.</td></tr><tr><td valign="top"><a href="#map_range-3">map_range/3</a></td><td>関数に loop X in [From, To] を渡して各々の結果をリストで返す.</td></tr><tr><td valign="top"><a href="#maybe_fold_range-4">maybe_fold_range/4</a></td><td><code>{error, Reason}</code>を返した場合に途中で処理を中断し, 結果を返す <a href="#fold_range-4"><code>fold_range/4</code></a></td></tr><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#apply_on_exit-4">apply_on_exit/4</a></td><td>Pidsで指定したプロセスのうちの一つでも死んだら指定の関数を実行する.</td></tr><tr><td valign="top"><a href="#apply_on_exit_impl-4">apply_on_exit_impl/4</a></td><td></td></tr><tr><td valign="top"><a href="#apply_on_exit_receiver-4">apply_on_exit_receiver/4</a></td><td></td></tr><tr><td valign="top"><a href="#composite_apply-1">composite_apply/1</a></td><td>関数のリストを先頭から順に実行する.ただし,先頭の関数は引数をとらない.</td></tr><tr><td valign="top"><a href="#composite_apply-2">composite_apply/2</a></td><td>関数のリストを先頭から順に実行する.先頭の関数が引数をとる場合は,
+その引数を本関数の第二引数にリストで指定する.</td></tr><tr><td valign="top"><a href="#fold_range-4">fold_range/4</a></td><td>関数に loop X in [From, To] と直前の結果を渡して最後の結果を返す.</td></tr><tr><td valign="top"><a href="#map_range-3">map_range/3</a></td><td>関数に loop X in [From, To] を渡して各々の結果をリストで返す.</td></tr><tr><td valign="top"><a href="#maybe_fold_range-4">maybe_fold_range/4</a></td><td><code>{error, Reason}</code>を返した場合に途中で処理を中断し, 結果を返す <a href="#fold_range-4"><code>fold_range/4</code></a></td></tr><tr><td valign="top"><a href="#repeat-3">repeat/3</a></td><td>指定した回数だけ関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-3">try_apply/3</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_apply-4">try_apply/4</a></td><td>指定された関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-1">try_call/1</a></td><td>引数の関数を実行する.</td></tr><tr><td valign="top"><a href="#try_call-2">try_call/2</a></td><td>引数の関数を実行する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -65,6 +94,31 @@ apply_on_exit_receiver(RefList::[reference()], Module::module(), Function::atom(
 </code></pre>
 <br />
 
+<a name="composite_apply-1"></a>
+
+### composite_apply/1 ###
+
+
+<pre><code>
+composite_apply(FunctionList::[<a href="#type-computation">computation()</a>]) -&gt; <a href="#type-computation_status">computation_status()</a>
+</code></pre>
+<br />
+
+関数のリストを先頭から順に実行する.ただし,先頭の関数は引数をとらない.
+<a name="composite_apply-2"></a>
+
+### composite_apply/2 ###
+
+
+<pre><code>
+composite_apply(FunctionList::[<a href="#type-computation">computation()</a>], Arg::term()) -&gt; <a href="#type-computation_status">computation_status()</a>
+</code></pre>
+<br />
+
+関数のリストを先頭から順に実行する.先頭の関数が引数をとる場合は,
+その引数を本関数の第二引数にリストで指定する.
+リスト中の各関数の返り値を,次に実行される関数の引数として渡して
+errorを吐くまで実行していく.
 <a name="fold_range-4"></a>
 
 ### fold_range/4 ###
