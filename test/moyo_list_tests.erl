@@ -233,7 +233,7 @@ maybe_foreach_test_() ->
     ].
 
 maybe_pmap_test_() ->
-    random:seed(now()),
+    random:seed(moyo_clock:now()),
     [
      {"空のリストの要素をマッピングする",
       fun () ->
