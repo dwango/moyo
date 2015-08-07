@@ -35,6 +35,9 @@
 %% execute/3の第3引数に渡せるオプションの中でopen_port/2に渡さないオプションリスト.
 -define(NON_OPENPORT_OPTION, [escape_all, stdout, stderr, discard_stderr, timeout, close_function, stdout_hook_fun, nice]).
 
+%% float() -> binary()のデフォルト表記法
+-define(DEFAULT_FLOAT_NOTATION, {decimals, 4}).
+
 -type iodata_or_atom()   :: iodata() | atom().
 %% iodata(), または, atom().
 -type command()          :: iodata_or_atom().
@@ -48,8 +51,10 @@
 %% オプション文字.
 -type option_argument()  :: iodata() | integer() | none.
 %% オプションの引数部分.
--type argument_option()  :: long_option | equal | escape.
+-type argument_option()  :: long_option | equal | escape | float_option().
 %% 引数に関するオプション.
+-type float_option()     :: {decimals, Decimals :: 0..253} | {scientific, Decimals :: 0..249} | compact.
+%% 小数パラメータに関するオプション.
 -type option()           :: port_settings() | escape_all
                           | {stdout, destination_file_path() | stderr} | {stderr, destination_file_path() | stdout}
                           | discard_stderr
@@ -86,6 +91,13 @@ generate_command(Command, ArgumentList) -> generate_command(Command, ArgumentLis
 %% ● `long_option': long optionにする("--"でオプションを指定する.).<br />
 %% ● `equal'      : オプション文字とオプション引数の間を"="で繋ぐ.<br />
 %% ● `escape'     : オプション引数をシングルクォーテーションでエスケープする.<br />
+%%
+%% 【argument option (小数)】<br />
+%% ● `{scientific, 0..253}' : 小数を指数表記で出力する.数字は有効桁数.<br />
+%% ● `{decimals, 0..249}'   : 小数を実数表記で出力する.数字は有効桁数.<br />
+%% ● `compact'              : 後端のゼロを省く.<br />
+%%  (\*) デフォルトは`[{decimals, 4}]'<br />
+%%  (\*) 表記方法が複数指定されている場合,最も後に指定された表記方法が採用される.<br />
 %%
 %% 【option】<br />
 %% ● `escape_all'            : 全てのオプション引数をエスケープする.<br />
@@ -175,15 +187,77 @@ reduce_parameters(Parameters, UnnecessaryParameters) ->
 iodata_and_atom_to_binary(Atom) when is_atom(Atom) -> atom_to_binary(Atom, utf8);
 iodata_and_atom_to_binary(Iodata)                  -> iolist_to_binary(Iodata).
 
+%% @doc デフォルトの表記オプションに従ってfloat()をbinary()に変換する
+-spec parse_float_to_binary(float()) -> binary().
+parse_float_to_binary(Float) -> parse_float_to_binary(Float, []).
+
+%% @doc float()をbinary()に変換する
+-spec parse_float_to_binary(float(), [argument_option()]) -> binary().
+parse_float_to_binary(Float, OptionList) ->
+    {Notation, SigFigure, Compact} = fetch_float_notation(OptionList),
+    FloatOption = case Compact of
+        compact -> [{Notation, SigFigure}, Compact];
+        none    -> [{Notation, SigFigure}]
+    end,
+
+    FloatBinary = float_to_binary(Float, FloatOption),
+    case {Notation, Compact} of
+        {scientific, compact} -> compactize_scientific_notation(FloatBinary);
+        _                     -> FloatBinary
+    end.
+
+%% @doc オプションリストから表記方法, 有効数字, compactか否かを取り出す
+-spec fetch_float_notation([argument_option()]) -> {N, S, C} when
+    N :: scientific | decimals | none,
+    S :: 0..253 | none,
+    C :: compact | normal | none.
+fetch_float_notation(OptionList) -> fetch_float_notation_impl([?DEFAULT_FLOAT_NOTATION| OptionList], {none, none, none}).
+
+%% @doc オプションリストから表記方法, 有効数字, compactか否かを取り出す
+-spec fetch_float_notation_impl([argument_option()], {N, S, C}) -> {N, S, C} when
+    N :: scientific | decimals | none,
+    S :: 0..253 | none,
+    C :: compact | normal | none.
+fetch_float_notation_impl([], NotationTuple) -> NotationTuple;
+fetch_float_notation_impl([compact|OptionList], {Notation, SigFigure, _Compact}) ->
+    fetch_float_notation_impl(OptionList, {Notation, SigFigure, compact});
+fetch_float_notation_impl([{scientific, N}|OptionList], {_Notation, _SigFigure, Compact}) ->
+    fetch_float_notation_impl(OptionList, {scientific, N, Compact});
+fetch_float_notation_impl([{decimals, N}|OptionList], {_Notation, _SigFigure, Compact}) ->
+    fetch_float_notation_impl(OptionList, {decimals, N, Compact});
+fetch_float_notation_impl([_Option|OptionList], NotationTuple) ->
+    fetch_float_notation_impl(OptionList, NotationTuple).
+
+%% @doc scientific-notationのcompactモード
+-spec compactize_scientific_notation(binary()) -> binary().
+compactize_scientific_notation(FloatBinary) ->
+    [NormVal, Exp] = binary:split(FloatBinary, <<"e">>),
+    RoundedNormVal = cutoff_trailings(NormVal, $0),
+    <<RoundedNormVal/binary, "e", Exp/binary>>.
+
+%% @doc binary()の後端のバイトが指定されたバイト値でなくなるまで後端のバイトを削除する．
+-spec cutoff_trailings(binary(), byte()) -> binary().
+cutoff_trailings(Bin, Cutoff) ->
+    ByteLength = byte_size(Bin),
+    case binary:last(Bin) of
+        Cutoff -> cutoff_trailings(binary:part(Bin, {0, ByteLength-1}), Cutoff);
+        _      -> Bin
+    end.
+
 %% @doc 引数で用いられる値をbinary()に変換する.
 -spec to_binary_for_argument(iodata_or_atom() | integer()) -> binary().
 to_binary_for_argument(Integer) when is_integer(Integer) -> integer_to_binary(Integer);
+to_binary_for_argument(Float) when is_float(Float)       -> parse_float_to_binary(Float);
 to_binary_for_argument(IodataOrAtom)                     -> iodata_and_atom_to_binary(IodataOrAtom).
 
 %% @doc オプションのタプルをフラットなバイナリに変換.
 -spec flatten_option(Option::argument()) -> binary().
 %% {引数, オプション}のパターン
-flatten_option({Argument, [Item|_] = OptionList}) when is_atom(Item) ->
+%% floatはOptionListの要素がatom以外のパターンもある
+flatten_option({Argument, OptionList}) when is_float(Argument) ->
+    Argument1 = parse_float_to_binary(Argument, OptionList),
+    generate_option_argument(Argument1, OptionList);
+flatten_option({Argument, [Item|_]=OptionList}) when is_atom(Item) or is_tuple(Item) ->
     Argument1 = to_binary_for_argument(Argument),
     generate_option_argument(Argument1, OptionList);
 

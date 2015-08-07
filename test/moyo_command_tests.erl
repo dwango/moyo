@@ -212,7 +212,70 @@ generate_command_test_() ->
               Command = moyo_command:generate_command(command, [argument, {optchr, optarg}], [discard_stderr]),
               Expected = <<"command argument -optchr optarg 2> /dev/null">>,
               ?assertEqual(Expected, Command)
+      end},
+
+     {"オプション無しfloatを指定",
+      fun () ->
+              Command = moyo_command:generate_command(command, [3.3]),
+              Expected = <<"command 3.3000">>,
+              ?assertEqual(Expected, Command)
+      end},
+
+     {"compactなfloatを指定",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [compact]}]),
+              Expected = <<"command 3.3">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"scientificなfloatを指定",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [{scientific, 3}]}]),
+              Expected = <<"command 3.300e+00">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"decimalsなfloatを指定",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [{decimals, 5}]}]),
+              Expected = <<"command 3.30000">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"scientificでcompactなfloatを指定",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [{scientific, 3}, compact]}]),
+              Expected = <<"command 3.3e+00">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"floatのnotationの指定が複数ある場合は，もっとも後端の指定が有効になる",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [{decimals, 10}, {decimals, 20}, {scientific, 50}, {scientific, 3}]}]),
+              Expected = <<"command 3.300e+00">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"floatもescapeできる",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [compact, escape]}]),
+              Expected = <<"command '3.3'">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"floatにもescape_allが反映される",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{3.3, [compact]}], [escape_all]),
+              Expected = <<"command '3.3'">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"floatでない引数にfloat用のオプションを追加した場合，float用オプションは無視される",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{not_a_float, [{decimals, 20}, compact]}]),
+              Expected = <<"command not_a_float">>,
+              ?assertEqual(Expected, Command)
+      end},
+     {"floatでない引数にfloat用のオプションが追加されている場合でも，有効なオプションは適応される",
+      fun () ->
+              Command = moyo_command:generate_command(command, [{20, [{decimals, 20}, escape, compact]}]),
+              Expected = <<"command '20'">>,
+              ?assertEqual(Expected, Command)
       end}
+  
     ].
 
 execute_test_() ->

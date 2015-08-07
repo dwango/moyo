@@ -32,7 +32,7 @@ argument() = iodata() | integer() | {iodata(), [<a href="#type-argument_option">
 
 
 <pre><code>
-argument_option() = long_option | equal | escape
+argument_option() = long_option | equal | escape | <a href="#type-float_option">float_option()</a>
 </code></pre>
 
  引数に関するオプション.
@@ -58,6 +58,20 @@ destination_file_path() = binary()
 </code></pre>
 
  標準出力/エラー出力の出力先.
+
+
+
+### <a name="type-float_option">float_option()</a> ###
+
+
+
+<pre><code>
+float_option() = {decimals, Decimals::0..253} | {scientific, Decimals::0..249} | compact
+</code></pre>
+
+
+
+  小数パラメータに関するオプション.
 
 
 
@@ -223,6 +237,15 @@ generate_command(Command::<a href="#type-command">command()</a>, ArgumentList::[
 ● `long_option`: long optionにする("--"でオプションを指定する.).<br />
 ● `equal`      : オプション文字とオプション引数の間を"="で繋ぐ.<br />
 ● `escape`     : オプション引数をシングルクォーテーションでエスケープする.<br />
+
+
+
+【argument option (小数)】<br />
+● `{scientific, 0..253}` : 小数を指数表記で出力する.数字は有効桁数.<br />
+● `{decimals, 0..249}`   : 小数を実数表記で出力する.数字は有効桁数.<br />
+● `compact`              : 後端のゼロを省く.<br />
+(\*) デフォルトは`[{decimals, 4}]`<br />
+(\*) 表記方法が複数指定されている場合,最も後に指定された表記方法が採用される.<br />
 
 【option】<br />
 ● `escape_all`            : 全てのオプション引数をエスケープする.<br />
