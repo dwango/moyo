@@ -64,14 +64,11 @@ destination_file_path() = binary()
 ### <a name="type-float_option">float_option()</a> ###
 
 
-
 <pre><code>
 float_option() = {decimals, Decimals::0..253} | {scientific, Decimals::0..249} | compact
 </code></pre>
 
-
-
-  小数パラメータに関するオプション.
+ 小数パラメータに関するオプション.
 
 
 
@@ -237,8 +234,6 @@ generate_command(Command::<a href="#type-command">command()</a>, ArgumentList::[
 ● `long_option`: long optionにする("--"でオプションを指定する.).<br />
 ● `equal`      : オプション文字とオプション引数の間を"="で繋ぐ.<br />
 ● `escape`     : オプション引数をシングルクォーテーションでエスケープする.<br />
-
-
 
 【argument option (小数)】<br />
 ● `{scientific, 0..253}` : 小数を指数表記で出力する.数字は有効桁数.<br />

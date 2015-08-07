@@ -20,28 +20,22 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ### <a name="type-computation">computation()</a> ###
 
 
-
 <pre><code>
 computation() = fun(() -&gt; <a href="#type-computation_status">computation_status()</a>) | fun((InputValue::term()) -&gt; <a href="#type-computation_status">computation_status()</a>)
 </code></pre>
 
-
-
-  合成関数を構成する関数一つ一つの定義．個々の関数はarityを0又は1とし,computation_status()を返すものとする.
+ 合成関数を構成する関数一つ一つの定義．個々の関数はarityを0又は1とし,computation_status()を返すものとする.
 
 
 
 ### <a name="type-computation_status">computation_status()</a> ###
 
 
-
 <pre><code>
-computation_status() = {ok, Response::term()} | ok | {error, Error::term()} | error
+computation_status() = {ok, Response::term()} | ok | {error, Reason::term()} | error
 </code></pre>
 
-
-
-  合成関数を構成する関数一つ一つの返り値の定義.
+ 合成関数を構成する関数一つ一つの返り値の定義.
 
 
 
@@ -98,17 +92,16 @@ apply_on_exit_receiver(RefList::[reference()], Module::module(), Function::atom(
 
 ### composite_apply/1 ###
 
-
 <pre><code>
 composite_apply(FunctionList::[<a href="#type-computation">computation()</a>]) -&gt; <a href="#type-computation_status">computation_status()</a>
 </code></pre>
 <br />
 
 関数のリストを先頭から順に実行する.ただし,先頭の関数は引数をとらない.
+
 <a name="composite_apply-2"></a>
 
 ### composite_apply/2 ###
-
 
 <pre><code>
 composite_apply(FunctionList::[<a href="#type-computation">computation()</a>], Arg::term()) -&gt; <a href="#type-computation_status">computation_status()</a>
@@ -119,6 +112,7 @@ composite_apply(FunctionList::[<a href="#type-computation">computation()</a>], A
 その引数を本関数の第二引数にリストで指定する.
 リスト中の各関数の返り値を,次に実行される関数の引数として渡して
 errorを吐くまで実行していく.
+
 <a name="fold_range-4"></a>
 
 ### fold_range/4 ###
