@@ -92,7 +92,7 @@ moyo_eunit_test_() ->
                ?assertEqual(H, 1),
 
                L2 = lists:seq(1, 0),
-               ?assertError({assertMatch_failed, _}, ?assignMatch([H2 | _], L2))
+               ?assertError({assertMatch_failed, _}, ?assignMatch([_ | _], L2))
        end},
       {"assignMatchが部分が単なる代入でなくても利用できる",
        fun() ->

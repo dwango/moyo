@@ -17,7 +17,7 @@
 -define(assertMatch2(Guard, Expr),
         (fun() ->
                  try
-                     Guard = Expr,
+                     Guard = Guard=Expr,
                      ok
                  catch
                      error:{badmatch, __MOYO_EUNIT_V} ->
