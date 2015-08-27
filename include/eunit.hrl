@@ -17,7 +17,15 @@
 -define(assertMatch2(Guard, Expr),
         (fun() ->
                  try
-                     Guard = Guard=Expr,
+                     __MOYO_ASSERT_MATCH2_TMP = Expr,
+
+                     %% `Gurad'内に変数が含まれる場合に、OTP18で"unused変数警告"が出力されるのを抑制するために、二度`Guard'を使っている。
+                     %% (一度目で束縛された変数が、二度目は使われるので警告がでなくなる)
+                     %%
+                     %% なお`Guard = Guard = __MOYO_ASSERT_MATCH2_TMP'のようにまとめて書くと、`Gurad'にバイナリリテラルが含まれる場合に、
+                     %% OTP18で別のコンパイラ警告が出てしまうので、別々に分けている。
+                     Guard = __MOYO_ASSERT_MATCH2_TMP,
+                     Guard = __MOYO_ASSERT_MATCH2_TMP,
                      ok
                  catch
                      error:{badmatch, __MOYO_EUNIT_V} ->

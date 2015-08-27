@@ -17,6 +17,14 @@ moyo_eunit_test_() ->
                ?assertMatch2(hoge, hoge),
                ?assertError({assertMatch_failed, _}, ?assertMatch2([], lists:seq(1,3)))
        end},
+      {"assertMatch2の引数に関数を入れた時、2回実行されない",
+       fun() ->
+               Fun = fun() -> self() ! ok end,
+               ?assertMatch2(ok, Fun()),
+
+               ReceiveCounter = fun Counter(Count) -> receive ok -> Counter(Count + 1) after 0 -> Count end end,
+               ?assertEqual(1, ReceiveCounter(0))
+       end},
       {"assertTerminatedが正常に実行できる",
        fun() ->
                _ = process_flag(trap_exit, true),
@@ -93,6 +101,14 @@ moyo_eunit_test_() ->
 
                L2 = lists:seq(1, 0),
                ?assertError({assertMatch_failed, _}, ?assignMatch([_ | _], L2))
+       end},
+      {"assignMatchを使ったリテラル同士のマッチ",
+       fun () ->
+               ?assignMatch(1, 1),
+               ?assignMatch(a, a),
+               ?assignMatch(<<"a">>, <<"a">>),
+               ?assignMatch([a], [a]),
+               ?assignMatch({a}, {a})
        end},
       {"assignMatchが部分が単なる代入でなくても利用できる",
        fun() ->

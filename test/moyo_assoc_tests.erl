@@ -813,3 +813,49 @@ values_test_() ->
                 ?assertEqual(Expected, moyo_assoc:values(moyo_assoc:unique_by_key(AssocList)))
             end}
     ].
+
+from_map_recur_test_() ->
+    [
+        {"mapからassocListに再起的に変換できる",
+            fun() ->
+                NestAL = lists:foldl(
+                    fun(_, Res) -> [{0, Res}] end, 0, lists:seq(1, 10)
+                ),
+                NestMap = lists:foldl(
+                    fun(_, Res) -> #{0=>Res} end, 0, lists:seq(1, 10)
+                ),
+                ?assertEqual(NestAL, moyo_assoc:from_map_recur(NestMap)),
+                ?assert(moyo_assoc:equal(
+                    [{#{}, []}, {[], []}, {a, a}],
+                    moyo_assoc:from_map_recur(#{#{}=>#{}, []=>#{}, a=>a})
+                ))
+            end}
+    ].
+
+to_map_recur_test_() ->
+    [
+        {"assocListからmapに再起的に変換できる",
+            fun() ->
+                NestAL = lists:foldl(
+                    fun(_, Res) -> [{0, Res}] end, 0, lists:seq(1, 10)
+                ),
+                NestMap = lists:foldl(
+                    fun(_, Res) -> #{0=>Res} end, 0, lists:seq(1, 10)
+                ),
+                ?assertEqual(NestMap, moyo_assoc:to_map_recur(NestAL)),
+                ?assertEqual(
+                    #{#{}=>#{}, []=>#{}, a=>a}
+                    , moyo_assoc:to_map_recur([{#{}, []}, {[], []}, {a, a}]))
+            end},
+        {"assocListでないものを変換しない",
+            fun() ->
+                Check = fun(A) -> ?assertEqual(#{0=>A}, moyo_assoc:to_map_recur([{0, A}])) end,
+                Check(#{}),
+                Check([{1, 2}, 3]),
+                Check([0, {1, 2}])
+            end},
+        {"Keyが同じなら前の値で変換される",
+            fun() ->
+                ?assertEqual(#{1=>#{1=>2}}, moyo_assoc:to_map_recur([{1, [{1, 2}, {1, 3}]}, {1, 3}]))
+            end}
+    ].

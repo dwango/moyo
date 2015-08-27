@@ -73,7 +73,9 @@
          unique_by_key/1,
          keys/1,
          keys_as_set/1,
-         values/1
+         values/1,
+         from_map_recur/1,
+         to_map_recur/1
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -648,6 +650,42 @@ keys_as_set(AssocList) ->
 values(AssocList) ->
     [Value || {_, Value} <- AssocList].
 
+%% @doc ネストしたmapをassocListに変換する
+%%
+%% Mapからassoclistに変換する
+%% また、各Valに対し再帰的にこの関数を適用する
+%%
+%% ex:
+%% ```
+%% from_map_recur(#{#{}=>#{},[]=>#{}}).
+%% [{#{},[]},{[],[]}]
+%% '''
+-spec from_map_recur(#{}) -> assoc_list().
+from_map_recur(NestMap)when is_map(NestMap) ->
+    fun F(Map) when is_map(Map) -> from_map(maps:map(fun(_, V) -> F(V) end, Map));
+        F(Leaf) -> Leaf
+    end(NestMap).
+
+%% @doc ネストしたassocListをmapに変換する
+%%
+%% assocListをMapに変換する
+%% また、各Valに対し再帰的にこの関数を適用する
+%%
+%% ex:
+%% ```
+%% to_map_recur([{#{},[]},{[],[]}]).
+%% #{#{}=>#{},[]=>#{}}
+%% '''
+-spec to_map_recur(assoc_list()) -> #{}.
+to_map_recur(NestAssocList)  ->
+    if  %速度上の理由でis_assocListによる事前チェックは行わない
+        is_list(NestAssocList) ->
+            case to_map_recur_any(NestAssocList) of
+                Res when (is_map(Res)) -> Res;
+                _ -> error(badarg)
+            end;
+        true -> error(badarg)
+    end.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
@@ -727,3 +765,18 @@ intersection_and_differences_impl([], [], Intersec, Diff1, Diff2) ->
     ReversedDiff1 = lists:reverse(Diff1),
     ReversedDiff2 = lists:reverse(Diff2),
     {ReversedIntersec, ReversedDiff1, ReversedDiff2}.
+
+-spec to_map_recur_any(any()) -> any().
+to_map_recur_any(AssocList) when is_list(AssocList) ->
+    MappedOptional = moyo_list:maybe_map(
+        fun({K, V}) -> {ok, {K, to_map_recur_any(V)}};
+            (_) -> {error, isnt_assoc_list}
+        end,
+        AssocList),
+    case MappedOptional of
+        {ok, Res} -> to_map(Res);
+        {error, _} -> AssocList
+    end;
+to_map_recur_any(Leaf) -> Leaf.
+
+

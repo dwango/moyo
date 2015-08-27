@@ -383,3 +383,19 @@ number_to_fixed_point_binary_test_() ->
                            moyo_binary:number_to_fixed_point_binary(32, 32, 1.5))
       end}
     ].
+
+from_integer_test_() ->
+    [
+        {"大文字",
+            fun() ->
+                ?assertEqual(<<"G">>, moyo_binary:from_integer(16, 36, uppercase)),
+                ?assertEqual(<<"1111">>, moyo_binary:from_integer(15, 2, uppercase)),
+                ?assertEqual(<<"-A">>, moyo_binary:from_integer(-10, 16, uppercase))
+            end},
+        {"小文字",
+            fun() ->
+                ?assertEqual(<<"g">>, moyo_binary:from_integer(16, 36, lowercase)),
+                ?assertEqual(<<"1111">>, moyo_binary:from_integer(15, 2, lowercase)),
+                ?assertEqual(<<"-a">>, moyo_binary:from_integer(-10, 16, lowercase))
+            end}
+    ].

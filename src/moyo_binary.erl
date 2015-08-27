@@ -25,7 +25,8 @@
          fill/2,
          join/2,
          fixed_point_binary_to_number/3,
-         number_to_fixed_point_binary/3
+         number_to_fixed_point_binary/3,
+         from_integer/3
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -270,6 +271,13 @@ join([Head1|[Head2|Tail]], Separator) ->
 join([Head], _) -> Head;
 join([], _) -> <<>>.
 
+%% @doc IntをBase進数に変換してバイナリ文字列で返す。大文字小文字が指定できる
+-spec from_integer(Int :: integer(), Base :: 2..36, Case :: 'uppercase'|'lowercase') -> binary().
+from_integer(Int, Base, lowercase) ->
+    <<<<(to_lowercase(X))>> || <<X>> <=integer_to_binary(Int, Base)>>;
+from_integer(Int, Base, uppercase) ->  %integer_to_binaryは大文字を返すはずだが、念のため
+    <<<<(to_uppercase(X))>> || <<X>> <=integer_to_binary(Int, Base)>>.
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
@@ -321,3 +329,15 @@ fixed_point_binary_to_number(IntegerPartLength, DecimalPartLength, Bin) ->
       DecimalPartLength :: integer().
 number_to_fixed_point_binary(IntegerPartLength, DecimalPartLength, Num) ->
     <<(trunc(Num * (1 bsl DecimalPartLength))):(IntegerPartLength + DecimalPartLength)>>.
+
+%% @doc 大文字を小文字にする。それ以外は無視する
+-spec to_lowercase(char())->char().
+to_lowercase(C) when $A =< C andalso C =< $Z
+    -> C - $A + $a;
+to_lowercase(C) -> C.
+
+%% @doc 小文字を大文字にする。それ以外は無視する
+-spec to_uppercase(char())->char().
+to_uppercase(C) when $a =< C andalso C =< $z
+    -> C - $a + $A;
+to_uppercase(C) -> C.
