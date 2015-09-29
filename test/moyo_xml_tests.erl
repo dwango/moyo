@@ -148,11 +148,14 @@ to_iolist_test_() ->
                       {attr3, val}],
                      [
                       <<"テキスト">>,
-                      {<<"child">>, [], [there, <<" are ">>, 2, [" ", "pens"]]}
+                      {<<"child">>, [], [there, <<" are ">>, 2, [" ", "pens"]]},
+                      <<"数値">>,
+                      {<<"float">>, [], [12.34]}
                      ]},
-              Expected = <<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child></test>">>,
-
-              ?assertEqual(Expected, list_to_binary(moyo_xml:to_iolist(Xml)))
+              Expected1 = <<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>1.23399999999999998579e+01</float></test>">>,
+              Expected2 = <<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>12.34</float></test>">>,
+              ?assertEqual(Expected1, list_to_binary(moyo_xml:to_iolist(Xml))),
+              ?assertEqual(Expected2, list_to_binary(moyo_xml:to_iolist(Xml, [{float_format, [{decimals, 6}, compact]}])))
       end},
      {"変換に失敗した場合は例外が送出される",
       fun () ->

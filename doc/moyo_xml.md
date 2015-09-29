@@ -144,7 +144,7 @@ parse系関数の結果としては常にバイナリが返る
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#parse_binary-2">parse_binary/2</a></td><td>XML文字列(バイナリ)をパースする.</td></tr><tr><td valign="top"><a href="#parse_file-2">parse_file/2</a></td><td>XMLファイルをパースする.</td></tr><tr><td valign="top"><a href="#to_iolist-1">to_iolist/1</a></td><td>XMLをiolist形式の文字列に変換する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#parse_binary-2">parse_binary/2</a></td><td>XML文字列(バイナリ)をパースする.</td></tr><tr><td valign="top"><a href="#parse_file-2">parse_file/2</a></td><td>XMLファイルをパースする.</td></tr><tr><td valign="top"><a href="#to_iolist-1">to_iolist/1</a></td><td>XMLをiolist形式の文字列に変換する.</td></tr><tr><td valign="top"><a href="#to_iolist-2">to_iolist/2</a></td><td>XMLをiolist形式の文字列に、指定されたオプションに従って変換する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -194,4 +194,18 @@ XMLをiolist形式の文字列に変換する
 
 変換に失敗した場合は例外が送出される. <br />
 要素の属性値や内容は[`moyo_string:to_string/1`](moyo_string.md#to_string-1)によって、適宜文字列に変換される.
+
+<a name="to_iolist-2"></a>
+
+### to_iolist/2 ###
+
+<pre><code>
+to_iolist(Xml::<a href="#type-xml">xml()</a>, Options::[<a href="moyo_string.md#type-encode_option">moyo_string:encode_option()</a>]) -&gt; XmlString::iolist()
+</code></pre>
+<br />
+
+XMLをiolist形式の文字列に、指定されたオプションに従って変換する
+
+変換に失敗した場合は例外が送出される. <br />
+要素の属性値や内容は[`moyo_string:to_string/2`](moyo_string.md#to_string-2)によって、適宜文字列に変換される.
 

@@ -27,7 +27,8 @@
 -export([
          parse_file/2,
          parse_binary/2,
-         to_iolist/1
+         to_iolist/1,
+         to_iolist/2
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -109,8 +110,16 @@ parse_binary(<<InputXml/binary>>, Options) ->
 %% 要素の属性値や内容は{@link moyo_string:to_string/1}によって、適宜文字列に変換される.
 -spec to_iolist(xml()) -> XmlString::iolist().
 to_iolist(Xml) ->
+    to_iolist(Xml, []).
+
+%% @doc XMLをiolist形式の文字列に、指定されたオプションに従って変換する
+%%
+%% 変換に失敗した場合は例外が送出される. <br />
+%% 要素の属性値や内容は{@link moyo_string:to_string/2}によって、適宜文字列に変換される.
+-spec to_iolist(xml(), [moyo_string:encode_option()]) -> XmlString::iolist().
+to_iolist(Xml, Options) ->
     Prolog = ["<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"],
-    IoList = xmerl:export_simple([normalize_xml_for_export_simple(Xml)], xmerl_xml, [{prolog, Prolog}]),
+    IoList = xmerl:export_simple([normalize_xml_for_export_simple(Xml, Options)], xmerl_xml, [{prolog, Prolog}]),
     IoList.
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -205,8 +214,8 @@ convert_string(Str, ToType) ->
 %% @doc xmerl:export_simple/3用に入力XMLデータを正規化する
 %%
 %% TODO: 無闇にバイナリをアトムに変換するのは好ましくないので、xmerl:export_simple/3用の独自コールバックを用意するようにしたい
--spec normalize_xml_for_export_simple(xml_element()|xml_text()) -> xml_element().
-normalize_xml_for_export_simple({Name, Attributes, Contents}) ->
+-spec normalize_xml_for_export_simple(xml_element()|xml_text(), [moyo_string:encode_option()]) -> xml_element().
+normalize_xml_for_export_simple({Name, Attributes, Contents}, Options) ->
     %% 要素名の型をアトムに統一する
     Name2 = if
                 is_binary(Name) -> binary_to_atom(Name, utf8);
@@ -224,7 +233,7 @@ normalize_xml_for_export_simple({Name, Attributes, Contents}) ->
                                  end,
                             V2 = case moyo_string:is_iodata(V) of
                                      true  -> V;
-                                     false -> moyo_string:to_string(V)
+                                     false -> moyo_string:to_string(V, Options)
                                  end,
                             {K2, V2};
                         (WrongAttr) ->
@@ -232,15 +241,15 @@ normalize_xml_for_export_simple({Name, Attributes, Contents}) ->
                     end,
                     Attributes),
 
-    Contents2 = [normalize_xml_for_export_simple(Content) || Content <- Contents],
+    Contents2 = [normalize_xml_for_export_simple(Content, Options) || Content <- Contents],
 
     {Name2, Attributes2, Contents2};
-normalize_xml_for_export_simple(Text) when is_atom(Text) ->
+normalize_xml_for_export_simple(Text, _Options) when is_atom(Text) ->
     [atom_to_binary(Text, utf8)];
-normalize_xml_for_export_simple(Text) when is_binary(Text) ->
+normalize_xml_for_export_simple(Text, _Options) when is_binary(Text) ->
     [Text];
-normalize_xml_for_export_simple(Text) ->
+normalize_xml_for_export_simple(Text, Options) ->
     case moyo_string:is_iodata(Text) of
         true  -> Text;
-        false -> moyo_string:to_string(Text)
+        false -> moyo_string:to_string(Text, Options)
     end.
