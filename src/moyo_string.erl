@@ -8,6 +8,7 @@
 %%----------------------------------------------------------------------------------------------------------------------
 -export([
          to_string/1,
+         to_string/2,
 
          format/2,
 
@@ -15,6 +16,22 @@
          is_iodata/1,
          is_iolist/1
         ]).
+
+%%----------------------------------------------------------------------------------------------------------------------
+%% Exported Types
+%%----------------------------------------------------------------------------------------------------------------------
+-export_type([
+              encode_option/0
+             ]).
+
+%%----------------------------------------------------------------------------------------------------------------------
+%% Types
+%%----------------------------------------------------------------------------------------------------------------------
+-type float_format_option() :: {scientific, Decimals :: 0..249}
+                             | {decimals, Decimals :: 0..253}
+                             | compact.
+
+-type encode_option() :: {float_format, [float_format_option()]}.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
@@ -41,6 +58,32 @@ to_string(V) when is_list(V)     ->
     end;
 to_string(V) ->
     lists:flatten(io_lib:format("~w", [V])).
+
+%% @doc Erlangの項を文字列(数値のリスト)に、指定されたオプションに従って変換する
+%%
+%% 入力値が非負の数値リストの場合は、変換は行われずにそのまま返される。<br />
+%% ユニコード値のリストから、UTF-8のリストへ変換したい場合等は unicode モジュールを使用する必要がある。<br />
+%%
+%% 入力値が浮動小数点数ならば float_to_list/2 で指定できるオプション<br />
+%%   [{scientific, Decimals} | {decimals, Decimals} | compact]<br />
+%% を利用して変換方式を指定することができる。<br />
+%% {scientific, Decimals} と {decimals, Decimals} が同時に指定された場合は、最後に指定されたものが採用される。<br />
+%% 例:
+%% ```
+%% > moyo_string:to_string(12.34, [{float_format, [{scientific, 6}]}]).
+%% <<"1.234000e+01">>
+%% > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}]}]).
+%% <<"12.340000">>
+%% > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}, compact]}]).
+%% <<"12.34">>
+%% '''
+-spec to_string(term(), [encode_option()]) -> string().
+to_string(V, _Options = []) ->
+    to_string(V);
+to_string(V, [{float_format, FloatFormatOptions} | _Rest]) when is_float(V) ->
+    float_to_list(V, FloatFormatOptions);
+to_string(V, [_Option | Rest]) ->
+    to_string(V, Rest).
 
 %% @doc 指定されたフォーマットの文字列を生成して返す.
 %%

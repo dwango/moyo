@@ -80,6 +80,30 @@ to_string_test_() ->
       fun () ->
               Input = make_ref(),
               ?assert(is_list(moyo_string:to_string(Input))) % 具体的な文字列表現は環境依存なのでテストしない
+      end},
+     {"浮動小数点数が文字列に変換できる: 有効数字6桁の指数形式",
+      fun () ->
+              Input    = 12.34,
+              Expected = "1.234000e+01",
+              ?assertEqual(Expected, moyo_string:to_string(Input, [{float_format, [{scientific, 6}]}]))
+      end},
+     {"浮動小数点数が文字列に変換できる: 小数点以下6桁の非指数形式",
+      fun () ->
+              Input    = 12.34,
+              Expected = "12.340000",
+              ?assertEqual(Expected, moyo_string:to_string(Input, [{float_format, [{decimals, 6}]}]))
+      end},
+     {"浮動小数点数が文字列に変換できる: 小数点以下6桁未満(0は可能な限り省略)の非指数形式",
+      fun () ->
+              Input    = 12.34,
+              Expected = "12.34",
+              ?assertEqual(Expected, moyo_string:to_string(Input, [{float_format, [{decimals, 6},compact]}]))
+      end},
+     {"浮動小数点数用オプションを指定しても無視して文字列に変換できる",
+      fun () ->
+              Input    = {1, 2, 3},
+              Expected = "{1,2,3}",
+              ?assertEqual(Expected, moyo_string:to_string(Input, [{float_format, [{decimals, 6},compact]}]))
       end}
     ].
 
