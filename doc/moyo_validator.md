@@ -204,7 +204,7 @@ sign_constraint() = positive | negative | non_negative
 
 
 <pre><code>
-spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_constraints">type_constraints()</a> | {list, <a href="#type-spec">spec()</a>} | {tuple, [<a href="#type-spec">spec()</a>]} | {enum, [term()]} | {equal, term()} | {'or', [<a href="#type-spec">spec()</a>]} | {custom, <a href="#type-custom_spec_fun">custom_spec_fun()</a>}
+spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_constraints">type_constraints()</a> | {list, <a href="#type-spec">spec()</a>} | {tuple, [<a href="#type-spec">spec()</a>]} | {enum, [term()]} | {equal, term()} | {'or', [<a href="#type-spec">spec()</a>]} | {'and', [<a href="#type-spec">spec()</a>]} | {'not', <a href="#type-spec">spec()</a>} | {custom, <a href="#type-custom_spec_fun">custom_spec_fun()</a>}
 </code></pre>
 
  {list, spec()}: 入力値が`spec()`に適合する値を要素とするリストかをチェックする<br />
@@ -212,6 +212,8 @@ spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_const
 {enum, [term()]}: 入力値が`[term()]`のいずれかの要素と等しいかどうかをチェックする<br />
 {equal, term()}: 入力値が`term()`と等しいかどうかをチェックする<br />
 {'or', [spec()]}: 入力値が`[spec()]`のいずれかの条件に適合するかをチェックする<br />
+{'and', [spec()]}: 入力値が`[spec()]`の全ての条件に適合するかをチェックする<br />
+{'not', spec()}: 入力値が`spec()`とマッチしないことをチェックする<br />
 {custom, custom_spec_fun()}: 入力値が`custom_spec_fun()`で指定の条件に適合するかどうかをチェックする<br />
 
 

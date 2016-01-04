@@ -1080,6 +1080,43 @@ validate_or_test_() ->
       end}
     ].
 
+validate_and_test_() ->
+    [
+     {"入力値が全ての条件にマッチする",
+      fun () ->
+              Specs = [integer, number],
+              Value = 10,
+              ?assertEqual({ok, Value}, moyo_validator:validate(Value, {'and', Specs}))
+      end},
+     {"入力値が一部でマッチしない",
+      fun () ->
+              Specs = [integer, atom, number],
+              Value = 10,
+              ?assertMatch({error, _}, moyo_validator:validate(Value, {'and', Specs}))
+      end},
+     {"条件リストが空の場合は、バリデーションに成功",
+      fun () ->
+              Value = self(),
+              ?assertMatch({ok, Value}, moyo_validator:validate(Value, {'and', []}))
+      end}
+    ].
+
+validate_not_test_() ->
+    [
+     {"入力値が条件に当てはまる",
+      fun () ->
+              Spec  = integer,
+              Value = <<"bin">>,
+              ?assertEqual({ok, Value}, moyo_validator:validate(Value, {'not', Spec}))
+      end},
+     {"入力値が条件に当てはまらない",
+      fun () ->
+              Spec  = integer,
+              Value = 10,
+              ?assertMatch({error, _}, moyo_validator:validate(Value, {'not', Spec}))
+      end}
+    ].
+
 illigal_case_test_() ->
     [
      {"存在しないconstraintを指定",

@@ -32,12 +32,15 @@
 %% Types
 %%----------------------------------------------------------------------------------------------------------------------
 -type spec() :: basic_type() | type_constraints()
-              | {list, spec()} | {tuple, [spec()]} | {enum, [term()]} | {equal, term()} | {'or', [spec()]} | {custom, custom_spec_fun()}.
+              | {list, spec()} | {tuple, [spec()]} | {enum, [term()]} | {equal, term()} | {'or', [spec()]}
+              | {'and', [spec()]} | {'not', spec()} | {custom, custom_spec_fun()}.
 %% {list, spec()}: 入力値が`spec()'に適合する値を要素とするリストかをチェックする<br />
 %% {tuple, [spec()]}: 入力値の各要素が`spec()`と適合するかチェックする. `spec()`は`tuple`の要素数用意する必要がある.<br />
 %% {enum, [term()]}: 入力値が`[term()]'のいずれかの要素と等しいかどうかをチェックする<br />
 %% {equal, term()}: 入力値が`term()'と等しいかどうかをチェックする<br />
 %% {'or', [spec()]}: 入力値が`[spec()]'のいずれかの条件に適合するかをチェックする<br />
+%% {'and', [spec()]}: 入力値が`[spec()]'の全ての条件に適合するかをチェックする<br />
+%% {'not', spec()}: 入力値が`spec()'とマッチしないことをチェックする<br />
 %% {custom, custom_spec_fun()}: 入力値が`custom_spec_fun()'で指定の条件に適合するかどうかをチェックする<br />
 
 -type type_constraints() ::
@@ -421,6 +424,21 @@ validate_impl(Value, {'or', Specs}) ->
                        (Spec)          -> ok =:= validate_impl(Value, {Spec, []}) end, Specs) of
         true  -> ok;
         false -> {error, {all_validation_failed, {value, Value}, {specs, Specs}}}
+    end;
+validate_impl(Value, {'and', Specs}) ->
+    case lists:all(fun ({_, _} = Spec) -> ok =:= validate_impl(Value, Spec);
+                       (Spec)          -> ok =:= validate_impl(Value, {Spec, []}) end, Specs) of
+        true  -> ok;
+        false -> {error, {validation_failed, {value, Value}, {specs, Specs}}}
+    end;
+validate_impl(Value, {'not', Spec}) ->
+    Ret = case Spec of
+              {_, _} -> validate_impl(Value, Spec);
+              _      -> validate_impl(Value, {Spec, []})
+          end,
+    case Ret =/= ok of
+        true  -> ok;
+        false -> {error, {not_different, {value, Value}, {spec, Spec}}}
     end;
 validate_impl(Value, {custom, CustomFun}) ->
     try CustomFun(Value) of
