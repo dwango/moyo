@@ -106,7 +106,7 @@ position(Value, List) -> position_impl(Value, List, 1).
 %% @doc 入力リストの順番を無作為に並べ替える
 -spec shuffle([Element]) -> [Element] when Element :: term().
 shuffle(List) ->
-    [E || {_, E} <- lists:ukeysort(1, [{random:uniform(), E} || E <- List])].
+    [E || {_, E} <- lists:ukeysort(1, [{rand:uniform(), E} || E <- List])].
 
 %% @doc lists:foldl/3 の中断機能追加版: 関数適用後の結果が`{false, _}'となった場合は、そこで走査が中断される.
 %%
