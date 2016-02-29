@@ -359,6 +359,139 @@ join_test_() ->
       end}
     ].
 
+divide_test_() ->
+    [
+     {"iodata を 0/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(0, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<>>, <<"abcd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"iodata を 1/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(1, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"a">>, <<"bcd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"iodata を 2/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(2, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"ab">>, <<"cd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"iodata を 3/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(3, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abc">>, <<"d">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"iodata を 4/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(4, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abcd">>, <<>> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"iodata を 5/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(5, [$a, "b", <<"c">> | <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abcd">>, <<>> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 0/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(0, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<>>, <<"abcd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 1/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(1, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"a">>, <<"bcd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 2/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(2, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"ab">>, <<"cd">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 3/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(3, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abc">>, <<"d">> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 4/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(4, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abcd">>, <<>> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"binary を 5/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(5, <<"abcd">>),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abcd">>, <<>> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
+     {"ネストした iodata の途中で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(2, [<<"a">>, [<<"b">>, <<"c">>], <<"d">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"ab">>, <<"cd">> },
+
+              ?assertEqual(Expected, Result)
+      end}
+    ].
+
 fixed_point_binary_to_number_test_() ->
     [
      {"固定小数点16.16",

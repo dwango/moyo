@@ -3,6 +3,9 @@
 %% @doc バイナリに関する処理を集めたユーティリティモジュール.
 -module(moyo_binary).
 
+%% improper lists を使っているので警告を抑制
+-dialyzer({no_improper_lists, divide/2}).
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
@@ -24,6 +27,7 @@
          tr/2,
          fill/2,
          join/2,
+         divide/2,
          fixed_point_binary_to_number/3,
          number_to_fixed_point_binary/3,
          from_integer/3
@@ -270,6 +274,40 @@ join([Head1|[Head2|Tail]], Separator) ->
     join([<<Head1/binary, Separator/binary, Head2/binary>>|Tail], Separator);
 join([Head], _) -> Head;
 join([], _) -> <<>>.
+
+%% @doc `IoData'を指定の位置で分割する
+-spec divide(Position::non_neg_integer(), iodata()) -> {iodata(), iodata()}.
+divide(Position, IoData) ->
+    divide_impl(Position, IoData, []).
+
+%% Position に到達するまで IoList を Acc に追加する
+-spec divide_impl(Position::non_neg_integer(), iodata(), iodata()) -> {iodata(), iodata()}.
+divide_impl(Position, IoList, Acc)   when Position =< 0 ->
+    {lists:reverse(Acc), IoList};               % 終了条件
+divide_impl(Position, [H | T], Acc)  when is_integer(H) ->
+    divide_impl(Position - 1, T, [H | Acc]);    % integer はそのまま繋げる
+divide_impl(Position, Data, Acc) when is_binary(Data) ->
+    DataSize = byte_size(Data),
+    case DataSize =< Position of
+        true ->
+            %% Acc に繋げて終わり
+            divide_impl(0, <<>>, [Data | Acc]);
+        false ->
+            %% 必要な分だけ切り取って終わり
+            DataPre  = binary:part(Data, 0, Position),
+            DataPost = binary:part(Data, Position, DataSize - Position),
+            divide_impl(0, DataPost, [DataPre | Acc])
+    end;
+divide_impl(Position, [H | T], Acc) ->
+    HSize = iolist_size(H),
+    case HSize >= Position of
+        %% H が Position に達しているので H を分解して終了
+        true  ->
+            {Pre, Post} = divide(Position, H),
+            divide_impl(0, [Post | T], [Pre | Acc]);
+        %% H では足りないので次に行く
+        false -> divide_impl(Position - HSize, T, [H | Acc])
+    end.
 
 %% @doc IntをBase進数に変換してバイナリ文字列で返す。大文字小文字が指定できる
 -spec from_integer(Int :: integer(), Base :: 2..36, Case :: 'uppercase'|'lowercase') -> binary().
