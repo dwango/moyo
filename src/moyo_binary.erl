@@ -282,7 +282,7 @@ divide(Position, IoData) ->
 
 %% Position に到達するまで IoList を Acc に追加する
 -spec divide_impl(Position::non_neg_integer(), iodata(), iodata()) -> {iodata(), iodata()}.
-divide_impl(Position, IoList, Acc)   when Position =< 0 ->
+divide_impl(Position, IoList, Acc)   when Position =< 0; IoList =:= [] ->
     {lists:reverse(Acc), IoList};               % 終了条件
 divide_impl(Position, [H | T], Acc)  when is_integer(H) ->
     divide_impl(Position - 1, T, [H | Acc]);    % integer はそのまま繋げる

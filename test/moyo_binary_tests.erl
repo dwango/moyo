@@ -481,6 +481,16 @@ divide_test_() ->
               ?assertEqual(Expected, Result)
       end},
 
+     {"[binary] を 5/4 で divide",
+      fun () ->
+              {First, Second} = moyo_binary:divide(5, [<<"abcd">>]),
+              %% 返ってくる値は実装依存で形式が変化しうるので単体テストではバイナリ化して正規化
+              Result = { iolist_to_binary(First), iolist_to_binary(Second) },
+              Expected = { <<"abcd">>, <<>> },
+
+              ?assertEqual(Expected, Result)
+      end},
+
      {"ネストした iodata の途中で divide",
       fun () ->
               {First, Second} = moyo_binary:divide(2, [<<"a">>, [<<"b">>, <<"c">>], <<"d">>]),
