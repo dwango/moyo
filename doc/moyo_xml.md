@@ -48,7 +48,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 
 <pre><code>
-parse_option() = {key_type, binary | atom | existing_atom}
+parse_option() = {key_type, binary | atom | existing_atom} | {allow_external_entity, true | false}
 </code></pre>
 
 __[key_type オプション]__<br />
@@ -56,6 +56,12 @@ __[key_type オプション]__<br />
 `binary`ならバイナリ型、`atom`ならアトム型.<br />
 `existing_atom`の場合は、名前に対応するアトムが既に存在する場合はアトム型、存在しないならバイナリ型となる. <br />
 デフォルト値は`binary`.
+
+__[allow_external_entity オプション]__<br />
+外部エンティティ参照を許可するかどうかを指定する．<br />
+`true` であれば外部エンティティ参照が許可される．<br />
+`false` とすることで外部エンティティ参照を禁止できる．<br />
+デフォルト値は`false`.
 
 
 

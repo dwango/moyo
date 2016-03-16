@@ -119,6 +119,13 @@ parse_binary_test_() ->
               Input = <<"<test>閉じタグの要素名が異なっている</close>">>,
 
               ?assertError(_, moyo_xml:parse_binary(Input, []))
+      end},
+     {"外部エンティティが許可されていない場合は例外を吐く",
+      fun () ->
+              Input = <<"<!DOCTYPE test [<!ENTITY hoge SYSTEM \"http://localhost/hoge.xml\">]> <test>&hoge;</test>\n">>,
+
+              ?assertError({parse_xml_failed, {error, _, "external_entity_not_allowed : hoge", _, _}, _},
+                            moyo_xml:parse_binary(Input, [{allow_external_entity, false}]))
       end}
     ].
 

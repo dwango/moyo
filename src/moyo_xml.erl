@@ -59,12 +59,19 @@
 -type xml_content()         :: xml_element() | xml_text().
 -type xml_text()            :: iodata() | term(). % parse系関数の結果としては常にバイナリが返る
 
--type parse_option() :: {key_type, binary | atom | existing_atom}.
+-type parse_option() :: {key_type, binary | atom | existing_atom}
+                       |{allow_external_entity, true | false}.
 %% <b>[key_type オプション]</b><br />
 %% パース結果XMLの要素名および属性名をどのような型で表現するかを指定する.<br />
 %% `binary'ならバイナリ型、`atom'ならアトム型.<br />
 %% `existing_atom'の場合は、名前に対応するアトムが既に存在する場合はアトム型、存在しないならバイナリ型となる. <br />
 %% デフォルト値は`binary'.
+%%
+%% <b>[allow_external_entity オプション]</b><br />
+%% 外部エンティティ参照を許可するかどうかを指定する．<br />
+%% `true' であれば外部エンティティ参照が許可される．<br />
+%% `false' とすることで外部エンティティ参照を禁止できる．<br />
+%% デフォルト値は`false'.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Records
@@ -138,13 +145,16 @@ parse_impl(SaxParseFun, InputXml, Options) ->
     ParseOptions = #parse_option{
       key_type = moyo_assoc:fetch(key_type, Options, binary)
     },
+    ExternalEntity = moyo_assoc:fetch(allow_external_entity, Options, false),
     ParseState = #parse_state{
       element_stack = [{root, [], []}], % 番兵値
       options       = ParseOptions
     },
 
     SaxOptions = [
-                  {event_fun, fun event_fun_parse_xml/3},
+                 {event_fun, fun(Event, Location, State) ->
+                                  event_fun_parse_xml(Event, Location, State, ExternalEntity)
+                              end},
                   {event_state, ParseState}
                  ],
     case SaxParseFun(InputXml, SaxOptions) of
@@ -156,7 +166,7 @@ parse_impl(SaxParseFun, InputXml, Options) ->
     end.
 
 %% @doc `xmerl_sax_parser'の`EventFun'の実装
-event_fun_parse_xml({startElement, _Uri, LocalName, _QualifiedName, Attributes}, _Location, State) ->
+event_fun_parse_xml({startElement, _Uri, LocalName, _QualifiedName, Attributes}, _Location, State, _ExternalEntity) ->
     #parse_state{element_stack = Stack, options = #parse_option{key_type = KeyType}} = State,
     Attributes2 = [begin
                        AttributeKey   = convert_string(K, KeyType),
@@ -166,16 +176,17 @@ event_fun_parse_xml({startElement, _Uri, LocalName, _QualifiedName, Attributes},
     NewElement = {convert_string(LocalName, KeyType), Attributes2, []},
     State#parse_state{element_stack = [NewElement | Stack]};
 
-event_fun_parse_xml({endElement, _Uri, _LocalName, _QualifiedName}, _Location, State) ->
+event_fun_parse_xml({endElement, _Uri, _LocalName, _QualifiedName}, _Location, State, _ExternalEntity) ->
     #parse_state{element_stack = [Element, ParentElement | Stack]} = State,
     FixedElement = element_contents_reverse(Element),
     State#parse_state{element_stack = [element_push_content(FixedElement, ParentElement) | Stack]};
 
-event_fun_parse_xml({characters, Str}, _Location, State) ->
+event_fun_parse_xml({characters, Str}, _Location, State, _ExternalEntity) ->
     #parse_state{element_stack = [Element | Stack]} = State,
     State#parse_state{element_stack = [element_push_content(convert_string(Str, binary), Element) | Stack]};
-
-event_fun_parse_xml(_Event, _Location, State) ->
+event_fun_parse_xml({externalEntityDecl, Name, _PublicId, _SystemId}, _Location, _State, false) ->
+    throw({error, "external_entity_not_allowed : " ++ Name});
+event_fun_parse_xml(_Event, _Location, State, _ExternalEntity) ->
     State.
 
 %% @doc XML要素の内容(`xml_content'のリスト)を反転する
