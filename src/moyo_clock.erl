@@ -11,6 +11,7 @@
 -export([
          now/0,
          now_seconds/0,
+         now_milliseconds/0,
          local_timezone_offset_minutes/0,
          seconds_to_datetime/1,
          seconds_to_datetime_tz/2,
@@ -59,6 +60,7 @@
               non_neg_seconds/0,
               non_neg_milliseconds/0,
               unix_timestamp/0,
+              unix_timestamp_milliseconds/0,
               timezone/0,
               iso8601type/0,
               iso8601datetype/0,
@@ -81,6 +83,7 @@
 -type timezone_minutes()     :: integer().
 
 -type unix_timestamp()       :: non_neg_seconds().  % 1970-01-01T00:00:00Z からの経過秒数
+-type unix_timestamp_milliseconds() :: non_neg_milliseconds().  % 1970-01-01T00:00:00Z からの経過ミリ秒
 
 -type data_in_format() :: {now, erlang:timestamp()} | {datetime, calendar:datetime()}.
 
@@ -142,6 +145,11 @@ now() ->
 -spec now_seconds() -> unix_timestamp().
 now_seconds() ->
     calendar:datetime_to_gregorian_seconds(calendar:local_time()) - unix_timestamp_epoch_local().
+
+%% @doc 現在時刻をミリ秒形式で取得する。
+-spec now_milliseconds() -> unix_timestamp_milliseconds().
+now_milliseconds() ->
+    os:system_time(milli_seconds).
 
 %% @doc ローカル時間のタイムゾーンオフセット[分]を返す。
 -spec local_timezone_offset_minutes() -> timezone_minutes().

@@ -22,6 +22,14 @@ now_seconds_test_() ->
       end}
     ].
 
+now_milliseconds_test_() ->
+    [
+     {"現在時刻をミリ秒形式で取得する",
+      fun () ->
+              ?assertMatch(N when is_integer(N) andalso N >= 0, moyo_clock:now_milliseconds())
+      end}
+    ].
+
 seconds_to_datetime_test_() ->
     [
      {"時刻をUNIXタイムスタンプからdatetime()形式に変換する",
