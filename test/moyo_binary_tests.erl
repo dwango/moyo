@@ -542,3 +542,43 @@ from_integer_test_() ->
                 ?assertEqual(<<"-a">>, moyo_binary:from_integer(-10, 16, lowercase))
             end}
     ].
+
+to_lower_test_() ->
+    [
+     {"ASCII文字列のアルファベット",
+      fun() ->
+              ?assertEqual(<<"string">>, moyo_binary:to_lower(<<"StRiNg">>)),
+              ?assertEqual(<<"string">>, moyo_binary:to_lower(<<"STRING">>)),
+              ?assertEqual(<<"string">>, moyo_binary:to_lower(<<"string">>))
+      end},
+     {"ASCII文字列のアルファベット以外",
+      fun() ->
+              ?assertEqual(<<"  \n\n">>, moyo_binary:to_lower(<<"  \n\n">>)),
+              ?assertEqual(<<"0123-+-+">>, moyo_binary:to_lower(<<"0123-+-+">>))
+      end},
+     {"UTF-8文字列",
+      fun() ->
+              ?assertEqual(<<"もよ"/utf8>>, moyo_binary:to_lower(<<"もよ"/utf8>>)),
+              ?assertEqual(<<"ĄĆŁŹ"/utf8>>, moyo_binary:to_lower(<<"ĄĆŁŹ"/utf8>>))
+      end}
+    ].
+
+to_upper_test_() ->
+    [
+     {"ASCII文字列のアルファベット",
+      fun() ->
+              ?assertEqual(<<"STRING">>, moyo_binary:to_upper(<<"StRiNg">>)),
+              ?assertEqual(<<"STRING">>, moyo_binary:to_upper(<<"STRING">>)),
+              ?assertEqual(<<"STRING">>, moyo_binary:to_upper(<<"string">>))
+      end},
+     {"ASCII文字列のアルファベット以外",
+      fun() ->
+              ?assertEqual(<<"  \n\n">>, moyo_binary:to_upper(<<"  \n\n">>)),
+              ?assertEqual(<<"0123-+-+">>, moyo_binary:to_upper(<<"0123-+-+">>))
+      end},
+     {"UTF-8文字列",
+      fun() ->
+              ?assertEqual(<<"もよ"/utf8>>, moyo_binary:to_upper(<<"もよ"/utf8>>)),
+              ?assertEqual(<<"ĄĆŁŹ"/utf8>>, moyo_binary:to_upper(<<"ĄĆŁŹ"/utf8>>))
+      end}
+    ].

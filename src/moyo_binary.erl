@@ -30,7 +30,9 @@
          divide/2,
          fixed_point_binary_to_number/3,
          number_to_fixed_point_binary/3,
-         from_integer/3
+         from_integer/3,
+         to_lower/1,
+         to_upper/1
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -379,3 +381,28 @@ to_lowercase(C) -> C.
 to_uppercase(C) when $a =< C andalso C =< $z
     -> C - $a + $A;
 to_uppercase(C) -> C.
+
+
+%% @doc ASCII文字列の大文字を小文字に変換する。それ以外は変換しない。
+%%
+%% ```
+%% > to_lower(<<"StRiNg">>).
+%% <<"string">>
+%% > to_lower(<<"0123-+-+">>).
+%% <<"0123-+-+">>
+%% '''
+-spec to_lower(Str::binary())->binary().
+to_lower(Str) ->
+    << <<(to_lowercase(B))>> || <<B>> <= Str >>.
+
+%% @doc ASCII文字列の小文字を大文字に変換する。それ以外は変換しない。
+%%
+%% ```
+%% > to_upper(<<"StRiNg">>).
+%% <<"STRING">>
+%% > to_upper(<<"0123-+-+">>).
+%% <<"0123-+-+">>
+%% '''
+-spec to_upper(Str::binary())->binary().
+to_upper(Str) ->
+    << <<(to_uppercase(B))>> || <<B>> <= Str >>.
