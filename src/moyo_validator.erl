@@ -66,8 +66,8 @@
                               {more, number()} | {less, number()}.
 -type number_constraint()  :: sign_constraint() | {range, min_number(), max_number()} |
                               {more, number()} | {less, number()}.
--type string_constraint()  :: {max_length, integer()} | {regexp, string()} | ascii | not_empty.
--type binary_constraint()  :: {max_length, integer()} | {regexp, binary()} | ascii | not_empty.
+-type string_constraint()  :: {max_length, integer()} | {min_length, integer()} | {regexp, string()} | ascii | not_empty.
+-type binary_constraint()  :: {max_length, integer()} | {min_length, integer()} | {regexp, binary()} | ascii | not_empty.
 -type datetime_constraint():: {range, calendar:datetime(), calendar:datetime()} | {equal, calendar:datetime()} |
                               {more, calendar:datetime()} | {less, calendar:datetime()}.
 
@@ -168,6 +168,8 @@
 %% ● string, binary
 %%     ○ {max_length, integer()}
 %%         パラメータの長さがinteger()より大きい場合error
+%%     ○ {min_length, integer()}
+%%         パラメータの長さがinteger()より小さい場合error.
 %%     ○ {regexp, string() | binary()}
 %%         パラメータが正規表現string() | binary()にマッチしない場合はerror
 %%     ○ascii
@@ -544,6 +546,7 @@ check_constraints_impl(Value, {more, Threshold}, number) -> {ok, Value > Thresho
 check_constraints_impl(Value, {less, Threshold}, number) -> {ok, Value < Threshold};
 %% string に対するconstraint
 check_constraints_impl(Value, {max_length, Len}, string) -> {ok, length(Value) =< Len};
+check_constraints_impl(Value, {min_length, Len}, string) -> {ok, length(Value) >= Len};
 check_constraints_impl(Value, {regexp, Pattern}, string) ->
     {ok, re:run(Value, Pattern, [{capture, none}]) =:= match};
 check_constraints_impl(Value, ascii,             string) ->
@@ -554,6 +557,7 @@ check_constraints_impl(_, not_empty, string) ->
     {ok, true};
 %% binary に対するconstraint
 check_constraints_impl(Value, {max_length, Len}, binary) -> {ok, byte_size(Value) =< Len};
+check_constraints_impl(Value, {min_length, Len}, binary) -> {ok, byte_size(Value) >= Len};
 check_constraints_impl(Value, {regexp, Pattern}, binary) ->
     {ok, re:run(Value, Pattern, [{capture, none}]) =:= match};
 check_constraints_impl(Value, ascii,             binary) ->

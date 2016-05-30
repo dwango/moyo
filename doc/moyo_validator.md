@@ -44,7 +44,7 @@ basic_type() = integer | float | number | string | binary | boolean | atom | dat
 
 
 <pre><code>
-binary_constraint() = {max_length, integer()} | {regexp, binary()} | ascii | not_empty
+binary_constraint() = {max_length, integer()} | {min_length, integer()} | {regexp, binary()} | ascii | not_empty
 </code></pre>
 
 
@@ -222,7 +222,7 @@ spec() = <a href="#type-basic_type">basic_type()</a> | <a href="#type-type_const
 
 
 <pre><code>
-string_constraint() = {max_length, integer()} | {regexp, string()} | ascii | not_empty
+string_constraint() = {max_length, integer()} | {min_length, integer()} | {regexp, string()} | ascii | not_empty
 </code></pre>
 
 
@@ -327,6 +327,8 @@ validate(InputValue, Spec) -&gt; {ok, OutputValue} | {error, Reason}
   ● string, binary
       ○ {max_length, integer()}
           パラメータの長さがinteger()より大きい場合error
+      ○ {min_length, integer()}
+          パラメータの長さがinteger()より小さい場合error.
       ○ {regexp, string() | binary()}
           パラメータが正規表現string() | binary()にマッチしない場合はerror
       ○ascii
@@ -348,7 +350,7 @@ validate(InputValue, Spec) -&gt; {ok, OutputValue} | {error, Reason}
 ### validate/3 ###
 
 <pre><code>
-validate(InputValue, Spec, Option::[Option]) -&gt; {ok, OutputValue} | {error, Reason}
+validate(InputValue, Spec, Options::[Option]) -&gt; {ok, OutputValue} | {error, Reason}
 </code></pre>
 
 <ul class="definitions"><li><code>InputValue = term()</code></li><li><code>Spec = <a href="#type-spec">spec()</a></code></li><li><code>Option = <a href="#type-option">option()</a></code></li><li><code>OutputValue = term()</code></li><li><code>Reason = term()</code></li></ul>

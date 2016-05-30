@@ -27,7 +27,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.3409;0c
 ### exec/1 ###
 
 <pre><code>
-exec(Input::[Input]) -&gt; [{Input, RetValue::term()}]
+exec(Inputs::[Input]) -&gt; [{Input, RetValue::term()}]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li></ul>
@@ -41,7 +41,7 @@ see: `exec(Input, infinity)`
 ### exec/2 ###
 
 <pre><code>
-exec(Input::[Input], Timeout) -&gt; [{Input, RetValue::term()}]
+exec(Inputs::[Input], Timeout) -&gt; [{Input, RetValue::term()}]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li><li><code>Timeout = timeout()</code></li></ul>
@@ -55,7 +55,7 @@ exec(Input::[Input], Timeout) -&gt; [{Input, RetValue::term()}]
 ### exec_sort/1 ###
 
 <pre><code>
-exec_sort(Input::[Input]) -&gt; [RetValue::term()]
+exec_sort(Inputs::[Input]) -&gt; [RetValue::term()]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li></ul>
@@ -69,7 +69,7 @@ exec_sort(Input::[Input]) -&gt; [RetValue::term()]
 ### exec_sort/2 ###
 
 <pre><code>
-exec_sort(Input::[Input], Timeout) -&gt; [RetValue::term()]
+exec_sort(Inputs::[Input], Timeout) -&gt; [RetValue::term()]
 </code></pre>
 
 <ul class="definitions"><li><code>Input = {module(), Function::atom(), Args::[term()]}</code></li><li><code>Timeout = timeout()</code></li></ul>

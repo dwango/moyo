@@ -504,6 +504,16 @@ validate_string_test_() ->
                   moyo_validator:validate(String, {string, [{max_length, 7}]}))
       end},
 
+     {"string, min_length",
+      fun () ->
+              String = "kabukiza",
+
+              ?assertEqual({ok, String},
+                  moyo_validator:validate(String, {string, [{min_length, 5}]})),
+              ?assertMatch({error,{not_match, {_, {_, _}}, {_, String}}},
+                  moyo_validator:validate(String, {string, [{min_length, 9}]}))
+      end},
+
      {"string, regexp",
       fun () ->
               String  = "Dwango Mobile",
@@ -570,6 +580,16 @@ validate_binary_test_() ->
 
               ?assertEqual({ok, Binary},
                   moyo_validator:validate(Binary, {binary, [{max_length, 8}]}))
+      end},
+
+     {"binary, min_length",
+      fun () ->
+              Binary = <<"niconico">>,
+
+              ?assertEqual({ok, Binary},
+                  moyo_validator:validate(Binary, {binary, [{min_length, 5}]})),
+              ?assertMatch({error,{not_match, {_, {_, _}}, {_, Binary}}},
+                  moyo_validator:validate(Binary, {binary, [{min_length, 9}]}))
       end},
 
      {"binary, regexp",

@@ -117,7 +117,7 @@ tuple の N 番目の値でグループ化する.
 ### inits/1 ###
 
 <pre><code>
-inits(Element::[Element]) -&gt; [[Element]]
+inits(List::[Element]) -&gt; [[Element]]
 </code></pre>
 
 <ul class="definitions"><li><code>Element = term()</code></li></ul>
@@ -265,7 +265,7 @@ replace_if(PredFun, Value::term(), List::list()) -&gt; list()
 ### shuffle/1 ###
 
 <pre><code>
-shuffle(Element::[Element]) -&gt; [Element]
+shuffle(List::[Element]) -&gt; [Element]
 </code></pre>
 
 <ul class="definitions"><li><code>Element = term()</code></li></ul>
@@ -298,7 +298,7 @@ split_longest_common_prefix(Lists) -&gt; {LongestCommonPrefix, [Suffix]}
 ### tails/1 ###
 
 <pre><code>
-tails(Element::[Element]) -&gt; [[Element]]
+tails(List::[Element]) -&gt; [[Element]]
 </code></pre>
 
 <ul class="definitions"><li><code>Element = term()</code></li></ul>
