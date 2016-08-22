@@ -144,7 +144,7 @@ now() ->
 %% @doc UNIXタイムスタンプ形式の現在時間を取得する.
 -spec now_seconds() -> unix_timestamp().
 now_seconds() ->
-    calendar:datetime_to_gregorian_seconds(calendar:local_time()) - unix_timestamp_epoch_local().
+    os:system_time(seconds).
 
 %% @doc 現在時刻をミリ秒形式で取得する。
 -spec now_milliseconds() -> unix_timestamp_milliseconds().
