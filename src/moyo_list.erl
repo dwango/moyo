@@ -31,6 +31,7 @@
 
          inits/1,
          tails/1,
+         uniq/1,
          adjacent_uniq/1,
          group_by/2
         ]).
@@ -310,10 +311,28 @@ inits(List) ->
 tails([])   -> [[]];
 tails(List) -> [List | tails(tl(List))].
 
+%% @doc `List'内で重複要素を削除する
+%%
+%% 計算量は`O(n log n)'. 要素の出現順は保存される.
+%% リストがソートされてもよい場合は{@link lists:usort/1}の方が高速.
+%% 連接する重複要素のみを削除したい場合はこの関数の代わりに{@link moyo_list:adjacent_uniq/1}を使う.
+%%
+%% なお, 要素の一致判定は`=:='にて行われる (`1.0'と`1'は別要素扱い)
+%%
+%% ```
+%% > moyo_list:uniq([a, a, b, b, c, c]).
+%% [a, b, c]
+%%
+%% > moyo_list:uniq([c, a, c, b, b, a]).
+%% [c, a, b]
+%% '''
+-spec uniq([term()]) -> [term()].
+uniq(List) -> uniq_impl(List, #{}, []).
+
 %% @doc `List'内で連接する重複要素を削除する
 %%
 %% リスト全体を通して各要素をユニークにしたい場合は、事前にリストをソートしておくか、
-%% この関数の代わりに{@link lists:usort/1}を使う必要がある。
+%% この関数の代わりに{@link lists:usort/1}または{@link moyo_list:uniq/1}を使う必要がある。
 %%
 %% なお、要素の一致判定は`=:='にて行われる (`1.0'と`1'は別要素扱い)
 %%
@@ -462,4 +481,12 @@ longest_common_prefix_impl([[Head | Tail] | Lists], Acc) ->
     case lists:all(fun (List) -> List =/= [] andalso hd(List) =:= Head end, Lists) of
         false -> Acc;
         true  -> longest_common_prefix_impl([Tail | lists:map(fun erlang:tl/1, Lists)], Acc + 1)
+    end.
+
+-spec uniq_impl(List::[term()], Map::#{}, Acc::[term()]) -> [term()].
+uniq_impl([], _Map, Acc) -> lists:reverse(Acc);
+uniq_impl([H|T], Map, Acc) ->
+    case maps:is_key(H, Map) of
+        true -> uniq_impl(T, Map, Acc);
+        false -> uniq_impl(T, maps:put(H, true, Map), [H|Acc])
     end.

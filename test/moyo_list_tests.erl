@@ -421,6 +421,22 @@ tails_test_() ->
      }
     ].
 
+uniq_test_() ->
+    [
+     {"リスト内の重複する要素を削除する",
+      ?_assertEqual([a, b, c], moyo_list:uniq([a, b, a, c, c, b]))
+     },
+     {"入力リストの出現順が保存される",
+      ?_assertEqual([c, a, b], moyo_list:uniq([c, a, c, b, b, a]))
+     },
+     {"'1.0'と'1'は、別要素として扱われる('=:='基準での一致判定)",
+      ?_assertEqual([1, 1.0], moyo_list:uniq([1, 1.0]))
+     },
+     {"空リストの場合",
+      ?_assertEqual([], moyo_list:uniq([]))
+     }
+    ].
+
 adjacent_uniq_test_() ->
     [
      {"リスト内の連接する重複要素を削除する",

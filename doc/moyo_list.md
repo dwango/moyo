@@ -14,7 +14,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#adjacent_uniq-1">adjacent_uniq/1</a></td><td><code>List</code>内で連接する重複要素を削除する.</td></tr><tr><td valign="top"><a href="#delete_all-2">delete_all/2</a></td><td><code>List</code>内に存在する全ての<code>Element</code>を削除する.</td></tr><tr><td valign="top"><a href="#find_if-2">find_if/2</a></td><td><code>PredFun</code>の結果が<code>true</code>となる<code>List</code>内の最初の要素を検索する.</td></tr><tr><td valign="top"><a href="#foldl_while-3">foldl_while/3</a></td><td>lists:foldl/3 の中断機能追加版: 関数適用後の結果が<code>{false, _}</code>となった場合は、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#foldr_while-3">foldr_while/3</a></td><td>lists:foldr/3 の中断機能追加版: 関数適用後の結果が<code>{false, _}</code>となった場合は、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#group_by-2">group_by/2</a></td><td>tuple の N 番目の値でグループ化する.</td></tr><tr><td valign="top"><a href="#inits-1">inits/1</a></td><td><code>List</code>の全ての先頭部分リストを長さの増加する順に並べて返す.</td></tr><tr><td valign="top"><a href="#longest_common_prefix-1">longest_common_prefix/1</a></td><td><code>Lists</code>内のリスト群のLongestCommonPrefixの長さを返す.</td></tr><tr><td valign="top"><a href="#maybe_foldl-3">maybe_foldl/3</a></td><td>lists:foldl/3 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_foldr-3">maybe_foldr/3</a></td><td>lists:foldr/3 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_foreach-2">maybe_foreach/2</a></td><td>lists:foreach/2 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_map-2">maybe_map/2</a></td><td>lists:map/2 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_pmap-2">maybe_pmap/2</a></td><td>Equivalent to <a href="#maybe_pmap-3"><tt>maybe_pmap(Fun, List, infinity)</tt></a>.</td></tr><tr><td valign="top"><a href="#maybe_pmap-3">maybe_pmap/3</a></td><td><a href="#maybe_map-2"><code>maybe_map/2</code></a>の並列版.</td></tr><tr><td valign="top"><a href="#position-2">position/2</a></td><td><code>List</code>内で最初に<code>Value</code>が出現する位置を返す.</td></tr><tr><td valign="top"><a href="#replace_if-3">replace_if/3</a></td><td><code>PredFun</code>の結果が<code>true</code>となった最初の要素を<code>Value</code>で置換する.</td></tr><tr><td valign="top"><a href="#shuffle-1">shuffle/1</a></td><td>入力リストの順番を無作為に並べ替える.</td></tr><tr><td valign="top"><a href="#split_longest_common_prefix-1">split_longest_common_prefix/1</a></td><td><code>Lists</code>内の各リストを'LongestCommonPrefix部分'と'それ以降のSuffix部分'に分割する.</td></tr><tr><td valign="top"><a href="#tails-1">tails/1</a></td><td><code>List</code>の全ての末尾部分リストを長さの減少する順に並べて返す.</td></tr><tr><td valign="top"><a href="#take-2">take/2</a></td><td><code>Element</code>と一致する最初の要素を検索し、その値を除いたリストを返す.</td></tr><tr><td valign="top"><a href="#take_if-2">take_if/2</a></td><td><code>PredFun</code>の結果が<code>true</code>となる<code>List</code>内の最初の要素を検索し, その値とその値を除いたリストを返す.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#adjacent_uniq-1">adjacent_uniq/1</a></td><td><code>List</code>内で連接する重複要素を削除する.</td></tr><tr><td valign="top"><a href="#delete_all-2">delete_all/2</a></td><td><code>List</code>内に存在する全ての<code>Element</code>を削除する.</td></tr><tr><td valign="top"><a href="#find_if-2">find_if/2</a></td><td><code>PredFun</code>の結果が<code>true</code>となる<code>List</code>内の最初の要素を検索する.</td></tr><tr><td valign="top"><a href="#foldl_while-3">foldl_while/3</a></td><td>lists:foldl/3 の中断機能追加版: 関数適用後の結果が<code>{false, _}</code>となった場合は、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#foldr_while-3">foldr_while/3</a></td><td>lists:foldr/3 の中断機能追加版: 関数適用後の結果が<code>{false, _}</code>となった場合は、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#group_by-2">group_by/2</a></td><td>tuple の N 番目の値でグループ化する.</td></tr><tr><td valign="top"><a href="#inits-1">inits/1</a></td><td><code>List</code>の全ての先頭部分リストを長さの増加する順に並べて返す.</td></tr><tr><td valign="top"><a href="#longest_common_prefix-1">longest_common_prefix/1</a></td><td><code>Lists</code>内のリスト群のLongestCommonPrefixの長さを返す.</td></tr><tr><td valign="top"><a href="#maybe_foldl-3">maybe_foldl/3</a></td><td>lists:foldl/3 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_foldr-3">maybe_foldr/3</a></td><td>lists:foldr/3 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_foreach-2">maybe_foreach/2</a></td><td>lists:foreach/2 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_map-2">maybe_map/2</a></td><td>lists:map/2 の maybe版: 関数適用結果が<code>{error, Reason}</code>となる要素があれば、そこで走査が中断される.</td></tr><tr><td valign="top"><a href="#maybe_pmap-2">maybe_pmap/2</a></td><td>Equivalent to <a href="#maybe_pmap-3"><tt>maybe_pmap(Fun, List, infinity)</tt></a>.</td></tr><tr><td valign="top"><a href="#maybe_pmap-3">maybe_pmap/3</a></td><td><a href="#maybe_map-2"><code>maybe_map/2</code></a>の並列版.</td></tr><tr><td valign="top"><a href="#position-2">position/2</a></td><td><code>List</code>内で最初に<code>Value</code>が出現する位置を返す.</td></tr><tr><td valign="top"><a href="#replace_if-3">replace_if/3</a></td><td><code>PredFun</code>の結果が<code>true</code>となった最初の要素を<code>Value</code>で置換する.</td></tr><tr><td valign="top"><a href="#shuffle-1">shuffle/1</a></td><td>入力リストの順番を無作為に並べ替える.</td></tr><tr><td valign="top"><a href="#split_longest_common_prefix-1">split_longest_common_prefix/1</a></td><td><code>Lists</code>内の各リストを'LongestCommonPrefix部分'と'それ以降のSuffix部分'に分割する.</td></tr><tr><td valign="top"><a href="#tails-1">tails/1</a></td><td><code>List</code>の全ての末尾部分リストを長さの減少する順に並べて返す.</td></tr><tr><td valign="top"><a href="#take-2">take/2</a></td><td><code>Element</code>と一致する最初の要素を検索し、その値を除いたリストを返す.</td></tr><tr><td valign="top"><a href="#take_if-2">take_if/2</a></td><td><code>PredFun</code>の結果が<code>true</code>となる<code>List</code>内の最初の要素を検索し, その値とその値を除いたリストを返す.</td></tr><tr><td valign="top"><a href="#uniq-1">uniq/1</a></td><td><code>List</code>内で重複要素を削除する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -33,7 +33,7 @@ adjacent_uniq(List::[term()]) -&gt; [term()]
 `List`内で連接する重複要素を削除する
 
 リスト全体を通して各要素をユニークにしたい場合は、事前にリストをソートしておくか、
-この関数の代わりに[`lists:usort/1`](lists.md#usort-1)を使う必要がある。
+この関数の代わりに[`lists:usort/1`](lists.md#usort-1)または[`moyo_list:uniq/1`](moyo_list.md#uniq-1)を使う必要がある。
 
 なお、要素の一致判定は`=:=`にて行われる (`1.0`と`1`は別要素扱い)
 
@@ -342,4 +342,28 @@ take_if(PredFun, List1) -&gt; {ok, Element, List2} | error
 <ul class="definitions"><li><code>PredFun = fun((Element) -&gt; boolean())</code></li><li><code>List1 = [Element]</code></li><li><code>Element = term()</code></li><li><code>List2 = [Element]</code></li></ul>
 
 `PredFun`の結果が`true`となる`List`内の最初の要素を検索し, その値とその値を除いたリストを返す.
+
+<a name="uniq-1"></a>
+
+### uniq/1 ###
+
+<pre><code>
+uniq(List::[term()]) -&gt; [term()]
+</code></pre>
+<br />
+
+`List`内で重複要素を削除する
+
+計算量は`O(n log n)`. 要素の出現順は保存される.
+リストがソートされてもよい場合は[`lists:usort/1`](lists.md#usort-1)の方が高速.
+連接する重複要素のみを削除したい場合はこの関数の代わりに[`moyo_list:adjacent_uniq/1`](moyo_list.md#adjacent_uniq-1)を使う.
+
+なお, 要素の一致判定は`=:=`にて行われる (`1.0`と`1`は別要素扱い)
+
+```
+  > moyo_list:uniq([a, a, b, b, c, c]).
+  [a, b, c]
+  > moyo_list:uniq([c, a, c, b, b, a]).
+  [c, a, b]
+```
 
