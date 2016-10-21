@@ -127,7 +127,7 @@ make_temp_filepath() ->
 %% '''
 -spec make_temp_filepath(Prefix::binary()) -> Path::binary().
 make_temp_filepath(<<Prefix/binary>>) ->
-    Name = list_to_binary([Prefix, moyo_binary:to_hex(crypto:rand_bytes(8))]),
+    Name = list_to_binary([Prefix, moyo_binary:to_hex(crypto:strong_rand_bytes(8))]),
     Path = filename:join(<<"/tmp/">>, Name),
     case filelib:is_file(Path) of
         true  -> make_temp_filepath(Prefix);

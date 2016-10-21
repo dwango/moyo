@@ -121,13 +121,13 @@ random_sequence_test_() ->
     [
      {"指定したタイプ毎にランダムの文字列を返し、毎回異なる",
       fun () ->
-              random:seed(0, 0, 0),
-              ?assertEqual(<<"bUgWhkqseQTjIzrkXBoc">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
-              ?assertEqual(<<"JJILZMlkyOBFWlwuhPzh">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
-              ?assertEqual(<<"48215335197823716591">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
-              ?assertEqual(<<"97138257657278695563">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
-              ?assertEqual(<<"z14ofqGN4feGzu5VDlH1">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}])),
-              ?assertEqual(<<"Qm47AcX5M8Glxf9MmJEc">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}]))
+              rand:seed(exs64, {0, 0, 0}),
+              ?assertEqual(<<"MHfDhiSQxxFVWKSBCoIr">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
+              ?assertEqual(<<"PsSmPLDJexwnbeqvSMzR">>, moyo_math:random_sequence(20, [{symbol, alphabetical}])),
+              ?assertEqual(<<"15767488576692587821">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
+              ?assertEqual(<<"97958138928329877399">>, moyo_math:random_sequence(20, [{symbol, numeric}])),
+              ?assertEqual(<<"DZmObX6ugXOwATd87YzG">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}])),
+              ?assertEqual(<<"cZGW3oKb4jzY6JANkWAE">>, moyo_math:random_sequence(20, [{symbol, alphanumeric}]))
       end},
      {"指定した長さで指定した文字しか存在しない文字列を返す",
       fun () ->
@@ -138,9 +138,9 @@ random_sequence_test_() ->
       end},
      {"Symbolを省略し、デフォルト値alphabeticalで利用できる",
       fun () ->
-              random:seed(0, 0, 0),
+              rand:seed(exs64, {0, 0, 0}),
               R1 = moyo_math:random_sequence(20, [{symbol, alphabetical}]),
-              random:seed(0, 0, 0),
+              rand:seed(exs64, {0, 0, 0}),
               R2 = moyo_math:random_sequence(20),
               ?assertEqual(R1, R2)
       end}

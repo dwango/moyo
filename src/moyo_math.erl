@@ -105,7 +105,6 @@ random_sequence(Length) -> random_sequence(Length, [{symbol, alphabetical}]).
 
 %% @doc ランダム文字列を返す
 %%
-%% この関数を利用する時は、random:seed を実行して乱数初期化をする必要があります。
 %% DataTypeで出力形式を指定し、Symbolで出力内容を指定する．
 -spec random_sequence(Length::non_neg_integer(), Options) -> binary() when
     Options :: [{symbol, Symbols}],
@@ -156,4 +155,4 @@ random_alphanumeric_sequence(Length) ->
 -spec random_sequence_with_table(Length::non_neg_integer(), Table::binary()) -> binary().
 random_sequence_with_table(Length, Table) ->
     TailPos = byte_size(Table) - 1,
-    << <<(binary:at(Table, random:uniform(TailPos)))>> || _ <- lists:seq(1, Length)>>.
+    << <<(binary:at(Table, rand:uniform(TailPos)))>> || _ <- lists:seq(1, Length)>>.

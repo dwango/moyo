@@ -325,7 +325,7 @@ from_integer(Int, Base, uppercase) ->  %integer_to_binaryは大文字を返す�
 generate_random_list(_, 0, Acc) ->
     Acc;
 generate_random_list(ByteSize, Count, Acc) ->
-    Bin = crypto:rand_bytes(ByteSize),
+    Bin = crypto:strong_rand_bytes(ByteSize),
 
     %% NOTE: Countのサイズが大きい場合は、かなり非効率になるユニーク確認処理
     case lists:member(Bin, Acc) of
