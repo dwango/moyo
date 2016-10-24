@@ -151,6 +151,5 @@ random_sequence(Length::non_neg_integer(), Options) -&gt; binary()
 
 ランダム文字列を返す
 
-この関数を利用する時は、random:seed を実行して乱数初期化をする必要があります。
 DataTypeで出力形式を指定し、Symbolで出力内容を指定する．
 
