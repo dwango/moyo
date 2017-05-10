@@ -32,7 +32,8 @@
          number_to_fixed_point_binary/3,
          from_integer/3,
          to_lower/1,
-         to_upper/1
+         to_upper/1,
+         append/2
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -279,13 +280,20 @@ join([], _) -> <<>>.
 
 %% @doc `IoData'を指定の位置で分割する
 -spec divide(Position::non_neg_integer(), iodata()) -> {iodata(), iodata()}.
+divide(Position, <<Data/binary>>) ->
+    case Data of
+        <<Pre:Position/binary, Post/binary>> -> {Pre, Post};
+        _                                    -> {Data, <<>>}
+    end;
 divide(Position, IoData) ->
     divide_impl(Position, IoData, []).
 
 %% Position に到達するまで IoList を Acc に追加する
 -spec divide_impl(Position::non_neg_integer(), iodata(), iodata()) -> {iodata(), iodata()}.
-divide_impl(Position, IoList, Acc)   when Position =< 0; IoList =:= [] ->
+divide_impl(0, IoList, Acc) ->
     {lists:reverse(Acc), IoList};               % 終了条件
+divide_impl(_Position, [], Acc) ->
+    {lists:reverse(Acc), []};                   % 終了条件
 divide_impl(Position, [H | T], Acc)  when is_integer(H) ->
     divide_impl(Position - 1, T, [H | Acc]);    % integer はそのまま繋げる
 divide_impl(Position, Data, Acc) when is_binary(Data) ->
@@ -317,6 +325,13 @@ from_integer(Int, Base, lowercase) ->
     <<<<(to_lowercase(X))>> || <<X>> <=integer_to_binary(Int, Base)>>;
 from_integer(Int, Base, uppercase) ->  %integer_to_binaryは大文字を返すはずだが、念のため
     <<<<(to_uppercase(X))>> || <<X>> <=integer_to_binary(Int, Base)>>.
+
+%% @doc `Bin'の末尾に`IoData'を連結する.
+-spec append(Bin::binary(), IoData::iodata()) -> binary().
+append(Bin, <<Data/binary>>)            -> <<Bin/binary, Data/binary>>;
+append(Bin, [H | T]) when is_integer(H) -> append(<<Bin/binary, H>>, T);
+append(Bin, [H | T])                    -> append(append(Bin, H), T);
+append(Bin, [])                         -> Bin.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions

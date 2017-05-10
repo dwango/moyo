@@ -582,3 +582,28 @@ to_upper_test_() ->
               ?assertEqual(<<"ĄĆŁŹ"/utf8>>, moyo_binary:to_upper(<<"ĄĆŁŹ"/utf8>>))
       end}
     ].
+
+append_test_() ->
+    [
+     {"バイナリにバイナリが結合できる",
+      fun () ->
+              Bin0 = <<"hoge">>,
+              Bin1 = <<"_fuga.">>,
+              Expected = <<"hoge_fuga.">>,
+              ?assertEqual(Expected, moyo_binary:append(Bin0, Bin1))
+      end},
+     {"バイナリにiodata()が結合できる",
+      fun () ->
+              Bin = <<"hoge">>,
+              IoData = [$_, "fu", [<<"ga">>], $.],
+              Expected = <<"hoge_fuga.">>,
+              ?assertEqual(Expected, moyo_binary:append(Bin, IoData))
+      end},
+     {"空文字列系が結合できる",
+      fun () ->
+              Bin = <<"hoge">>,
+              ?assertEqual(Bin, moyo_binary:append(Bin, <<"">>)),
+              ?assertEqual(Bin, moyo_binary:append(Bin, [])),
+              ?assertEqual(Bin, moyo_binary:append(Bin, [<<"">>,[[], <<"">>]]))
+      end}
+    ].
