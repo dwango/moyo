@@ -62,6 +62,43 @@ seconds_to_datetime_tz_test_() ->
       end}
     ].
 
+milliseconds_to_timestamp_test_() ->
+    [
+     {"unixtime[ミリ秒]をtimestampに変換する",
+      fun () ->
+              UnixtimeMs = 1504852037136, %% 2017年09月08日 15:27:17.136
+              ExpectedTimestamp = {1504, 852037, 136000},
+              ?assertEqual(ExpectedTimestamp, moyo_clock:milliseconds_to_timestamp(UnixtimeMs))
+      end}
+    ].
+
+timestamp_to_milliseconds_test_() ->
+    [
+     {"timestampをunixtime[ミリ秒]に変換する(マイクロ秒以下は切り捨てられる)",
+      fun () ->
+              Timestamp = {1504, 852037, 136888},  %% 2017年09月08日 15:27:17.136888
+              ExpectedMs = 1504852037136,
+              ?assertEqual(ExpectedMs, moyo_clock:timestamp_to_milliseconds(Timestamp))
+      end}
+    ].
+
+milliseconds_to_timestamp_to_milliseconds_test_() ->
+    [
+     {"unixtimeをtimestampに変換して元に戻す",
+      fun () ->
+              lists:foreach(
+                fun (UnixtimeMs) ->
+                        Timestamp = moyo_clock:milliseconds_to_timestamp(UnixtimeMs),
+                        ?assertEqual(UnixtimeMs, moyo_clock:timestamp_to_milliseconds(Timestamp))
+                end,
+                [
+                 0                   %% 1970年01月01日 09:00:00.000
+                 , 870793200 * 1000  %% 1997年08月06日 00:00:00.000
+                 , 1504852037136     %% 2017年09月08日 15:27:17.136
+                ]
+               )
+      end}
+    ].
 
 datetime_to_seconds_test_() ->
     [

@@ -16,6 +16,8 @@
          seconds_to_datetime/1,
          seconds_to_datetime_tz/2,
          seconds_to_now/1,
+         milliseconds_to_timestamp/1,
+         timestamp_to_milliseconds/1,
          datetime_to_seconds/1,
          datetime_to_seconds_tz/2,
          datetime_to_datetime_tz/3,
@@ -172,6 +174,19 @@ seconds_to_datetime_tz(Seconds, TzMinutes) when is_integer(Seconds) andalso Seco
 -spec seconds_to_now(unix_timestamp()) -> erlang:timestamp().
 seconds_to_now(Seconds) when is_integer(Seconds) andalso Seconds >= 0 ->
     {Seconds div (1000 * 1000), Seconds rem (1000 * 1000), 0}.
+
+%% @doc UNIXタイムスタンプ形式の日時[ミリ秒]を`erlang:timestamp()'形式に変換する.
+-spec milliseconds_to_timestamp(unix_timestamp_milliseconds()) -> erlang:timestamp().
+milliseconds_to_timestamp(Milliseconds) when is_integer(Milliseconds) andalso Milliseconds >= 0 ->
+    Rem = Milliseconds rem (1000 * 1000 * 1000),
+    {Milliseconds div (1000 * 1000 * 1000), Rem div 1000, Rem rem 1000 * 1000}.
+
+%% @doc `erlang:timestamp()' 形式の日時をUNIXタイムスタンプ形式[ミリ秒]に変換する.
+%%
+%% ミリ秒より細かい精度に関しては切り捨てる.
+-spec timestamp_to_milliseconds(erlang:timestamp()) -> unix_timestamp_milliseconds().
+timestamp_to_milliseconds({MegaSecs, Secs, MicroSecs}) ->
+    MegaSecs * 1000 * 1000 * 1000 + Secs * 1000 + MicroSecs div 1000.
 
 %% @doc `datetime()'形式のローカル日時をUNIXタイプスタンプ形式の数値に変換する.
 %%
@@ -650,7 +665,6 @@ parse_iso8601_timezone(Bin) -> error(badarg, [Bin]).
 is_valid_datetime({{Year, Month, Day}, {Hour, Min, Sec}}) ->
     ?IS_VALID_DATE(Year, Month, Day) andalso ?IS_VALID_HMS(Hour, Min, Sec);
 is_valid_datetime(Bin) -> error(badarg, [Bin]).
-
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
