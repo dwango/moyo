@@ -1,4 +1,4 @@
-%% @copyright 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
+%% @copyright 2013-2018 DWANGO Co., Ltd. All Rights Reserved.
 -module(moyo_eunit_tests).
 
 -include("eunit.hrl").
@@ -153,5 +153,11 @@ moyo_eunit_test_() ->
                             end),
                receive linked -> ok end,
                ?assertLinked(Pid1, Pid3) % linked
+       end},
+      {"assertContainが正しく動作する",
+       fun() ->
+               ?assertContain(1, [2,1,3]),
+               ?assertError({assert, _}, ?assertContain(0, lists:map(fun(N)->N+1 end, [0,1,2]))),
+               ?assertError({assert, _}, ?assertContain(0, hoge))
        end}
      ]}.

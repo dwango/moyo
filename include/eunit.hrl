@@ -1,4 +1,4 @@
-%% @copyright 2013-2015 DWANGO Co., Ltd. All Rights Reserved.
+%% @copyright 2013-2018 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc eunit用の追加マクロ
 %%
@@ -104,6 +104,32 @@
 %% ```
 %% {_, Ref} = spawn_monitor(fun hoge/0),
 %% ?assertDown(Ref, _)
+%% '''
+%%
+-ifdef(NOASSERT).
+-define(assertContain(Element, List), ok).
+-else.
+-define(assertContain(Element, List),
+        (fun() ->
+                 case is_list(List) andalso lists:member(Element, List) of
+                     true ->
+                         ok;
+                     false ->
+                         Expression = lists:flatten(io_lib:format("~p contains ~p", [List, Element])),
+                         erlang:error({assert,
+                                       [{module, ?MODULE},
+                                        {line, ?LINE},
+                                        {expression, Expression},
+                                        {expected, true},
+                                        {value, false}]})
+                 end
+         end)()).
+-endif.
+-define(_assertContain(Element, List), ?_test(?assertContain(Element, List))).
+%% ListがElementを含むことを確認する
+%%
+%% ```
+%% ?assertContain(1, [2,1,3])
 %% '''
 
 -ifdef(NOASSERT).
