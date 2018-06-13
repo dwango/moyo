@@ -36,7 +36,7 @@
 -spec delete_directory(file:name_all(), boolean()) -> ok | {error, Reason::term()}.
 delete_directory(DirectoryPath, Recursive) ->
     Result =
-        case file:read_file_info(DirectoryPath) of
+        case file:read_file_info(DirectoryPath, [raw]) of
             {error, Reason}                    -> {error, Reason};
             {ok, #file_info{type = directory}} ->
                 case Recursive of
@@ -66,7 +66,7 @@ delete_if_exists(FilePath) ->
 %% 対象パスが存在しない場合は`{ok, 0}'が返る.
 -spec get_disk_usage(file:name_all()) -> {ok, UsageBytes::non_neg_integer()} | {error, Reason::term()}.
 get_disk_usage(Path) ->
-    case file:read_file_info(Path) of
+    case file:read_file_info(Path, [raw]) of
         {error, enoent} -> {ok, 0};
         {error, Reason} -> ?MOYO_ERROR_FUNCALL(file, read_file_info, [Path], Reason);
         {ok, #file_info{size = Size, type = directory}} ->
@@ -188,7 +188,7 @@ delete_directory_recur(DirectoryPath) ->
                 moyo_list:maybe_foreach(
                   fun (Filename) ->
                           Path = filename:join(DirectoryPath, Filename),
-                          case file:read_file_info(Path) of
+                          case file:read_file_info(Path, [raw]) of
                               {error, enoent} -> ok;
                               {error, Reason} ->
                                   ?MOYO_ERROR_FUNCALL(file, read_file_info, [Path], Reason);
