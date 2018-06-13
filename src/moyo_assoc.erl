@@ -477,7 +477,7 @@ to_record_as(RecordName, Fields, FieldSpecList, Params) ->
 %%  {key4,value4},
 %%  {key5,value5}]
 %% '''
--spec from_map(#{}) -> moyo_assoc:assoc_list().
+-spec from_map(map()) -> moyo_assoc:assoc_list().
 from_map(Map) ->
     maps:to_list(Map).
 
@@ -490,7 +490,7 @@ from_map(Map) ->
 %% 1> moyo_assoc:to_map([{key1, value1}, {key2, value2}, {key3, value3}, {key4, value4}, {key5, value5}]).
 %% #{key1 => value1,key2 => value2,key3 => value3,key4 => value4,key5 => value5}
 %% '''
--spec to_map(moyo_assoc:assoc_list()) -> #{}.
+-spec to_map(moyo_assoc:assoc_list()) -> map().
 to_map(Fields) ->
     lists:foldr(fun({K, V}, Map) -> maps:put(K, V, Map) end, maps:new(), Fields).
 
@@ -660,7 +660,7 @@ values(AssocList) ->
 %% from_map_recur(#{#{}=>#{},[]=>#{}}).
 %% [{#{},[]},{[],[]}]
 %% '''
--spec from_map_recur(#{}) -> assoc_list().
+-spec from_map_recur(map()) -> assoc_list().
 from_map_recur(NestMap)when is_map(NestMap) ->
     fun F(Map) when is_map(Map) -> from_map(maps:map(fun(_, V) -> F(V) end, Map));
         F(Leaf) -> Leaf
@@ -676,7 +676,7 @@ from_map_recur(NestMap)when is_map(NestMap) ->
 %% to_map_recur([{#{},[]},{[],[]}]).
 %% #{#{}=>#{},[]=>#{}}
 %% '''
--spec to_map_recur(assoc_list()) -> #{}.
+-spec to_map_recur(assoc_list()) -> map().
 to_map_recur(NestAssocList)  ->
     if  %速度上の理由でis_assocListによる事前チェックは行わない
         is_list(NestAssocList) ->
@@ -778,5 +778,3 @@ to_map_recur_any(AssocList) when is_list(AssocList) ->
         {error, _} -> AssocList
     end;
 to_map_recur_any(Leaf) -> Leaf.
-
-

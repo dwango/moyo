@@ -483,7 +483,7 @@ longest_common_prefix_impl([[Head | Tail] | Lists], Acc) ->
         true  -> longest_common_prefix_impl([Tail | lists:map(fun erlang:tl/1, Lists)], Acc + 1)
     end.
 
--spec uniq_impl(List::[term()], Map::#{}, Acc::[term()]) -> [term()].
+-spec uniq_impl(List::[term()], Map::map(), Acc::[term()]) -> [term()].
 uniq_impl([], _Map, Acc) -> lists:reverse(Acc);
 uniq_impl([H|T], Map, Acc) ->
     case maps:is_key(H, Map) of
