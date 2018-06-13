@@ -1,5 +1,3 @@
-%% coding: latin-1
-%%
 %% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc moyo_commandモジュールのユニットテスト
@@ -275,7 +273,7 @@ generate_command_test_() ->
               Expected = <<"command '20'">>,
               ?assertEqual(Expected, Command)
       end}
-  
+
     ].
 
 execute_test_() ->
@@ -305,9 +303,10 @@ execute_test_() ->
 
      {"exit_statusで0以外で終了(異常終了)した時の挙動",
       fun () ->
-              Result = moyo_command:execute("sh", ["../test/testdata/moyo_command/exit_1.sh"]),
+              Path = list_to_binary(filename:dirname(?FILE) ++ "/testdata/moyo_command/exit_1.sh"),
+              Result = moyo_command:execute("sh", [Path]),
 
-              ?assertMatch({{error, {exit_status, 1}}, <<"sh ../test/testdata/moyo_command/exit_1.sh">>}, Result)
+              ?assertMatch({{error, {exit_status, 1}}, <<"sh ", Path/binary>>}, Result)
       end},
 
      {"timeout時の外部プログラムの終了方法を指定",
@@ -320,18 +319,18 @@ execute_test_() ->
 
      {"標準エラー出力を捨てる",
       fun () ->
-              Result = moyo_command:execute("sh",
-                           ["../test/testdata/moyo_command/stderr.sh"], [discard_stderr]),
-              Expected = {{ok, <<>>}, <<"sh ../test/testdata/moyo_command/stderr.sh 2> /dev/null">>},
+              Path = list_to_binary(filename:dirname(?FILE) ++ "/testdata/moyo_command/stderr.sh"),
+              Result = moyo_command:execute("sh", [Path], [discard_stderr]),
+              Expected = {{ok, <<>>}, <<"sh ", Path/binary, " 2> /dev/null">>},
 
               ?assertEqual(Expected, Result)
       end},
 
      {"stderr_to_stdoutとdiscard_stderr",
       fun () ->
-              Result = moyo_command:execute("sh",
-                           ["../test/testdata/moyo_command/stderr.sh"], [discard_stderr, stderr_to_stdout]),
-              Expected = {{ok, <<>>}, <<"sh ../test/testdata/moyo_command/stderr.sh 2> /dev/null">>},
+              Path = list_to_binary(filename:dirname(?FILE) ++ "/testdata/moyo_command/stderr.sh"),
+              Result = moyo_command:execute("sh", [Path], [discard_stderr, stderr_to_stdout]),
+              Expected = {{ok, <<>>}, <<"sh ", Path/binary, " 2> /dev/null">>},
 
               ?assertEqual(Expected, Result)
       end},

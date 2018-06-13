@@ -1,5 +1,3 @@
-%% coding: latin-1
-%%
 %% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc moyo_assocモジュールのユニットテスト
@@ -145,7 +143,7 @@ parse_url_test_()->
         {"ipv6を入力にして成功する",
             fun() ->
                 ?assertMatch(
-                    {ok, #{scheme := <<"http">>, 
+                    {ok, #{scheme := <<"http">>,
                         host := <<"FEDC:BA98:7654:3210:FEDC:BA98:7654:3210">>, port := 80, path:= <<"/index.html">>}},
                     moyo_url:parse_url(<<"http://[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html">>))
             end},
@@ -169,14 +167,14 @@ parse_url_test_()->
                     ?assertMatch(Output, moyo_url:parse_url(URL))
                     ||
                     {URL, Output} <- [
-                        %%userinfo:true ,port:true ,path:true ,query:true ,fragment:true 
+                        %%userinfo:true ,port:true ,path:true ,query:true ,fragment:true
                         {<<"s://host">>, {ok, #{host => <<"host">>, path => <<"/">>, scheme => <<"s">>}}},
                         %%userinfo:true ,port:true ,path:true ,query:true ,fragment:false
                         {<<"s://host#f@/?">>, {ok, #{fragment => <<"#f@/?">>,
                             host => <<"host">>,
                             path => <<"/">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:true ,path:true ,query:false,fragment:true 
+                        %%userinfo:true ,port:true ,path:true ,query:false,fragment:true
                         {<<"s://host?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             query => <<"?q/=?">>,
@@ -187,14 +185,14 @@ parse_url_test_()->
                             path => <<"/">>,
                             query => <<"?q/=?">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:true ,path:false,query:true ,fragment:true 
+                        %%userinfo:true ,port:true ,path:false,query:true ,fragment:true
                         {<<"s://host/p@">>, {ok, #{host => <<"host">>, path => <<"/p@">>, scheme => <<"s">>}}},
                         %%userinfo:true ,port:true ,path:false,query:true ,fragment:false
                         {<<"s://host/p@#f@/?">>, {ok, #{fragment => <<"#f@/?">>,
                             host => <<"host">>,
                             path => <<"/p@">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:true ,path:false,query:false,fragment:true 
+                        %%userinfo:true ,port:true ,path:false,query:false,fragment:true
                         {<<"s://host/p@?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             query => <<"?q/=?">>,
@@ -205,7 +203,7 @@ parse_url_test_()->
                             path => <<"/p@">>,
                             query => <<"?q/=?">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:false,path:true ,query:true ,fragment:true 
+                        %%userinfo:true ,port:false,path:true ,query:true ,fragment:true
                         {<<"s://host:99">>, {ok, #{host => <<"host">>, path => <<"/">>, port => 99, scheme => <<"s">>}}},
                         %%userinfo:true ,port:false,path:true ,query:true ,fragment:false
                         {<<"s://host:99#f@/?">>, {ok, #{fragment => <<"#f@/?">>,
@@ -213,7 +211,7 @@ parse_url_test_()->
                             path => <<"/">>,
                             port => 99,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:false,path:true ,query:false,fragment:true 
+                        %%userinfo:true ,port:false,path:true ,query:false,fragment:true
                         {<<"s://host:99?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             port => 99,
@@ -226,7 +224,7 @@ parse_url_test_()->
                             port => 99,
                             query => <<"?q/=?">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:false,path:false,query:true ,fragment:true 
+                        %%userinfo:true ,port:false,path:false,query:true ,fragment:true
                         {<<"s://host:99/p@">>, {ok, #{host => <<"host">>, path => <<"/p@">>, port => 99, scheme => <<"s">>}}},
                         %%userinfo:true ,port:false,path:false,query:true ,fragment:false
                         {<<"s://host:99/p@#f@/?">>, {ok, #{fragment => <<"#f@/?">>,
@@ -234,7 +232,7 @@ parse_url_test_()->
                             path => <<"/p@">>,
                             port => 99,
                             scheme => <<"s">>}}},
-                        %%userinfo:true ,port:false,path:false,query:false,fragment:true 
+                        %%userinfo:true ,port:false,path:false,query:false,fragment:true
                         {<<"s://host:99/p@?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             port => 99,
@@ -247,7 +245,7 @@ parse_url_test_()->
                             port => 99,
                             query => <<"?q/=?">>,
                             scheme => <<"s">>}}},
-                        %%userinfo:false,port:true ,path:true ,query:true ,fragment:true 
+                        %%userinfo:false,port:true ,path:true ,query:true ,fragment:true
                         {<<"s://user@host">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             scheme => <<"s">>,
@@ -258,7 +256,7 @@ parse_url_test_()->
                             path => <<"/">>,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:true ,path:true ,query:false,fragment:true 
+                        %%userinfo:false,port:true ,path:true ,query:false,fragment:true
                         {<<"s://user@host?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             query => <<"?q/=?">>,
@@ -271,7 +269,7 @@ parse_url_test_()->
                             query => <<"?q/=?">>,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:true ,path:false,query:true ,fragment:true 
+                        %%userinfo:false,port:true ,path:false,query:true ,fragment:true
                         {<<"s://user@host/p@">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             scheme => <<"s">>,
@@ -282,7 +280,7 @@ parse_url_test_()->
                             path => <<"/p@">>,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:true ,path:false,query:false,fragment:true 
+                        %%userinfo:false,port:true ,path:false,query:false,fragment:true
                         {<<"s://user@host/p@?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             query => <<"?q/=?">>,
@@ -295,7 +293,7 @@ parse_url_test_()->
                             query => <<"?q/=?">>,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:false,path:true ,query:true ,fragment:true 
+                        %%userinfo:false,port:false,path:true ,query:true ,fragment:true
                         {<<"s://user@host:99">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             port => 99,
@@ -308,7 +306,7 @@ parse_url_test_()->
                             port => 99,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:false,path:true ,query:false,fragment:true 
+                        %%userinfo:false,port:false,path:true ,query:false,fragment:true
                         {<<"s://user@host:99?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/">>,
                             port => 99,
@@ -323,7 +321,7 @@ parse_url_test_()->
                             query => <<"?q/=?">>,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:false,path:false,query:true ,fragment:true 
+                        %%userinfo:false,port:false,path:false,query:true ,fragment:true
                         {<<"s://user@host:99/p@">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             port => 99,
@@ -336,7 +334,7 @@ parse_url_test_()->
                             port => 99,
                             scheme => <<"s">>,
                             userinfo => <<"user">>}}},
-                        %%userinfo:false,port:false,path:false,query:false,fragment:true 
+                        %%userinfo:false,port:false,path:false,query:false,fragment:true
                         {<<"s://user@host:99/p@?q/=?">>, {ok, #{host => <<"host">>,
                             path => <<"/p@">>,
                             port => 99,
@@ -354,10 +352,10 @@ parse_url_test_()->
                     ]
                     %% 上のテストパターンの生成コード
                     %%   パターンの生成ルール理解のために書き残す
-                    %% Out=[maps:filter(fun(_,V)->V=/=none end, 
+                    %% Out=[maps:filter(fun(_,V)->V=/=none end,
                     %%      #{scheme=><<"s">>, userinfo => U,host=><<"host">>,port=>Po,path=>P,query=>Q,fragment=>F})
                     %%      || U<-[none,<<"user">>],     Po<-[none,99],            P<-[<<"/">>,<<"/p@">>],  Q<-[none,<<"?q/=?">>],  F<-[none,<<"#f@/?">>] ],
-                    %% In=[<<"s://",U/binary,"host",Po/binary,P/binary,Q/binary,F/binary>> 
+                    %% In=[<<"s://",U/binary,"host",Po/binary,P/binary,Q/binary,F/binary>>
                     %%      || U<-[<<"">>,<<"user@">>],  Po<-[<<"">>,<<":99">>],   P<-[<<"">>,<<"/p@">>],   Q<-[<<"">>,<<"?q/=?">>],F<-[<<"">>,<<"#f@/?">>] ],
                     %% Comment=[{U,Po,P,Q,F}||U<-["true ","false"],Po<-["true ","false"],P<-["true ","false"],Q<-["true ","false"],F<-["true ","false"]],
                     %% [io:format("%%userinfo:~s,port:~s,path:~s,query:~s,fragment:~s\n{~p,{ok,~p}},~n",[A,S,D,F,G,I,O])|| {I,O,{A,S,D,F,G}}<-lists:zip3(In,Out,Comment)].

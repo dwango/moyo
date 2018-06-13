@@ -1,5 +1,3 @@
-%% coding: latin-1
-%%
 %% @copyright 2017 DWANGO Co., Ltd. All Rights Reserved.
 -module(moyo_graph_tests).
 

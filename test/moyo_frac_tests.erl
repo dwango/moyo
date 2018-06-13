@@ -1,5 +1,3 @@
-%% coding: latin-1
-%%
 %% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc moyo_fracのテストモジュール.

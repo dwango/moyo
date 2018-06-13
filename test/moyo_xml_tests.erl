@@ -1,11 +1,11 @@
-%% coding: latin-1
-%%
 %% @copyright 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 %%
 %% @doc moyo_xmlモジュールのユニットテスト
 -module(moyo_xml_tests).
 
 -include_lib("eunit/include/eunit.hrl").
+
+-define(UTF8(Chars), unicode:characters_to_binary(Chars)).
 
 parse_binary_test_() ->
     [
@@ -30,22 +30,22 @@ parse_binary_test_() ->
       end},
      {"テキストを含む場合のパース",
       fun () ->
-              Input    = <<"<test attr=\"属性値\">テキスト</test>">>,
+              Input    = ?UTF8("<test attr=\"属性値\">テキスト</test>"),
               Expected = {test,
-                          [{attr, <<"属性値">>}],
-                          [<<"テキスト">>]},
+                          [{attr, ?UTF8("属性値")}],
+                          [?UTF8("テキスト")]},
 
               ?assertEqual({Expected, <<>>},
                            moyo_xml:parse_binary(Input, [{key_type,atom}]))
       end},
      {"子要素を含む場合のパース",
       fun () ->
-              Input    = <<"<test attr=\"属性値\">テキスト<child>子テキスト</child></test>">>,
+              Input    = ?UTF8("<test attr=\"属性値\">テキスト<child>子テキスト</child></test>"),
               Expected = {test,
-                          [{attr, <<"属性値">>}],
+                          [{attr, ?UTF8("属性値")}],
                           [
-                           <<"テキスト">>,
-                           {child, [], [<<"子テキスト">>]}
+                           ?UTF8("テキスト"),
+                           {child, [], [?UTF8("子テキスト")]}
                           ]},
 
               ?assertEqual({Expected, <<>>},
@@ -53,14 +53,14 @@ parse_binary_test_() ->
       end},
      {"改行やコメントは無視される",
       fun () ->
-              Input    = <<"<test>
-                            <!-- 改行あり -->
-                              <child>子テキスト</child>
-                            </test>">>,
+              Input    = ?UTF8("<test>
+                                  <!-- 改行あり -->
+                                  <child>子テキスト</child>
+                                </test>"),
               Expected = {test,
                           [],
                           [
-                           {child, [], [<<"子テキスト">>]}
+                           {child, [], [?UTF8("子テキスト")]}
                           ]},
 
               ?assertEqual({Expected, <<>>},
@@ -68,13 +68,13 @@ parse_binary_test_() ->
       end},
      {"入力データの途中でXMLのパースが終了した場合は、残り(未パース)のデータが返り値に含まれる",
       fun () ->
-              Input    = <<"<test>テキスト</test><next>次のXML</next>">>,
+              Input    = ?UTF8("<test>テキスト</test><next>次のXML</next>"),
               Expected = {test,
                           [],
                           [
-                           <<"テキスト">>
+                           ?UTF8("テキスト")
                           ]},
-              RestText = <<"<next>次のXML</next>">>,
+              RestText = ?UTF8("<next>次のXML</next>"),
 
               ?assertEqual({Expected, RestText},
                            moyo_xml:parse_binary(Input, [{key_type,atom}]))
@@ -106,9 +106,9 @@ parse_binary_test_() ->
       end},
      {"key_typeオプションに existing_atom を指定すると、要素名および属性名が既にアトムとして存在する場合は、型がアトムとなる",
       fun () ->
-              Input    = <<"<test アトムとして存在しない属性名=\"10\"/>">>,
+              Input    = ?UTF8("<test アトムとして存在しない属性名=\"10\"/>"),
               Expected = {test,
-                          [{<<"アトムとして存在しない属性名">>, <<"10">>}],
+                          [{?UTF8("アトムとして存在しない属性名"), <<"10">>}],
                           []},
 
               ?assertEqual({Expected, <<>>},
@@ -116,7 +116,7 @@ parse_binary_test_() ->
       end},
      {"XMLとして不正な文字列を渡した場合はパースに失敗する",
       fun () ->
-              Input = <<"<test>閉じタグの要素名が異なっている</close>">>,
+              Input = ?UTF8("<test>閉じタグの要素名が異なっている</close>"),
 
               ?assertError(_, moyo_xml:parse_binary(Input, []))
       end},
@@ -134,14 +134,16 @@ parse_file_test_() ->
      {"XMLファイルをパースする",
       fun () ->
               Expected = {test,
-                          [{attr, <<"属性値">>}],
+                          [{attr, ?UTF8("属性値")}],
                           [
-                           <<"テキスト">>,
-                           {child, [], [<<"子テキスト">>]}
+                           ?UTF8("テキスト"),
+                           {child, [], [?UTF8("子テキスト")]}
                           ]},
 
               ?assertEqual({Expected, <<>>},
-                           moyo_xml:parse_file("../test/testdata/moyo_xml/test.xml", [{key_type, atom}]))
+                           moyo_xml:parse_file(
+                             filename:dirname(?FILE) ++ "/testdata/moyo_xml/test.xml",
+                             [{key_type, atom}]))
       end}
     ].
 
@@ -150,17 +152,17 @@ to_iolist_test_() ->
      {"xml()型のデータをiolistに変換する",
       fun () ->
               Xml = {test,
-                     [{<<"attr1">>, <<"値">>},
+                     [{<<"attr1">>, ?UTF8("値")},
                       {attr2, 1},
                       {attr3, val}],
                      [
-                      <<"テキスト">>,
+                      ?UTF8("テキスト"),
                       {<<"child">>, [], [there, <<" are ">>, 2, [" ", "pens"]]},
-                      <<"数値">>,
+                      ?UTF8("数値"),
                       {<<"float">>, [], [12.34]}
                      ]},
-              Expected1 = <<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>1.23399999999999998579e+01</float></test>">>,
-              Expected2 = <<"<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>12.34</float></test>">>,
+              Expected1 = ?UTF8("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>1.23399999999999998579e+01</float></test>"),
+              Expected2 = ?UTF8("<?xml version=\"1.0\" encoding=\"UTF-8\" ?><test attr1=\"値\" attr2=\"1\" attr3=\"val\">テキスト<child>there are 2 pens</child>数値<float>12.34</float></test>"),
               ?assertEqual(Expected1, list_to_binary(moyo_xml:to_iolist(Xml))),
               ?assertEqual(Expected2, list_to_binary(moyo_xml:to_iolist(Xml, [{float_format, [{decimals, 6}, compact]}])))
       end},

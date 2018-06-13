@@ -1,5 +1,3 @@
-%% coding: latin-1
-%%
 %% @copyright 2015 DWANGO Co., Ltd. All Rights Reserved.
 -module(moyo_char_tests).
 
@@ -38,4 +36,3 @@ is_alpha_num_test_() -> [
             [?assert(not moyo_char:is_alpha_num(X)) || X <- Input2]
         end}
 ].
-
