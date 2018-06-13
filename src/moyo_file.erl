@@ -135,7 +135,8 @@ make_temp_filepath(<<Prefix/binary>>) ->
     end.
 
 %% @doc {error, _} が返ってきた時にエラーを発生させる版の file:open/2 です.
--spec open(file:name_all(), [file:mode()]) -> file:io_device().
+-spec open(file:name_all(), [Mode]) -> file:io_device() when
+      Mode :: term(). % See: http://erlang.org/doc/man/file.html
 open(File, Modes) ->
     case file:open(File, Modes) of
         {error, Reason} -> error({failed_to_open_file, File, Reason});

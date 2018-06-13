@@ -128,9 +128,10 @@ make_temp_filepath(Prefix::binary()) -&gt; Path::binary()
 ### open/2 ###
 
 <pre><code>
-open(File::<a href="file.md#type-name_all">file:name_all()</a>, Modes::[<a href="file.md#type-mode">file:mode()</a>]) -&gt; <a href="file.md#type-io_device">file:io_device()</a>
+open(File::<a href="file.md#type-name_all">file:name_all()</a>, Modes::[Mode]) -&gt; <a href="file.md#type-io_device">file:io_device()</a>
 </code></pre>
-<br />
+
+<ul class="definitions"><li><code>Mode = term()</code></li></ul>
 
 {error, _} が返ってきた時にエラーを発生させる版の file:open/2 です.
 
