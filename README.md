@@ -8,7 +8,7 @@ MOYOはErlang用のユーティリティモジュール集です。
 
 ## ビルド方法
 
-ビルドツールには [rebar](https://github.com/rebar/rebar) を使用しています。
+ビルドツールには [rebar3](https://github.com/erlang/rebar3) を使用しています。
 ※ ただし通常はmakeコマンド経由でrebarが実行されるので、自分で叩く機会は少ないです。
 
 
@@ -17,10 +17,7 @@ MOYOはErlang用のユーティリティモジュール集です。
 $ git clone git@github.com:dwango/moyo.git
 $ cd moyo
 
-# 初期ビルド (依存ライブラリの取得 & コンパイル)
-$ make init
-
-# 二回目以降のビルド (コンパイル)
+# コンパイル
 $ make compile
 
 # ユニットテスト
@@ -38,9 +35,9 @@ $ make start
 
 ## 他のプロジェクトに組み込む方法
 
-rebarを使った一般的なライブラリと同様の方法で組み込みが可能です。
+rebar3を使った一般的なライブラリと同様の方法で組み込みが可能です。
 
-具体的にはプロジェクトのrebar.configに以下のようなエントリを追加すると、moyoが依存関係に追加され、リポジトリの取得やビルドがrebarコマンド経由で行えるようになります。
+具体的にはプロジェクトのrebar.configに以下のようなエントリを追加すると、moyoが依存関係に追加され、リポジトリの取得やビルドがrebar3コマンド経由で行えるようになります。
 ```erlang
 {deps,
  [
