@@ -14,7 +14,10 @@
          urldecode_rfc3986/1,
 
          parse_query/1,
-         build_qs/1
+         build_qs/1,
+
+         parse_scheme/1,
+         parse_url/1
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -124,6 +127,93 @@ build_qs(AssocList) ->
          end || {K, V} <- AssocList],
         "&")).
 
+%% @doc URLのschemeを取得する
+-spec parse_scheme(URL :: binary()) ->
+    {ok, {Scheme :: binary(), Rest :: binary()}} | error.
+parse_scheme(URL) ->
+    case  binary:split(URL,<<"://">>) of
+        [Scheme,Rest]-> {ok,{Scheme,Rest}};
+        _->error
+    end.
+
+%% @doc URLをparseし、URLの要素をmapで返す
+%%
+%% URLに必須なschemeとhostが入力に含まれない場合、もしくはperseに失敗した場合errorとなる
+%% http_uri:parseとの違い
+%% + 入出力の文字列をバイナリ型で取り扱う
+%%     string()で取り扱わない
+%% + schemeをバイナリで返す
+%%     http_uri版はschemeをatomで返すため、ユーザ入力を受け付ける場合、無限にatomが生成される恐れがあったが、
+%%     この関数はバイナリで返すためleakの心配がない
+%% + デフォルトのport指定を持たない
+%%     http_uri版は"http://foo/"の様なhttp+port指定なし入力の場合、戻り値のportに80自動指定するが、
+%%     この関数ではしない。parserとしての機能としては大きすぎ、parseしたいだけなのにschemeとportの組を設定する必要がある等邪魔になることがあったので外した
+
+-spec parse_url(URL :: binary()) ->
+    {ok, ParsedURL}| {error, Reason :: term()} when
+    ParsedURL :: #{
+        scheme => binary(),     % mandatory
+        userinfo => binary(),   % optional
+        host => binary(),       % mandatory
+        port => pos_integer(),  % optional
+        path => binary(),       % mandatory
+        query => binary(),      % optional
+        fragment => binary()    % optional
+    }.
+parse_url(URL) ->
+    case parse_scheme(URL) of
+        error -> {error, require_scheme};
+        {ok, {Scheme, UserHostPortPathQueryFragment}} ->
+            %% fragment query pathを取り出す 
+            {UserHostPortPathQuery, Fragment} =
+                splitL(UserHostPortPathQueryFragment, <<"#">>),
+            {UserHostPortPath, Query} =
+                splitL(UserHostPortPathQuery, <<"?">>),
+            {UserHostPort, Path} =
+                splitL(UserHostPortPath, <<"/">>),
+
+            %%userinfoを取り出す
+            {User, HostPort} =
+                case binary:split(UserHostPort, <<"@">>) of
+                    [U, HP] -> {U, HP};
+                    [HP] -> {none, HP}
+                end,
+
+            %% hostとportを取り出す
+            {Host, Port} =
+                case HostPort of
+                    <<"[", Rest/binary>> ->  %ipv6用
+                        case binary:split(Rest, <<"]">>) of
+                            [L, <<":", R/binary>>] -> {L, R};
+                            [L, <<"">>] -> {L, none};
+                            _ -> {none, none} % 空のHostを返して関数を失敗させる
+                        end;
+                    _ ->
+                        splitL(HostPort, <<":">>)
+                end,
+
+            %% Hostは必須なのでvalidate
+            case Host =/= none of
+                false -> {error, require_host};
+                true ->
+                    case parse_port(Port) of    %% portが正の数字かどうか解析
+                        {error, _} = Error -> Error;
+                        {ok, Portint} ->
+                            Result =
+                                maps:filter(fun(_, V) -> V =/= none end, #{
+                                    scheme=> Scheme,
+                                    userinfo=> User,
+                                    host=> Host,
+                                    port=> Portint,
+                                    path=> map_add_prefix(Path, <<"/">>, <<"/">>),
+                                    query=> map_add_prefix(Query, <<"?">>, none),
+                                    fragment=> map_add_prefix(Fragment, <<"#">>, none)
+                                }),
+                            {ok, Result}
+                    end
+            end
+    end.
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
 %%----------------------------------------------------------------------------------------------------------------------
@@ -168,3 +258,31 @@ urldecode_impl(<<$+, Rest/binary>>, Acc, true) ->
     urldecode_impl(Rest, [$  | Acc], true);
 urldecode_impl(<<Byte, Rest/binary>>, Acc, Interpret_x_www_form_urlencoded) ->
     urldecode_impl(Rest, [Byte | Acc], Interpret_x_www_form_urlencoded).
+
+%% 常に2要素返すbinary:split関数。1要素しか返せない場合、右の要素をnoneにする
+-spec splitL(Bin :: binary(), Pattern :: binary()) -> {binary(), none|binary()}.
+splitL(Bin, Pattern) ->
+    case binary:split(Bin, Pattern) of
+        [L, R] -> {L, R};
+        [L] -> {L, none}
+    end.
+
+%% バイナリが正の数字ならその数字を、noneならnoneを、それ以外ならerrorを返す
+-spec parse_port(Bin :: binary()) -> {ok, pos_integer()}|{ok, none}|{error, Reason :: term()}.
+parse_port(Bin) ->
+    case Bin of
+        none -> {ok, none};
+        _ ->
+            case catch binary_to_integer(Bin) of
+                Portint when is_integer(Portint) andalso Portint > 0 -> {ok, Portint};
+                _ -> {error, require_port_is_integer}
+            end
+    end.
+
+%% none|binary を受け取り Default|入力にprefix を付けて返す
+-spec map_add_prefix(Bin :: none|binary(), Prefix :: binary(), Default :: any()) -> any()|binary().
+map_add_prefix(Bin, Prefix, Default) ->
+    case Bin of
+        none -> Default;
+        _ -> <<Prefix/binary, Bin/binary>>
+    end.

@@ -14,7 +14,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#build_qs-1">build_qs/1</a></td><td>連想リストからHTTPのクエリ文字列を生成する.</td></tr><tr><td valign="top"><a href="#parse_query-1">parse_query/1</a></td><td>URLのクエリストリング部をパースして、対応する連想リストを取得する.</td></tr><tr><td valign="top"><a href="#urldecode_base64-1">urldecode_base64/1</a></td><td>base64url形式でエンコードされたバイナリをデコードする.</td></tr><tr><td valign="top"><a href="#urldecode_rfc3986-1">urldecode_rfc3986/1</a></td><td>RFC3986形式でエンコードされているバイナリをデコードする.</td></tr><tr><td valign="top"><a href="#urlencode_base64-1">urlencode_base64/1</a></td><td>Equivalent to <a href="#urlencode_base64-2"><tt>urlencode_base64(PlainText, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#urlencode_base64-2">urlencode_base64/2</a></td><td>バイナリをbase64url形式にエンコードする.</td></tr><tr><td valign="top"><a href="#urlencode_rfc3986-1">urlencode_rfc3986/1</a></td><td>テキストを RFC3986 にもとづいてエンコードする.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#build_qs-1">build_qs/1</a></td><td>連想リストからHTTPのクエリ文字列を生成する.</td></tr><tr><td valign="top"><a href="#parse_query-1">parse_query/1</a></td><td>URLのクエリストリング部をパースして、対応する連想リストを取得する.</td></tr><tr><td valign="top"><a href="#parse_scheme-1">parse_scheme/1</a></td><td>URLのschemeを取得する.</td></tr><tr><td valign="top"><a href="#parse_url-1">parse_url/1</a></td><td>URLをparseし、URLの要素をmapで返す.</td></tr><tr><td valign="top"><a href="#urldecode_base64-1">urldecode_base64/1</a></td><td>base64url形式でエンコードされたバイナリをデコードする.</td></tr><tr><td valign="top"><a href="#urldecode_rfc3986-1">urldecode_rfc3986/1</a></td><td>RFC3986形式でエンコードされているバイナリをデコードする.</td></tr><tr><td valign="top"><a href="#urlencode_base64-1">urlencode_base64/1</a></td><td>Equivalent to <a href="#urlencode_base64-2"><tt>urlencode_base64(PlainText, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#urlencode_base64-2">urlencode_base64/2</a></td><td>バイナリをbase64url形式にエンコードする.</td></tr><tr><td valign="top"><a href="#urlencode_rfc3986-1">urlencode_rfc3986/1</a></td><td>テキストを RFC3986 にもとづいてエンコードする.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -61,6 +61,40 @@ URLのクエリストリング部をパースして、対応する連想リス�
   なお、入力として"%a=b"のように不正なパーセントエンコーディング文字が渡された場合の挙動は未定義。<br />
   (何らかの解釈でデコードされた結果が返るかもしれないし、エラーとなるかもしれない)
 ```
+
+<a name="parse_scheme-1"></a>
+
+### parse_scheme/1 ###
+
+<pre><code>
+parse_scheme(URL::binary()) -&gt; {ok, {Scheme::binary(), Rest::binary()}} | error
+</code></pre>
+<br />
+
+URLのschemeを取得する
+
+<a name="parse_url-1"></a>
+
+### parse_url/1 ###
+
+<pre><code>
+parse_url(URL::binary()) -&gt; {ok, ParsedURL} | {error, Reason::term()}
+</code></pre>
+
+<ul class="definitions"><li><code>ParsedURL = #{scheme =&gt; binary(), userinfo =&gt; binary(), host =&gt; binary(), port =&gt; pos_integer(), path =&gt; binary(), query =&gt; binary(), fragment =&gt; binary()}</code></li></ul>
+
+URLをparseし、URLの要素をmapで返す
+
+URLに必須なschemeとhostが入力に含まれない場合、もしくはperseに失敗した場合errorとなる
+http_uri:parseとの違い
++ 入出力の文字列をバイナリ型で取り扱う
+string()で取り扱わない
++ schemeをバイナリで返す
+http_uri版はschemeをatomで返すため、ユーザ入力を受け付ける場合、無限にatomが生成される恐れがあったが、
+この関数はバイナリで返すためleakの心配がない
++ デフォルトのport指定を持たない
+http_uri版は"http://foo/"の様なhttp+port指定なし入力の場合、戻り値のportに80自動指定するが、
+この関数ではしない。parserとしての機能としては大きすぎ、parseしたいだけなのにschemeとportの組を設定する必要がある等邪魔になることがあったので外した
 
 <a name="urldecode_base64-1"></a>
 
