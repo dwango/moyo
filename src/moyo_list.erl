@@ -3,6 +3,8 @@
 %% @doc リストに関する処理を集めたユーティリティモジュール.
 -module(moyo_list).
 
+-include("moyo_internal.hrl").
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
@@ -413,7 +415,8 @@ pmap_call(Fun ,Arg) ->
             SomeResult      -> {error, {'EXIT', SomeResult}}
         end
     catch
-        ExceptionClass:SomeReason -> {error, {'EXIT', ExceptionClass, SomeReason, erlang:get_stacktrace()}}
+        ExceptionClass:SomeReason ?CAPTURE_STACKTRACE ->
+            {error, {'EXIT', ExceptionClass, SomeReason, ?GET_STACKTRACE}}
     end.
 
 -spec pmap_receive(Ref, {Count, Results}) -> Results when

@@ -4,6 +4,7 @@
 -module(moyo_file).
 
 -include_lib("kernel/include/file.hrl").
+-include("moyo_internal.hrl").
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
@@ -98,7 +99,7 @@ get_disk_usage_async(Path, Pid, Tag) ->
                           try
                               get_disk_usage(Path)
                           catch
-                              Class:Reason -> {error, {Class, Reason, erlang:get_stacktrace()}}
+                              Class:Reason ?CAPTURE_STACKTRACE -> {error, {Class, Reason, ?GET_STACKTRACE}}
                           end,
                       Pid ! {Tag, Result}
               end),
