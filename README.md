@@ -1,5 +1,7 @@
 # moyo
 
+[![Build Status](https://travis-ci.org/dwango/moyo.svg?branch=master)](https://travis-ci.org/dwango/moyo)
+
 ## 概要
 MOYOはErlang用のユーティリティモジュール集です。
 
