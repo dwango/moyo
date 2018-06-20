@@ -3,6 +3,8 @@
 %% @doc 関数に関する処理を集めたユーティリティモジュール.
 -module(moyo_fun).
 
+-include("moyo_internal.hrl").
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
@@ -64,8 +66,8 @@ try_apply(Module, Function, Args) ->
     try
         apply(Module, Function, Args)
     catch
-        Class:Reason ->
-            {error, {'EXIT', {Class, Reason, erlang:get_stacktrace()}}}
+        Class:Reason ?CAPTURE_STACKTRACE ->
+            {error, {'EXIT', {Class, Reason, ?GET_STACKTRACE}}}
     end.
 
 %% @doc 指定された関数を実行する. 実行中に例外が発生した場合は`ErrorResult'を返す
@@ -87,8 +89,8 @@ try_call(Fun) ->
     try
         Fun()
     catch
-        Class:Reason ->
-            {error, {'EXIT', {Class, Reason, erlang:get_stacktrace()}}}
+        Class:Reason ?CAPTURE_STACKTRACE ->
+            {error, {'EXIT', {Class, Reason, ?GET_STACKTRACE}}}
     end.
 
 %% @doc 引数の関数を実行する. 実行中に例外が発生した場合は`ErrorResult'を返す

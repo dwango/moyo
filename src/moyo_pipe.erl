@@ -5,6 +5,8 @@
 %% 現在は出力機能にのみ対応済み
 -module(moyo_pipe).
 
+-include("moyo_internal.hrl").
+
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported API
 %%----------------------------------------------------------------------------------------------------------------------
@@ -100,13 +102,13 @@ output_loop(State) ->
                     try
                         true = port_command(Port, Data)
                     catch
-                        error:badarg ->
+                        error:badarg ?CAPTURE_STACKTRACE ->
                             case erlang:port_info(Port) of
                                 undefined ->
                                     %% ポートが閉じている(コマンドの実行が終了している)ので、出力プロセスも終了
                                     exit(normal);
                                 _ ->
-                                    erlang:raise(error, badarg, erlang:get_stacktrace())
+                                    erlang:raise(error, badarg, ?GET_STACKTRACE)
                             end
                     end,
                     ok = timer:sleep(Interval),
