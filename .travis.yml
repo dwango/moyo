@@ -3,4 +3,6 @@ otp_release:
   - 20.3
   - 19.3
   - 18.3
+before_script:
+  - export TZ=Asia/Tokyo
 script: make
