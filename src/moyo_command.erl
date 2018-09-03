@@ -33,7 +33,7 @@
 %% Macros & Records & Types
 %%----------------------------------------------------------------------------------------------------------------------
 %% execute/3の第3引数に渡せるオプションの中でopen_port/2に渡さないオプションリスト.
--define(NON_OPENPORT_OPTION, [escape_all, stdout, stderr, discard_stderr, timeout, close_function, stdout_hook_fun, nice]).
+-define(NON_OPENPORT_OPTION, [escape_all, stdout, stderr, discard_stderr, timeout, close_function, stdout_hook_fun, nice, open_port_module]).
 
 %% float() -> binary()のデフォルト表記法
 -define(DEFAULT_FLOAT_NOTATION, {decimals, 4}).
@@ -59,7 +59,8 @@
                           | {stdout, destination_file_path() | stderr} | {stderr, destination_file_path() | stdout}
                           | discard_stderr
                           | {timeout, time()} | {nice, integer()} | {close_function, fun((port()) -> ok)}
-                          | {stdout_hook_fun, {stdout_hook_fun(), term()}}.
+                          | {stdout_hook_fun, {stdout_hook_fun(), term()}}
+                          | {open_port_module, module()}.
 %% execute/2, execute/3に指定できるオプション.
 -type port_settings()    :: term(). % open_portに指定できるオプション.
 -type time()             :: non_neg_integer().
@@ -362,7 +363,8 @@ execute_impl(Parent, Command, OptionList) ->
     OptionListForOpenPort = prepare_option_for_open_port(OptionList),
 
     %% 外部コマンドを実行.
-    Port = open_port({spawn, binary_to_list(Command)}, OptionListForOpenPort),
+    Module = proplists:get_value(open_port_module, OptionList, erlang),
+    Port = Module:open_port({spawn, binary_to_list(Command)}, OptionListForOpenPort),
 
     Time = proplists:get_value(timeout, OptionList),
     TimerSetting = set_timer(Time),
