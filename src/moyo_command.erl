@@ -111,6 +111,7 @@ generate_command(Command, ArgumentList) -> generate_command(Command, ArgumentLis
 %% ● `{close_function, Fun}' : timeoutオプションでタイムアウトした時の処理を明示的に指定する.<br />
 %% ● `{stdout_hook_fun, {Fun, Init}}' : 標準出力をフィルタリングする.
 %%                                      Initに初期値を, Funは2引数の関数で第1引数に`exit'が来た場合は`binary'を返す.
+%% ● `{open_port_module, Module}' : erlang:open_port/2の代わりに, 指定したモジュールのopen_port/2を使用する.
 -spec generate_command(command(), [argument()], [option()]) -> binary().
 generate_command(Command, ArgumentList, OptionList) ->
     %% escape_allオプション
