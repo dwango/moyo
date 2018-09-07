@@ -442,6 +442,13 @@ execute_test_() ->
               Result = moyo_command:execute("echo", ["test"], [{open_port_module, undefined_module}]),
 
               ?assertMatch({{error, {undef, _}}, <<"echo test">>}, Result)
+        end},
+
+        {"open_port_moduleにopen_port/2をexportしていないモジュールを指定した場合",
+        fun () ->
+              Result = moyo_command:execute("echo", ["test"], [{open_port_module, lists}]),
+
+              ?assertMatch({{error, {undef, _}}, <<"echo test">>}, Result)
         end}
     ].
 
