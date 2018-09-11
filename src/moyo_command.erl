@@ -110,7 +110,7 @@ generate_command(Command, ArgumentList) -> generate_command(Command, ArgumentLis
 %% ● `{timeout, Time}'       : Time `ミリ秒' で処理が終わらなかった場合, タイムアウトする.<br />
 %% ● `{close_function, Fun}' : timeoutオプションでタイムアウトした時の処理を明示的に指定する.<br />
 %% ● `{stdout_hook_fun, {Fun, Init}}' : 標準出力をフィルタリングする.
-%%                                      Initに初期値を, Funは2引数の関数で第1引数に`exit'が来た場合は`binary'を返す.
+%%                                      Initに初期値を, Funは2引数の関数で第1引数に`exit'が来た場合は`binary'を返す.<br />
 %% ● `{open_port_module, Module}' : erlang:open_port/2の代わりに, 指定したモジュールのopen_port/2を使用する.
 -spec generate_command(command(), [argument()], [option()]) -> binary().
 generate_command(Command, ArgumentList, OptionList) ->
