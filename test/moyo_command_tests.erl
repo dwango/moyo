@@ -427,7 +427,29 @@ execute_test_() ->
               Expected = {{ok, <<"alert1\nalert2\nalert3\n">>}, <<"echo \"alert1\ninfo\nalert2\nnotice\nalert3\n\"">>},
               ?assertEqual(Expected, Result)
 
-      end}
+      end},
+
+      {"open_port_moduleを指定する",
+       fun () ->
+              Result = moyo_command:execute("echo", ["test"], [{open_port_module, erlang}]),
+
+              Expected = {{ok, <<"test\n">>}, <<"echo test">>},
+              ?assertEqual(Expected, Result)
+       end},
+
+       {"open_port_moduleに不正なモジュールを指定した場合",
+        fun () ->
+              Result = moyo_command:execute("echo", ["test"], [{open_port_module, undefined_module}]),
+
+              ?assertMatch({{error, {undef, _}}, <<"echo test">>}, Result)
+        end},
+
+        {"open_port_moduleにopen_port/2をexportしていないモジュールを指定した場合",
+        fun () ->
+              Result = moyo_command:execute("echo", ["test"], [{open_port_module, lists}]),
+
+              ?assertMatch({{error, {undef, _}}, <<"echo test">>}, Result)
+        end}
     ].
 
 escape_shell_arg_test_() ->
