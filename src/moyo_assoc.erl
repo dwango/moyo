@@ -452,12 +452,13 @@ to_record(RecordName, Fields, Params) ->
 %% > {ok, Entries} = lookup_entries_as(FieldSpecList, Params).
 %% > to_record(RecordName, Fields, Entries).
 %% '''
--spec to_record_as(RecordName, Fields, FieldSpecList, Params) -> {ok, assoc_list()} | {error, Reason} when
+-spec to_record_as(RecordName, Fields, FieldSpecList, Params) -> {ok, Record} | {error, Reason} when
       RecordName    :: atom(),
       Fields        :: [atom()],
       FieldSpecList :: [validate_entry_spec()],
       Params        :: assoc_list(),
-      Reason        :: term().
+      Reason        :: term(),
+      Record        :: tuple().
 to_record_as(RecordName, Fields, FieldSpecList, Params) ->
     case moyo_assoc:lookup_entries_as(FieldSpecList, Params) of
         {error, Reason} -> {error, Reason};
