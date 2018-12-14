@@ -311,7 +311,7 @@ lookup_values(KeyList, AssocList) ->
 
 %% @doc `EntrySpecList'で指定された方式で、値一覧を取得する
 %%
-%% 以下のコードとほぼ透過:
+%% 以下のコードとほぼ等価:
 %% ```
 %% > {ok, Entries} = lookup_entries_as(EntrySpecList, AssocList).
 %% > {ok, [V || {_, V} <- Entries]}.
