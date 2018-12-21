@@ -24,6 +24,7 @@
          maybe_foreach/2,
          maybe_foldl/3,
          maybe_foldr/3,
+         maybe_filter/2,
 
          maybe_pmap/2,
          maybe_pmap/3,
@@ -155,6 +156,16 @@ maybe_foldl(Fun, Acc, [Element | List]) ->
         {error, Reason} -> {error, Reason};
         {ok, AccNext}   -> maybe_foldl(Fun, AccNext, List)
     end.
+
+%% @doc lists:filter/2 の maybe版: 関数適用結果が`{error, Reason}'となる要素があれば、そこで走査が中断される.
+%%
+%% `Fun'の結果は `boolean()' or `{error, Reason}' のいずれかである必要がある.
+-spec maybe_filter(Fun, List) -> {ok, List} | {error, Reason} when
+      Fun       :: fun((Element) -> boolean() | {error, Reason}),
+      List      :: [Element],
+      Reason    :: term().
+maybe_filter(Fun, List) ->
+    maybe_filter(Fun, [], List).
 
 %% @doc lists:foldr/3 の maybe版: 関数適用結果が`{error, Reason}'となる要素があれば、そこで走査が中断される.
 %%
@@ -493,3 +504,18 @@ uniq_impl([H|T], Map, Acc) ->
         true -> uniq_impl(T, Map, Acc);
         false -> uniq_impl(T, maps:put(H, true, Map), [H|Acc])
     end.
+
+-spec maybe_filter(Fun, Acc, List) -> {ok, List} | {error, Reason} when
+      Fun       :: fun((Element) -> boolean() | {error, Reason}),
+      List      :: [Element],
+      Acc       :: [Element],
+      Reason    :: term().
+maybe_filter(_, Acc, []) ->
+    {ok, lists:reverse(Acc)};
+maybe_filter(Fun, Acc, [Element | List]) ->
+    case Fun(Element) of
+        {error, Reason} -> {error, Reason};
+        true            -> maybe_filter(Fun, [Element | Acc], List);
+        false           -> maybe_filter(Fun, Acc, List)
+    end.
+

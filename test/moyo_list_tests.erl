@@ -230,6 +230,14 @@ maybe_foreach_test_() ->
       end}
     ].
 
+maybe_filter_test_() ->
+    [
+     {"要素の走査成功時",
+      ?_assertEqual({ok, [1, 2, 3]}, moyo_list:maybe_filter(fun is_integer/1, [1, atom, 2, atom, 3]))},
+     {"要素の走査失敗時",
+      ?_assertEqual({error, reason}, moyo_list:maybe_filter(fun (_) -> {error, reason} end, [1, 2, 3]))}
+    ].
+
 maybe_pmap_test_() ->
     [
      {"空のリストの要素をマッピングする",
