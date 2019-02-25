@@ -40,6 +40,7 @@
          store_if_not_exist/3,
          delete/2,
          take/2,
+         take/3,
          update/4,
          rupdate/4,
 
@@ -152,12 +153,22 @@ store_if_not_exist(Key, Value, AssocList) ->
         false -> {true, [{Key, Value} | AssocList]}
     end.
 
-%% @doc キーに対応する要素を連想リストから取り出す(取り除く)
+%% @doc キーに対応する要素を連想リストから取り出す(取り除く).
 -spec take(key(), assoc_list()) -> error | {ok, value(), assoc_list()}.
-take(Key, AssocList) ->
-    case lists:keytake(Key, 1, AssocList) of
+take(Key, AssocList0) ->
+    case lists:keytake(Key, 1, AssocList0) of
         false                           -> error;
-        {value, {_, Value}, AssocList2} -> {ok, Value, AssocList2}
+        {value, {_, Value}, AssocList1} -> {ok, Value, AssocList1}
+    end.
+
+%% @doc キーに対応する要素を連想リストから取り出す(取り除く).
+%%
+%% キーに対応する要素が連想リストに存在しなかった場合には, 連想リストは変更せず, 値として Default を返す.
+-spec take(key(), assoc_list(), value()) -> {ok, value(), assoc_list()}.
+take(Key, AssocList0, Default) ->
+    case lists:keytake(Key, 1, AssocList0) of
+        false                           -> {ok, Default, AssocList0};
+        {value, {_, Value}, AssocList1} -> {ok, Value, AssocList1}
     end.
 
 %% @doc キーに対応する要素を削除する.

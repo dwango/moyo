@@ -87,6 +87,20 @@ take_test_() ->
       end}
     ].
 
+take3_test_() ->
+    [
+     {"キーに紐づく要素を連想リストから取り出す",
+      fun () ->
+              AssocList = [{color, red}, {lang, ruby}],
+              ?assertEqual({ok, red, [{lang, ruby}]}, moyo_assoc:take(color, AssocList, default))
+      end},
+     {"対応するキーが存在しない場合はリストはそのままで`default'が返る",
+      fun () ->
+              AssocList = [{color, red}, {lang, ruby}],
+              ?assertEqual({ok, default, AssocList}, moyo_assoc:take(size, AssocList, default))
+      end}
+    ].
+
 delete_test_() ->
     [
      {"キーに紐づく要素を削除する",
