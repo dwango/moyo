@@ -2,7 +2,7 @@
 
 -module(moyo_concurrent_tests).
 
--include_lib("eunit/include/eunit.hrl").
+-include_lib("../include/eunit.hrl").
 
 -on_load(init/0).
 
@@ -84,6 +84,69 @@ exec_sort_test_() ->
                Inputs = [{lists, reverse, [[1,2,3]]},
                          {erlang, exit, [hoge]}],
                ?assertError(hoge, moyo_concurrent:exec_sort(Inputs))
+       end}
+     ]}.
+
+exec_map_test_() ->
+    {spawn,
+     [
+      {"timeoutを指定できる",
+       fun() ->
+               ?assertError(timeout, moyo_concurrent:exec([{timer, sleep, [infinity]}], 1))
+       end},
+      {"複数実行",
+       fun() ->
+               %% Input, Expected
+               TestData = [{{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[3,4,5]]}, [5,4,3]},
+                           {{lists, member,  [1, [1,2,3]]}, true}
+                          ],
+               Assoc  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
+               [?assertEqual(Expected, moyo_assoc:fetch(Input, Assoc))
+                || {Input, Expected} <- TestData]
+       end},
+      {"Input が同じ場合",
+       fun() ->
+               %% Input, Expected
+               TestData = [{{lists, reverse, [[a,b,c]]}, [c,b,a]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[1,2,3]]}, [3,2,1]},
+                           {{lists, reverse, [[x,y,z]]}, [z,y,x]}],
+               Assoc  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
+               %% order sensitive 
+               [?assertEqual(lists:nth(I, TestData), lists:nth(I, Assoc))
+                || I <- lists:seq(1, length(TestData))]
+       end},
+      {"error, throw, exit になるものがある場合",
+       fun() ->
+               Input = [{lists, reverse, [[1,2,3]]},
+                        {lists, reverse, [[3,4,5]]},
+                        {erlang, error, [hoge]},
+                        {erlang, throw, [fuga]},
+                        {erlang, exit, [piyo]}],
+               Result = moyo_concurrent:exec_map(Input),
+               %% order sensitive
+               ?assertEqual({{lists, reverse, [[1, 2, 3]]}, [3, 2, 1]}, lists:nth(1, Result)),
+               ?assertEqual({{lists, reverse, [[3, 4, 5]]}, [5, 4, 3]}, lists:nth(2, Result)),
+               ?assertMatch2({'EXIT', {erlang, error, [hoge]}, {hoge, _}}, lists:nth(3, Result)),
+               ?assertMatch2({'EXIT', {erlang, throw, [fuga]}, {{nocatch, fuga}, _}}, lists:nth(4, Result)),
+               ?assertMatch2({'EXIT', {erlang, exit, [piyo]}, piyo}, lists:nth(5, Result))
+       end},
+      {"signal が突き抜けない",
+       fun() ->
+               Input = [{erlang, apply, [fun() ->
+                                                 spawn_link(fun() -> exit(self(), kill) end),
+                                                 ok
+                                         end, []]}],
+               Result = moyo_concurrent:exec_map(Input),
+               ?assertMatch2([{{erlang, apply, _}, ok}], Result)
        end}
      ]}.
 

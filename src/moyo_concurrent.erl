@@ -12,7 +12,9 @@
          exec/1,
          exec/2,
          exec_sort/1,
-         exec_sort/2
+         exec_sort/2,
+         exec_map/1,
+         exec_map/2
         ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
@@ -49,6 +51,23 @@ exec(Inputs) ->
       Timeout :: timeout().
 exec(Inputs, Timeout) ->
     exec_impl(Inputs, Timeout, fun exec_order_by_finish/1).
+
+%% @doc 並行に複数のコマンドを実行する
+%%
+%% see: `exec_map([Input], infinity)`
+-spec exec_map([Input]) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+      Input   :: {module(), Function :: atom(), Args :: [term()]}.
+exec_map(Inputs) ->
+    exec_map(Inputs, infinity).
+
+%% @doc 並行に複数のコマンドを実行する
+%% 返り値は Inputs の順番で返される. <br />
+%% 1つでも結果がerrorだった場合もすべての実行が完了を待ち, 結果のリストは Inputs の写像となる.
+-spec exec_map([Input], Timeout) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+      Input   :: {module(), Function :: atom(), Args :: [term()]},
+      Timeout :: timeout().
+exec_map(Inputs, Timeout) ->
+    exec_impl(Inputs, Timeout, fun exec_order_preserved_by_input/1).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Internal Functions
@@ -98,3 +117,21 @@ exec_order_by_input(Inputs) ->
                     end)
          || {Module, Fun, Args} <- Inputs],
     [receive {Input, RetValue} -> RetValue end || Input <- Inputs].
+
+%% @doc Input要素の関数をプロセスを立てて実行し, 結果を入力順に返す. エラーが起きても停止しない.
+-spec exec_order_preserved_by_input([Input]) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+      Input :: {module(), Function :: atom(), Args :: [term()]}.
+exec_order_preserved_by_input(Inputs) ->
+    Self = self(),
+    process_flag(trap_exit, true),
+    Pids = [spawn_link(fun() ->
+                               Self ! {{Module, Fun, Args}, apply(Module, Fun, Args)}
+                       end)
+            || {Module, Fun, Args} <- Inputs],
+    [receive
+         {Input, _} = Ok -> 
+             receive %% wait normal exit
+                 {'EXIT', Pid, normal} -> Ok
+             end;
+         {'EXIT', Pid, Signal} -> {'EXIT', Input, Signal}
+     end || {Pid, Input} <- lists:zip(Pids, Inputs)].
