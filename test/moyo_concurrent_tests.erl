@@ -101,9 +101,8 @@ exec_map_test_() ->
                            {{lists, reverse, [[3,4,5]]}, [5,4,3]},
                            {{lists, member,  [1, [1,2,3]]}, true}
                           ],
-               Assoc  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
-               [?assertEqual(Expected, moyo_assoc:fetch(Input, Assoc))
-                || {Input, Expected} <- TestData]
+               Actual  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
+               ?assertEqual(Actual, [E || {_, E} <- TestData])
        end},
       {"Input が同じ場合",
        fun() ->
@@ -119,10 +118,8 @@ exec_map_test_() ->
                            {{lists, reverse, [[1,2,3]]}, [3,2,1]},
                            {{lists, reverse, [[1,2,3]]}, [3,2,1]},
                            {{lists, reverse, [[x,y,z]]}, [z,y,x]}],
-               Assoc  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
-               %% order sensitive 
-               [?assertEqual(lists:nth(I, TestData), lists:nth(I, Assoc))
-                || I <- lists:seq(1, length(TestData))]
+               Actual = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
+               ?assertEqual(Actual, [E || {_, E} <- TestData])
        end},
       {"error, throw, exit になるものがある場合",
        fun() ->
@@ -133,11 +130,11 @@ exec_map_test_() ->
                         {erlang, exit, [piyo]}],
                Result = moyo_concurrent:exec_map(Input),
                %% order sensitive
-               ?assertEqual({{lists, reverse, [[1, 2, 3]]}, [3, 2, 1]}, lists:nth(1, Result)),
-               ?assertEqual({{lists, reverse, [[3, 4, 5]]}, [5, 4, 3]}, lists:nth(2, Result)),
-               ?assertMatch2({'EXIT', {erlang, error, [hoge]}, {hoge, _}}, lists:nth(3, Result)),
-               ?assertMatch2({'EXIT', {erlang, throw, [fuga]}, {{nocatch, fuga}, _}}, lists:nth(4, Result)),
-               ?assertMatch2({'EXIT', {erlang, exit, [piyo]}, piyo}, lists:nth(5, Result))
+               ?assertEqual([3, 2, 1], lists:nth(1, Result)),
+               ?assertEqual([5, 4, 3], lists:nth(2, Result)),
+               ?assertMatch2({'EXIT', {hoge, _}}, lists:nth(3, Result)),
+               ?assertMatch2({'EXIT', {{nocatch, fuga}, _}}, lists:nth(4, Result)),
+               ?assertMatch2({'EXIT', piyo}, lists:nth(5, Result))
        end},
       {"signal が突き抜けない",
        fun() ->
@@ -146,7 +143,7 @@ exec_map_test_() ->
                                                  ok
                                          end, []]}],
                Result = moyo_concurrent:exec_map(Input),
-               ?assertMatch2([{{erlang, apply, _}, ok}], Result)
+               ?assertMatch2([ok], Result)
        end}
      ]}.
 

@@ -55,7 +55,7 @@ exec(Inputs, Timeout) ->
 %% @doc 並行に複数のコマンドを実行する
 %%
 %% see: `exec_map([Input], infinity)`
--spec exec_map([Input]) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+-spec exec_map([Input]) -> [RetValue :: term() | {'EXIT', Signal :: term()}] when
       Input   :: {module(), Function :: atom(), Args :: [term()]}.
 exec_map(Inputs) ->
     exec_map(Inputs, infinity).
@@ -63,7 +63,7 @@ exec_map(Inputs) ->
 %% @doc 並行に複数のコマンドを実行する
 %% 返り値は Inputs の順番で返される. <br />
 %% 1つでも結果がerrorだった場合もすべての実行が完了を待ち, 結果のリストは Inputs の写像となる.
--spec exec_map([Input], Timeout) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+-spec exec_map([Input], Timeout) -> [RetValue :: term() | {'EXIT', Signal :: term()}] when
       Input   :: {module(), Function :: atom(), Args :: [term()]},
       Timeout :: timeout().
 exec_map(Inputs, Timeout) ->
@@ -119,7 +119,7 @@ exec_order_by_input(Inputs) ->
     [receive {Input, RetValue} -> RetValue end || Input <- Inputs].
 
 %% @doc Input要素の関数をプロセスを立てて実行し, 結果を入力順に返す. エラーが起きても停止しない.
--spec exec_order_preserved_by_input([Input]) -> [{Input, RetValue :: term()} | {'EXIT', Input, Signal :: term()}] when
+-spec exec_order_preserved_by_input([Input]) -> [RetValue :: term() | {'EXIT', Signal :: term()}] when
       Input :: {module(), Function :: atom(), Args :: [term()]}.
 exec_order_preserved_by_input(Inputs) ->
     Self = self(),
@@ -129,9 +129,9 @@ exec_order_preserved_by_input(Inputs) ->
                        end)
             || {Module, Fun, Args} <- Inputs],
     [receive
-         {Input, _} = Ok -> 
+         {Input, Result} ->
              receive %% wait normal exit
-                 {'EXIT', Pid, normal} -> Ok
+                 {'EXIT', Pid, normal} -> Result
              end;
-         {'EXIT', Pid, Signal} -> {'EXIT', Input, Signal}
+         {'EXIT', Pid, Signal} -> {'EXIT', Signal}
      end || {Pid, Input} <- lists:zip(Pids, Inputs)].
