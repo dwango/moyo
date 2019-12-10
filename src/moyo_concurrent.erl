@@ -54,7 +54,7 @@ exec(Inputs, Timeout) ->
 
 %% @doc 並行に複数のコマンドを実行する
 %%
-%% see: `exec_map([Input], infinity)`
+%% see: `exec_map([Input], infinity)'
 -spec exec_map([Input]) -> [RetValue :: term() | {'EXIT', Signal :: term()}] when
       Input   :: {module(), Function :: atom(), Args :: [term()]}.
 exec_map(Inputs) ->
