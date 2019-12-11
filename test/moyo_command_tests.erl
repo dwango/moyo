@@ -288,7 +288,7 @@ execute_test_() ->
 
      {"timeout設定時に処理が成功",
       fun () ->
-              Result = moyo_command:execute("echo", ["timeout"], [{timeout, 10}]),
+              Result = moyo_command:execute("echo", ["timeout"], [{timeout, 100}]),
               Expected = {{ok, <<"timeout\n">>}, <<"echo timeout">>},
 
               ?assertEqual(Expected, Result)
@@ -296,7 +296,7 @@ execute_test_() ->
 
      {"sleepコマンドでtimeout",
       fun () ->
-              Result = moyo_command:execute("sleep", ["1s"], [{timeout, 10}]),
+              Result = moyo_command:execute("sleep", ["1s"], [{timeout, 100}]),
 
               ?assertMatch({{error, timeout}, <<"sleep 1s">>}, Result)
       end},
@@ -312,7 +312,7 @@ execute_test_() ->
      {"timeout時の外部プログラムの終了方法を指定",
       fun () ->
               CloseFun = fun (Port) -> port_close(Port) end,
-              Result = moyo_command:execute("sleep", ["1s"], [{timeout, 10}, {close_function, CloseFun}]),
+              Result = moyo_command:execute("sleep", ["1s"], [{timeout, 100}, {close_function, CloseFun}]),
 
               ?assertEqual({{error, timeout}, <<"sleep 1s">>}, Result)
       end},
