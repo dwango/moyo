@@ -126,13 +126,13 @@ exec_order_preserved_by_input(Inputs) ->
     process_flag(trap_exit, true),
     Indices = lists:seq(1, length(Inputs)),
     Pids = [spawn_link(fun() ->
-                               Self ! {Index, {Module, Fun, Args}, apply(Module, Fun, Args)}
+                               Self ! {Index, apply(Module, Fun, Args)}
                        end)
             || {Index, {Module, Fun, Args}} <- lists:zip(Indices, Inputs)],
     [receive
-         {Index, Input, Result} ->
+         {Index, Result} ->
              receive %% wait normal exit
                  {'EXIT', Pid, normal} -> Result
              end;
          {'EXIT', Pid, Signal} -> {'EXIT', Signal}
-     end || {Index, {Pid, Input}} <- lists:zip(Indices, lists:zip(Pids, Inputs))].
+     end || {Index, Pid} <- lists:zip(Indices, Pids)].
