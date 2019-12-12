@@ -102,7 +102,7 @@ exec_map_test_() ->
                            {{lists, member,  [1, [1,2,3]]}, true}
                           ],
                Actual  = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
-               ?assertEqual(Actual, [E || {_, E} <- TestData])
+               ?assertEqual([E || {_, E} <- TestData], Actual)
        end},
       {"Input が同じ場合",
        fun() ->
@@ -119,7 +119,7 @@ exec_map_test_() ->
                            {{lists, reverse, [[1,2,3]]}, [3,2,1]},
                            {{lists, reverse, [[x,y,z]]}, [z,y,x]}],
                Actual = moyo_concurrent:exec_map([Input || {Input, _} <- TestData]),
-               ?assertEqual(Actual, [E || {_, E} <- TestData])
+               ?assertEqual([E || {_, E} <- TestData], Actual)
        end},
       {"error, throw, exit になるものがある場合",
        fun() ->
