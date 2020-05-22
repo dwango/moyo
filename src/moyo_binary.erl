@@ -13,6 +13,8 @@
          to_hex/1,
          from_hex/1,
          to_binary/1,
+         to_atom/1,
+         to_atom/2,
          try_binary_to_existing_atom/2,
          format/2,
          generate_random_list/2,
@@ -35,6 +37,8 @@
          to_upper/1,
          append/2
         ]).
+
+-deprecated({try_binary_to_existing_atom, 2}).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
@@ -99,6 +103,31 @@ to_binary(V) when is_atom(V)     -> atom_to_binary(V, utf8);
 to_binary(V) when is_integer(V)  -> integer_to_binary(V);
 to_binary(V) when is_float(V)    -> float_to_binary(V);
 to_binary(V)                     -> list_to_binary(moyo_string:to_string(V)).
+
+%% @equiv to_atom(Binary, [{encoding, utf8}])
+-spec to_atom(binary()) -> atom() | {error, term()}.
+to_atom(Binary) ->
+    to_atom(Binary, []).
+
+%% @doc バイナリのアトムへの変換を試みる.
+%%
+%% バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は`{error, badarg}'が返される.<br />
+%% `Options'に`no_exist'を指定すると、アトムがまだ存在しない場合もアトムを返す.
+-spec to_atom(binary(), Options) -> atom() | {error, term()}
+      when Options :: [no_exist | {encoding, Encoding}],
+           Encoding :: latin1 | unicode | utf8.
+to_atom(Binary, Options) ->
+    Encoding = proplists:get_value(encoding, Options, utf8),
+    case lists:member(no_exist, Options) of
+        false ->
+            try
+                binary_to_existing_atom(Binary, Encoding)
+            catch
+                Class:Reason -> {Class, Reason}
+            end;
+        true ->
+            binary_to_atom(Binary, Encoding)
+    end.
 
 %% @doc バイナリのアトムへの変換を試みる.
 %%
