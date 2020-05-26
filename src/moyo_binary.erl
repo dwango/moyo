@@ -104,7 +104,7 @@ to_binary(V) when is_integer(V)  -> integer_to_binary(V);
 to_binary(V) when is_float(V)    -> float_to_binary(V);
 to_binary(V)                     -> list_to_binary(moyo_string:to_string(V)).
 
-%% @equiv to_atom(Binary, [{encoding, utf8}])
+%% @equiv to_atom(Binary, [])
 -spec to_atom(binary()) -> atom() | {error, term()}.
 to_atom(Binary) ->
     to_atom(Binary, []).
@@ -112,6 +112,8 @@ to_atom(Binary) ->
 %% @doc バイナリのアトムへの変換を試みる.
 %%
 %% バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は`{error, badarg}'が返される.<br />
+%% `Options'に`{encoding, Encoding}'を指定すると、`Encoding'としてバイナリを変換する. <br />
+%% デフォルトで`utf8'としてバイナリを変換する. <br />
 %% `Options'に`create'を指定すると、アトムがまだ存在しない場合もアトムを返す.
 -spec to_atom(binary(), Options) -> atom() | {error, term()}
       when Options :: [create | {encoding, Encoding}],
