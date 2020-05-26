@@ -125,7 +125,7 @@ to_atom(Binary, Options) ->
             try
                 binary_to_existing_atom(Binary, Encoding)
             catch
-                Class:Reason -> {Class, Reason}
+                _:Reason -> {error, Reason}
             end;
         true ->
             binary_to_atom(Binary, Encoding)
