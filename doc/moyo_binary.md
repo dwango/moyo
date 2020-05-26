@@ -298,10 +298,11 @@ to_atom(Binary::binary(), Options) -&gt; atom() | {error, term()}
 
 バイナリのアトムへの変換を試みる.
 
-バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は`{error, badarg}`が返される.<br />
+バイナリに対応するアトムが既に存在する場合はそのアトムを返し、存在しない場合は`{error, badarg}`を返す.<br />
 `Options`に`{encoding, Encoding}`を指定すると、`Encoding`としてバイナリを変換する. <br />
 デフォルトで`utf8`としてバイナリを変換する. <br />
-`Options`に`create`を指定すると、アトムがまだ存在しない場合もアトムを返す.
+`Options`に`create`を指定すると、アトムがまだ存在しない場合もアトムを返す. <br />
+※ Erlang/OTP 20より古いバージョンでは、コードポイントが255を超えるUnicode文字がバイナリに含まれる場合変換に失敗する.
 
 <a name="to_binary-1"></a>
 
