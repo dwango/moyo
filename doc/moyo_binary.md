@@ -291,15 +291,15 @@ Equivalent to [`to_atom(Binary, [{encoding, utf8}])`](#to_atom-2).
 ### to_atom/2 ###
 
 <pre><code>
-to_atom(Binary::binary(), Options) -&gt; atom() | error
+to_atom(Binary::binary(), Options) -&gt; atom() | {error, term()}
 </code></pre>
 
-<ul class="definitions"><li><code>Options = no_exist | {encoding, Encoding}</code></li><li><code>Encoding = latin1 | unicode | utf8</code></li></ul>
+<ul class="definitions"><li><code>Options = [create | {encoding, Encoding}]</code></li><li><code>Encoding = latin1 | unicode | utf8</code></li></ul>
 
 バイナリのアトムへの変換を試みる.
 
 バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は`{error, badarg}`が返される.<br />
-`Options`に`no_exist`を指定すると、アトムがまだ存在しない場合もアトムを返す.
+`Options`に`create`を指定すると、アトムがまだ存在しない場合もアトムを返す.
 
 <a name="to_binary-1"></a>
 

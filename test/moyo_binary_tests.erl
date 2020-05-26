@@ -63,10 +63,10 @@ to_atom_test_() ->
               Input = <<"__erlay_lisp_ruby_scala_java__">>, % 多分、これに対応するアトムは存在しない
               ?assertMatch({error, badarg}, moyo_binary:to_atom(Input))
       end},
-     {"no_exist指定時にはバイナリをまだ存在しないアトムに変換できる",
+     {"create指定時にはバイナリをまだ存在しないアトムに変換できる",
       fun () ->
               Input = <<"__haskell_nodejs_python_go__">>,  % 多分、これに対応するアトムは存在しない
-              ?assertEqual(Input, atom_to_binary(moyo_binary:to_atom(Input, [no_exist]), utf8))
+              ?assertEqual(Input, atom_to_binary(moyo_binary:to_atom(Input, [create]), utf8))
       end}
     ].
 

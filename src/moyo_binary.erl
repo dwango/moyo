@@ -112,13 +112,13 @@ to_atom(Binary) ->
 %% @doc バイナリのアトムへの変換を試みる.
 %%
 %% バイナリに対応するアトムが既に存在する場合は、そのアトムを返し、存在しない場合は`{error, badarg}'が返される.<br />
-%% `Options'に`no_exist'を指定すると、アトムがまだ存在しない場合もアトムを返す.
+%% `Options'に`create'を指定すると、アトムがまだ存在しない場合もアトムを返す.
 -spec to_atom(binary(), Options) -> atom() | {error, term()}
-      when Options :: [no_exist | {encoding, Encoding}],
+      when Options :: [create | {encoding, Encoding}],
            Encoding :: latin1 | unicode | utf8.
 to_atom(Binary, Options) ->
     Encoding = proplists:get_value(encoding, Options, utf8),
-    case lists:member(no_exist, Options) of
+    case lists:member(create, Options) of
         false ->
             try
                 binary_to_existing_atom(Binary, Encoding)
