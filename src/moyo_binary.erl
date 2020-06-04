@@ -13,8 +13,8 @@
          to_hex/1,
          from_hex/1,
          to_binary/1,
-         to_atom/1,
-         to_atom/2,
+         try_to_atom/1,
+         try_to_atom/2,
          try_binary_to_existing_atom/2,
          format/2,
          generate_random_list/2,
@@ -104,10 +104,10 @@ to_binary(V) when is_integer(V)  -> integer_to_binary(V);
 to_binary(V) when is_float(V)    -> float_to_binary(V);
 to_binary(V)                     -> list_to_binary(moyo_string:to_string(V)).
 
-%% @equiv to_atom(Binary, [])
--spec to_atom(binary()) -> atom() | {error, term()}.
-to_atom(Binary) ->
-    to_atom(Binary, []).
+%% @equiv try_to_atom(Binary, [])
+-spec try_to_atom(binary()) -> atom() | {error, term()}.
+try_to_atom(Binary) ->
+    try_to_atom(Binary, []).
 
 %% @doc バイナリのアトムへの変換を試みる.
 %%
@@ -116,10 +116,10 @@ to_atom(Binary) ->
 %% デフォルトで`utf8'としてバイナリを変換する. <br />
 %% `Options'に`create'を指定すると、アトムがまだ存在しない場合もアトムを返す. <br />
 %% ※ Erlang/OTP 20より古いバージョンでは、コードポイントが255を超えるUnicode文字がバイナリに含まれる場合変換に失敗する.
--spec to_atom(binary(), Options) -> atom() | {error, term()}
+-spec try_to_atom(binary(), Options) -> atom() | {error, term()}
       when Options :: [create | {encoding, Encoding}],
            Encoding :: latin1 | unicode | utf8.
-to_atom(Binary, Options) ->
+try_to_atom(Binary, Options) ->
     Encoding = proplists:get_value(encoding, Options, utf8),
     case lists:member(create, Options) of
         false ->

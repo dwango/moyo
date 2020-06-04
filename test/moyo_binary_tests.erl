@@ -44,29 +44,29 @@ from_hex_test_() ->
       end}
     ].
 
-to_atom_test_() ->
+try_to_atom_test_() ->
     [
      {"バイナリを既に存在するアトムに変換する",
       fun () ->
               ExistingAtom = erlang,
               Input = <<"erlang">>,
-              ?assertEqual(ExistingAtom, moyo_binary:to_atom(Input))
+              ?assertEqual(ExistingAtom, moyo_binary:try_to_atom(Input))
       end},
      {"指定したエンコーディングとしてバイナリをアトムに変換する",
       fun () ->
               ExistingAtom = binary_to_atom(<<"もよ"/utf8>>, latin1),
               Input = <<"もよ"/utf8>>,
-              ?assertEqual(ExistingAtom, moyo_binary:to_atom(Input, [{encoding, latin1}]))
+              ?assertEqual(ExistingAtom, moyo_binary:try_to_atom(Input, [{encoding, latin1}]))
       end},
      {"存在しないアトムに変換しようとすると{error, badarg}が返る",
       fun () ->
               Input = <<"__erlay_lisp_ruby_scala_java__">>, % 多分、これに対応するアトムは存在しない
-              ?assertMatch({error, badarg}, moyo_binary:to_atom(Input))
+              ?assertMatch({error, badarg}, moyo_binary:try_to_atom(Input))
       end},
      {"create指定時にはバイナリをまだ存在しないアトムに変換できる",
       fun () ->
               Input = <<"__haskell_nodejs_python_go__">>,  % 多分、これに対応するアトムは存在しない
-              ?assertEqual(Input, atom_to_binary(moyo_binary:to_atom(Input, [create]), utf8))
+              ?assertEqual(Input, atom_to_binary(moyo_binary:try_to_atom(Input, [create]), utf8))
       end}
     ].
 
