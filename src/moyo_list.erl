@@ -15,6 +15,7 @@
          take_if/2,
          replace_if/3,
          position/2,
+         position_if/2,
          shuffle/1,
 
          foldl_while/3,
@@ -106,6 +107,13 @@ replace_if(PredFun, Value, List) -> replace_if_impl(PredFun, Value, List, []).
 %% `Value'が存在しない場合は`error'が返される
 -spec position(term(), list()) -> {ok, Position::pos_integer()} | error.
 position(Value, List) -> position_impl(Value, List, 1).
+
+%% @doc `List'内で最初に述語`PredFun'を満たす要素の位置を返す
+%%
+%% 該当する要素が存在しない場合は`error'が返される
+-spec position_if(fun((Element) -> boolean()), [Element]) -> {ok, pos_integer()} | error when
+      Element :: term().
+position_if(PredFun, List) -> position_if_impl(PredFun, List, 1).
 
 %% @doc 入力リストの順番を無作為に並べ替える
 -spec shuffle([Element]) -> [Element] when Element :: term().
@@ -473,6 +481,16 @@ position_impl(_Value, [], _Position)        -> error;
 position_impl(Value, [Value | _], Position) -> {ok, Position};
 position_impl(Value, [_ | List], Position)  -> position_impl(Value, List, Position + 1).
 
+-spec position_if_impl(fun((Element) -> boolean()), [Element], pos_integer()) -> {ok, pos_integer()} | error when
+      Element :: term().
+position_if_impl(_PredFun, [], _Position) ->
+    error;
+position_if_impl(PredFun, [Head | Tail], Position) ->
+    case PredFun(Head) of
+        true  -> {ok, Position};
+        false -> position_if_impl(PredFun, Tail, Position + 1)
+    end.
+
 -spec foldr_while_impl(Fun, Initial::term(), List) -> {true, Result} | {false, Result} when
       Fun     :: fun ((Element, Acc::term()) -> {true, Result} | {false, Result}),
       List    :: [Element],
@@ -518,4 +536,3 @@ maybe_filter(Fun, Acc, [Element | List]) ->
         true            -> maybe_filter(Fun, [Element | Acc], List);
         false           -> maybe_filter(Fun, Acc, List)
     end.
-
