@@ -79,6 +79,24 @@ position_test_() ->
       end}
     ].
 
+position_if_test_() ->
+    [
+     {"該当要素がリスト内の何番目に位置しているかを取得できる",
+      fun () ->
+              PredFun = fun (N) -> N > 0 end,
+              Input    = [-334, 0, 42, -57],
+              Expected = {ok, 3},
+              ?assertEqual(Expected, moyo_list:position_if(PredFun, Input))
+      end},
+     {"該当要素がリスト内に存在しない場合は`error'が返される",
+      fun () ->
+              PredFun = fun (N) -> N > 0 end,
+              Input    = [-334, 0, -42, -57],
+              Expected = error,
+              ?assertEqual(Expected, moyo_list:position_if(PredFun, Input))
+      end}
+    ].
+
 shuffle_test_() ->
     [
      {"リストをシャッフルする",
