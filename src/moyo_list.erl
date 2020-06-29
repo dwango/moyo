@@ -102,13 +102,13 @@ take_if(PredFun, List) -> take_if_impl(PredFun, List, []).
       PredFun :: fun ((term()) -> boolean()).
 replace_if(PredFun, Value, List) -> replace_if_impl(PredFun, Value, List, []).
 
-%% @doc `List'内で最初に`Value'が出現する位置を返す
+%% @doc `List'内で最初に`Value'が出現する位置を1-originで返す
 %%
 %% `Value'が存在しない場合は`error'が返される
 -spec position(term(), list()) -> {ok, Position::pos_integer()} | error.
 position(Value, List) -> position_impl(Value, List, 1).
 
-%% @doc `List'内で最初に述語`PredFun'を満たす要素の位置を返す
+%% @doc `List'内で最初に述語`PredFun'を満たす要素の位置を1-originで返す
 %%
 %% 該当する要素が存在しない場合は`error'が返される
 -spec position_if(fun((Element) -> boolean()), [Element]) -> {ok, pos_integer()} | error when
