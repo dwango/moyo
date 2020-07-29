@@ -31,38 +31,24 @@
                              | {decimals, Decimals :: 0..253}
                              | compact.
 
--type encode_option() :: {float_format, [float_format_option()]}.
+-type encode_option() :: {float_format, [float_format_option()]} | print.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
 %%----------------------------------------------------------------------------------------------------------------------
 
-%% @doc Erlangの項を文字列(数値のリスト)に変換する
-%%
-%% 入力値が非負の数値リストの場合は、変換は行われずにそのまま返される。<br />
-%% ユニコード値のリストから、UTF-8のリストへ変換したい場合等は unicode モジュールを使用する必要がある。
--spec to_string(term()) -> string().
-to_string(V) when is_binary(V)   -> binary_to_list(V);
-to_string(V) when is_atom(V)     -> atom_to_list(V);
-to_string(V) when is_integer(V)  -> integer_to_list(V);
-to_string(V) when is_float(V)    -> float_to_list(V);
-to_string(V) when is_function(V) -> erlang:fun_to_list(V);
-to_string(V) when is_pid(V)      -> erlang:pid_to_list(V);
-to_string(V) when is_port(V)     -> erlang:port_to_list(V);
-to_string(V) when is_reference(V)-> erlang:ref_to_list(V);
-to_string(V) when is_list(V)     ->
-    IsNonNegInteger = fun (C) -> is_integer(C) andalso C >= 0 end,
-    case lists:all(IsNonNegInteger, V) of
-        true  -> V;
-        false -> lists:flatten(io_lib:format("~w", [V]))
-    end;
+%% @equiv to_string(V, [])
 to_string(V) ->
-    lists:flatten(io_lib:format("~w", [V])).
+    to_string(V, []).
 
 %% @doc Erlangの項を文字列(数値のリスト)に、指定されたオプションに従って変換する
 %%
 %% 入力値が非負の数値リストの場合は、変換は行われずにそのまま返される。<br />
 %% ユニコード値のリストから、UTF-8のリストへ変換したい場合等は unicode モジュールを使用する必要がある。<br />
+%%
+%% 入力値がタプルや深いリストならば `print' オプションを指定することで<br />
+%% io_lib:format/2 のフォーマット`"~p"'に従った表現で変換することができる。<br />
+%% デフォルト値は`"~w"'。<br />
 %%
 %% 入力値が浮動小数点数ならば float_to_list/2 で指定できるオプション<br />
 %%   [{scientific, Decimals} | {decimals, Decimals} | compact]<br />
@@ -71,17 +57,19 @@ to_string(V) ->
 %% 例:
 %% ```
 %% > moyo_string:to_string(12.34, [{float_format, [{scientific, 6}]}]).
-%% <<"1.234000e+01">>
+%% "1.234000e+01"
 %% > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}]}]).
-%% <<"12.340000">>
+%% "12.340000"
 %% > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}, compact]}]).
-%% <<"12.34">>
+%% "12.34"
 %% '''
 -spec to_string(term(), [encode_option()]) -> string().
-to_string(V, _Options = []) ->
-    to_string(V);
+to_string(V, []) ->
+    to_string_impl(V, "~w");
 to_string(V, [{float_format, FloatFormatOptions} | _Rest]) when is_float(V) ->
     float_to_list(V, FloatFormatOptions);
+to_string(V, [print]) ->
+    to_string_impl(V, "~p");
 to_string(V, [_Option | Rest]) ->
     to_string(V, Rest).
 
@@ -127,3 +115,23 @@ is_iodata(X) -> is_binary(X) orelse is_iolist(X).
 is_iolist_element(X) when is_binary(X)                                    -> true;
 is_iolist_element(X) when is_integer(X) andalso (0 =< X andalso X =< 255) -> true;
 is_iolist_element(X)                                                      -> is_iolist(X).
+
+%% @private
+%% @doc Erlangの項を文字列(数値のリスト)に変換する
+-spec to_string_impl(term(), io:format()) -> string().
+to_string_impl(V, _) when is_binary(V)   -> binary_to_list(V);
+to_string_impl(V, _) when is_atom(V)     -> atom_to_list(V);
+to_string_impl(V, _) when is_integer(V)  -> integer_to_list(V);
+to_string_impl(V, _) when is_float(V)    -> float_to_list(V);
+to_string_impl(V, _) when is_function(V) -> erlang:fun_to_list(V);
+to_string_impl(V, _) when is_pid(V)      -> erlang:pid_to_list(V);
+to_string_impl(V, _) when is_port(V)     -> erlang:port_to_list(V);
+to_string_impl(V, _) when is_reference(V)-> erlang:ref_to_list(V);
+to_string_impl(V, IoLibFormat) when is_list(V)     ->
+    IsNonNegInteger = fun (C) -> is_integer(C) andalso C >= 0 end,
+    case lists:all(IsNonNegInteger, V) of
+        true  -> V;
+        false -> format(IoLibFormat, [V])
+    end;
+to_string_impl(V, IoLibFormat) ->
+    format(IoLibFormat, [V]).

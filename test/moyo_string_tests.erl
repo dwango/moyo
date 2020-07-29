@@ -64,6 +64,16 @@ to_string_test_() ->
               Expected2 = "{{1,2,3},<0.1.0>,[[[[[<<97,98,99>>]],{hello}]]]}",
               ?assertEqual(Expected2, moyo_string:to_string(Input2))
       end},
+     {"複雑なデータ構造をプリント表現に変換可能",
+      fun() ->
+              Input1    = [{1,2,3}, c:pid(0,1,0), [[[[[<<"abc">>]], {hello}]]]],
+              Expected1 = "[{1,2,3},<0.1.0>,[[[[[<<\"abc\">>]],{hello}]]]]",
+              ?assertEqual(Expected1, moyo_string:to_string(Input1, [print])),
+
+              Input2    = {{1,2,3}, c:pid(0,1,0), [[[[[<<"abc">>]], {hello}]]]},
+              Expected2 = "{{1,2,3},<0.1.0>,[[[[[<<\"abc\">>]],{hello}]]]}",
+              ?assertEqual(Expected2, moyo_string:to_string(Input2, [print]))
+      end},
      {"関数を文字列に変換",
       fun () ->
               Input = fun () -> ok end,
