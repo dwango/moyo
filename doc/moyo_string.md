@@ -21,7 +21,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 
 <pre><code>
-encode_option() = {float_format, [<a href="#type-float_format_option">float_format_option()</a>]} | print
+encode_option() = print | {float_format, [<a href="#type-float_format_option">float_format_option()</a>]}
 </code></pre>
 
 

@@ -31,7 +31,7 @@
                              | {decimals, Decimals :: 0..253}
                              | compact.
 
--type encode_option() :: {float_format, [float_format_option()]} | print.
+-type encode_option() :: print | {float_format, [float_format_option()]}.
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
@@ -66,11 +66,11 @@ to_string(V) ->
 -spec to_string(term(), [encode_option()]) -> string().
 to_string(V, []) ->
     to_string_impl(V, "~w");
-to_string(V, [{float_format, FloatFormatOptions} | _Rest]) when is_float(V) ->
-    float_to_list(V, FloatFormatOptions);
-to_string(V, [print]) ->
+to_string(V, [print | _]) ->
     to_string_impl(V, "~p");
-to_string(V, [_Option | Rest]) ->
+to_string(V, [{float_format, FloatFormatOptions} | _]) when is_float(V) ->
+    float_to_list(V, FloatFormatOptions);
+to_string(V, [_ | Rest]) ->
     to_string(V, Rest).
 
 %% @doc 指定されたフォーマットの文字列を生成して返す.
