@@ -119,12 +119,12 @@ is_iolist_element(X)                                                      -> is_
 %% @private
 %% @doc Erlangの項を文字列(数値のリスト)に変換する
 -spec to_string_impl(term(), io:format()) -> string().
-to_string_impl(V, _) when is_binary(V)    -> binary_to_list(V);
 to_string_impl(V, _) when is_atom(V)      -> atom_to_list(V);
-to_string_impl(V, _) when is_integer(V)   -> integer_to_list(V);
+to_string_impl(V, _) when is_binary(V)    -> binary_to_list(V);
 to_string_impl(V, _) when is_float(V)     -> float_to_list(V);
+to_string_impl(V, _) when is_integer(V)   -> integer_to_list(V);
+to_string_impl(V, _) when is_pid(V)       -> pid_to_list(V);
 to_string_impl(V, _) when is_function(V)  -> erlang:fun_to_list(V);
-to_string_impl(V, _) when is_pid(V)       -> erlang:pid_to_list(V);
 to_string_impl(V, _) when is_port(V)      -> erlang:port_to_list(V);
 to_string_impl(V, _) when is_reference(V) -> erlang:ref_to_list(V);
 to_string_impl(V, IoLibFormat) when is_list(V) ->
