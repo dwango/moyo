@@ -21,7 +21,7 @@ Copyright (c) 2013-2014 DWANGO Co., Ltd. All Rights Reserved.
 
 
 <pre><code>
-encode_option() = {float_format, [<a href="#type-float_format_option">float_format_option()</a>]}
+encode_option() = print | {float_format, [<a href="#type-float_format_option">float_format_option()</a>]}
 </code></pre>
 
 
@@ -39,7 +39,7 @@ float_format_option() = {scientific, Decimals::0..249} | {decimals, Decimals::0.
 ## Function Index ##
 
 
-<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットの文字列を生成して返す.</td></tr><tr><td valign="top"><a href="#is_ascii_string-1">is_ascii_string/1</a></td><td>引数の値がASCII文字列であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#is_iodata-1">is_iodata/1</a></td><td>引数の値が<code>iodata</code>であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#is_iolist-1">is_iolist/1</a></td><td>引数の値が<code>iolist</code>であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#to_string-1">to_string/1</a></td><td>Erlangの項を文字列(数値のリスト)に変換する.</td></tr><tr><td valign="top"><a href="#to_string-2">to_string/2</a></td><td>Erlangの項を文字列(数値のリスト)に、指定されたオプションに従って変換する.</td></tr></table>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#format-2">format/2</a></td><td>指定されたフォーマットの文字列を生成して返す.</td></tr><tr><td valign="top"><a href="#is_ascii_string-1">is_ascii_string/1</a></td><td>引数の値がASCII文字列であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#is_iodata-1">is_iodata/1</a></td><td>引数の値が<code>iodata</code>であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#is_iolist-1">is_iolist/1</a></td><td>引数の値が<code>iolist</code>であるかどうかを判定する.</td></tr><tr><td valign="top"><a href="#to_string-1">to_string/1</a></td><td>Equivalent to <a href="#to_string-2"><tt>to_string(V, [])</tt></a>.</td></tr><tr><td valign="top"><a href="#to_string-2">to_string/2</a></td><td>Erlangの項を文字列(数値のリスト)に、指定されたオプションに従って変換する.</td></tr></table>
 
 
 <a name="functions"></a>
@@ -104,22 +104,16 @@ See: [`http://www.erlang.org/doc/reference_manual/typespec.html`](http://www.erl
 
 ### to_string/1 ###
 
-<pre><code>
-to_string(V::term()) -&gt; string()
-</code></pre>
-<br />
+`to_string(V) -> any()`
 
-Erlangの項を文字列(数値のリスト)に変換する
-
-入力値が非負の数値リストの場合は、変換は行われずにそのまま返される。<br />
-ユニコード値のリストから、UTF-8のリストへ変換したい場合等は unicode モジュールを使用する必要がある。
+Equivalent to [`to_string(V, [])`](#to_string-2).
 
 <a name="to_string-2"></a>
 
 ### to_string/2 ###
 
 <pre><code>
-to_string(V::term(), Options::[<a href="#type-encode_option">encode_option()</a>]) -&gt; string()
+to_string(V::term(), Rest::[<a href="#type-encode_option">encode_option()</a>]) -&gt; string()
 </code></pre>
 <br />
 
@@ -127,6 +121,10 @@ Erlangの項を文字列(数値のリスト)に、指定されたオプション
 
 入力値が非負の数値リストの場合は、変換は行われずにそのまま返される。<br />
 ユニコード値のリストから、UTF-8のリストへ変換したい場合等は unicode モジュールを使用する必要がある。<br />
+
+入力値がタプルや深いリストならば `print` オプションを指定することで<br />
+io_lib:format/2 のフォーマット`"~p"`に従った表現で変換することができる。<br />
+デフォルト値は`"~w"`。<br />
 
 入力値が浮動小数点数ならば float_to_list/2 で指定できるオプション<br />
 [{scientific, Decimals} | {decimals, Decimals} | compact]<br />
@@ -136,10 +134,10 @@ Erlangの項を文字列(数値のリスト)に、指定されたオプション
 
 ```
   > moyo_string:to_string(12.34, [{float_format, [{scientific, 6}]}]).
-  <<"1.234000e+01">>
+  "1.234000e+01"
   > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}]}]).
-  <<"12.340000">>
+  "12.340000"
   > moyo_string:to_string(12.34, [{float_format, [{decimals, 6}, compact]}]).
-  <<"12.34">>
+  "12.34"
 ```
 
