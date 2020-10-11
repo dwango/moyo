@@ -694,9 +694,9 @@ to_map_recur(NestAssocList)  ->
         is_list(NestAssocList) ->
             case to_map_recur_any(NestAssocList) of
                 Res when (is_map(Res)) -> Res;
-                _ -> error(badarg)
+                _ -> error(badarg, [NestAssocList])
             end;
-        true -> error(badarg)
+        true -> error(badarg, [NestAssocList])
     end.
 
 %%----------------------------------------------------------------------------------------------------------------------
