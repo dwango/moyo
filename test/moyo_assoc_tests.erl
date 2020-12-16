@@ -869,5 +869,9 @@ to_map_recur_test_() ->
         {"Keyが同じなら前の値で変換される",
             fun() ->
                 ?assertEqual(#{1=>#{1=>2}}, moyo_assoc:to_map_recur([{1, [{1, 2}, {1, 3}]}, {1, 3}]))
+            end},
+        {"入力が不正な場合はエラーとなる",
+            fun() ->
+                ?assertError(badarg, moyo_assoc:to_map_recur(hoge))
             end}
     ].
