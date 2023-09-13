@@ -17,24 +17,24 @@
 -define(assertMatch2(Guard, Expr),
         (fun() ->
                  try
-                     __MOYO_ASSERT_MATCH2_TMP = Expr,
+                     MOYO_ASSERT___MATCH2_TMP = Expr,
 
                      %% `Guard'内に変数が含まれる場合に、OTP18で"unused変数警告"が出力されるのを抑制するために、二度`Guard'を使っている。
                      %% (一度目で束縛された変数が、二度目は使われるので警告がでなくなる)
                      %%
-                     %% なお`Guard = Guard = __MOYO_ASSERT_MATCH2_TMP'のようにまとめて書くと、`Guard'にバイナリリテラルが含まれる場合に、
+                     %% なお`Guard = Guard = MOYO_ASSERT___MATCH2_TMP'のようにまとめて書くと、`Guard'にバイナリリテラルが含まれる場合に、
                      %% OTP18で別のコンパイラ警告が出てしまうので、別々に分けている。
-                     Guard = __MOYO_ASSERT_MATCH2_TMP,
-                     Guard = __MOYO_ASSERT_MATCH2_TMP,
+                     Guard = MOYO_ASSERT___MATCH2_TMP,
+                     Guard = MOYO_ASSERT___MATCH2_TMP,
                      ok
                  catch
-                     error:{badmatch, __MOYO_EUNIT_V} ->
+                     error:{badmatch, MOYO_EUNIT___V} ->
                          erlang:error({assertMatch_failed,
                                        [{module, ?MODULE},
                                         {line, ?LINE},
                                         {expression, (??Expr)},
                                         {pattern, (??Guard)},
-                                        {value, (__MOYO_EUNIT_V)}
+                                        {value, (MOYO_EUNIT___V)}
                                        ]})
                  end
          end)()).
@@ -50,9 +50,9 @@
 -define(assignMatch(Guard, Expr),
         begin
             Guard = (fun() ->
-                             __MOYO_EUNIT_TMP = Expr,
-                             ?assertMatch2(Guard, __MOYO_EUNIT_TMP),
-                             __MOYO_EUNIT_TMP
+                             MOYO_EUNIT___TMP = Expr,
+                             ?assertMatch2(Guard, MOYO_EUNIT___TMP),
+                             MOYO_EUNIT___TMP
                      end)()
         end).
 -endif.
@@ -69,8 +69,8 @@
 -define(assertTerminated(Pid, Reason),
         (fun() ->
                  receive
-                     {'EXIT', Pid, __MOYO_EUNIT_RetReason} ->
-                         ?assertMatch2(Reason, __MOYO_EUNIT_RetReason)
+                     {'EXIT', Pid, MOYO_EUNIT___RetReason} ->
+                         ?assertMatch2(Reason, MOYO_EUNIT___RetReason)
                  after 3000 ->
                          ?assert(timeout)
                  end
@@ -91,8 +91,8 @@
 -define(assertDown(Ref, Reason),
         (fun() ->
                  receive
-                     {'DOWN', Ref, process, _, __MOYO_EUNIT_RetReason} ->
-                         ?assertMatch2(Reason, __MOYO_EUNIT_RetReason)
+                     {'DOWN', Ref, process, _, MOYO_EUNIT___RetReason} ->
+                         ?assertMatch2(Reason, MOYO_EUNIT___RetReason)
                  after 3000 ->
                          ?assert(timeout)
                  end
@@ -137,12 +137,12 @@
 -else.
 -define(ensureExited(Pid, Reason),
         (fun() ->
-                 __MOYO_EUNIT_Pid = Pid,
-                 __MOYO_EUNIT_Old = process_flag(trap_exit, true),
-                 __MOYO_EUNIT_Ref = monitor(process, __MOYO_EUNIT_Pid),
-                 exit(__MOYO_EUNIT_Pid, Reason),
-                 ?assertDown(__MOYO_EUNIT_Ref, _),
-                 process_flag(trap_exit, __MOYO_EUNIT_Old)
+                 MOYO_EUNIT___Pid = Pid,
+                 MOYO_EUNIT___Old = process_flag(trap_exit, true),
+                 MOYO_EUNIT___Ref = monitor(process, MOYO_EUNIT___Pid),
+                 exit(MOYO_EUNIT___Pid, Reason),
+                 ?assertDown(MOYO_EUNIT___Ref, _),
+                 process_flag(trap_exit, MOYO_EUNIT___Old)
          end)()).
 -endif.
 -define(_ensureExited(Pid, Reason), ?_test(?ensureExited(Pid, Reason))).
@@ -163,8 +163,8 @@
 -else.
 -define(assertLinked(Pid1, Pid2),
         (fun () ->
-                 {_, __Links} = erlang:process_info(Pid2, links),
-                 ?assert(lists:member(Pid1, __Links))
+                 {_, MOYO__Links} = erlang:process_info(Pid2, links),
+                 ?assert(lists:member(Pid1, MOYO__Links))
          end)()).
 -endif.
 -define(_assertLinked(Pid1, Pid2), ?_test(?assertLinked(Pid1, Pid2))).
