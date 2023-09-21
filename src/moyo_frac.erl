@@ -88,7 +88,7 @@ from_integer(Int) -> #fraction{numerator = Int, denominator = 1}.
 %% 非正規化数を分数にすることはできるが, to_floatすると割り算でerrorが発生する.
 %% 無限大, NaNに関してはErlangのfloatでは使えないので考慮していない.
 -spec from_float(float()) -> fraction().
-from_float(0.0) ->
+from_float(Float) when Float =:= +0.0 orelse Float =:= -0.0 ->
     moyo_frac:new(0, 1);
 from_float(Float) ->
     <<MaybeSign:1, MaybeExponent:11, MaybeFraction:52>> = <<Float/float>>,
