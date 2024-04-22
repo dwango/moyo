@@ -5,10 +5,10 @@
 
 maybe_constructor_test_() ->
     [
-     {"maybe, maybe_funを作る",
+     {"maybe_val, maybe_funを作る",
       fun () ->
-              ?assertEqual(nothing, moyo_monad:maybe(nothing)),
-              ?assertEqual({just, 123}, moyo_monad:maybe(123)),
+              ?assertEqual(nothing, moyo_monad:maybe_val(nothing)),
+              ?assertEqual({just, 123}, moyo_monad:maybe_val(123)),
               ?assertEqual(nothing, moyo_monad:maybe_fun(nothing)),
               SomeFun = fun(A, B)->A+B end,
               ?assertEqual({just, SomeFun}, moyo_monad:maybe_fun(SomeFun)),
