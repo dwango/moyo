@@ -81,7 +81,7 @@ to_string_test_() ->
       end},
      {"ポートを文字列に変換",
       fun () ->
-              Input = open_port("ls", []),
+              Input = open_port({spawn, "ls"}, []),
               ?assert(is_list(moyo_string:to_string(Input))) % 具体的な文字列表現は環境依存なのでテストしない
       end},
      {"リファレンスを文字列に変換",

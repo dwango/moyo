@@ -311,7 +311,7 @@ to_binary_test_() ->
       end},
      {"ポートを文字列に変換",
       fun () ->
-              Input = open_port("ls", []),
+              Input = open_port({spawn, "ls"}, []),
               ?assert(is_binary(moyo_binary:to_binary(Input))) % 具体的な文字列表現は環境依存なのでテストしない
       end},
      {"リファレンスを文字列に変換",
