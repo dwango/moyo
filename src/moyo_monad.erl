@@ -8,19 +8,19 @@
 %%----------------------------------------------------------------------------------------------------------------------
 -export([
          apply_maybe/3,
-         maybe/1,
+         maybe_val/1,
          maybe_fun/1
         ]).
 
 -export_type([
-              maybe/0,
+              maybe_val/0,
               maybe_fun/0
              ]).
 
 %%----------------------------------------------------------------------------------------------------------------------
 %% Types
 %%----------------------------------------------------------------------------------------------------------------------
--type maybe() :: {just, term()} | nothing.
+-type maybe_val() :: {just, term()} | nothing.
 %% なにか or Nothing を格納するデータ構造
 -type maybe_fun() :: {just, fun()} | nothing.
 %% 何らかの関数 or Nothing を格納するデータ構造
@@ -28,16 +28,16 @@
 %%----------------------------------------------------------------------------------------------------------------------
 %% Exported Functions
 %%----------------------------------------------------------------------------------------------------------------------
-%% @doc maybe()を作ります.
+%% @doc maybe_val()を作ります.
 %%
 %% {just nothing} は作れないので直接作ってください.
--spec maybe(term()) -> maybe().
-maybe(nothing) -> nothing;
-maybe(Value) -> {just, Value}.
+-spec maybe_val(term()) -> maybe_val().
+maybe_val(nothing) -> nothing;
+maybe_val(Value) -> {just, Value}.
 
 
 %% @doc maybe()を作ります.
--spec maybe_fun(nothing | fun()) -> maybe().
+-spec maybe_fun(nothing | fun()) -> maybe_val().
 maybe_fun(nothing) -> nothing;
 maybe_fun(Fun) when is_function(Fun) -> {just, Fun};
 maybe_fun(Fun) -> error({invalid_function, Fun}).

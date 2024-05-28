@@ -7,11 +7,11 @@ apply_if_test_() ->
     [
      {"条件節の値がtrueの場合は、THEN節で渡した関数が実行される",
       fun () ->
-              ?assertEqual(then, moyo_cond:apply_if(true, fun () -> then end, fun () -> else end))
+              ?assertEqual('then', moyo_cond:apply_if(true, fun () -> 'then' end, fun () -> 'else' end))
       end},
      {"条件節の値がfalseの場合は、ELSE節で渡した関数が実行される",
       fun () ->
-              ?assertEqual(else, moyo_cond:apply_if(false, fun () -> then end, fun () -> else end))
+              ?assertEqual('else', moyo_cond:apply_if(false, fun () -> 'then' end, fun () -> 'else' end))
       end}
     ].
 
